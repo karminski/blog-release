@@ -1,0 +1,1616 @@
+<!DOCTYPE html><html><head>
+      <title>learning-graphql-reading-notes</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+
+      <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #000000;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+    background: #C1DEF1;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+    background: #C1DEF1;
+}
+
+
+/* Code blocks */
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    background-color: #f9f9f9;
+}
+
+
+/* Inline code */
+
+:not(pre)>code[class*="language-"] {
+    padding: .2em;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #EEE;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #0066FF;
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.string {
+    color: #036A07;
+}
+
+.token.punctuation {
+    color: #000000;
+}
+
+.token.operator {
+    color: #0066FF;
+    font-weight: 900;
+    /* no highlight */
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: #0000CD;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*="language-css"] {
+    color: #0000ff;
+    font-weight: 900;
+}
+
+.token.function {
+    color: #000000;
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: #9a050f;
+}
+
+.token.selector,
+.language-autohotkey .token.keyword {
+    color: #00009f;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.language-json .token.property {
+    color: #2B91AF;
+}
+
+.token.tag,
+.token.selector {
+    color: #800000;
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: #19921c;
+}
+
+.token.directive.tag .tag {
+    background: #ffff00;
+    color: #000000;
+}
+
+
+/* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+
+.line-numbers .line-numbers-rows {
+    border-right-color: #a5a5a5;
+}
+
+.line-numbers-rows>span:before {
+    color: #2B91AF;
+}
+
+
+/* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+
+.line-highlight {
+    background: rgba(193, 222, 241, 0.2);
+    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+}
+
+
+/* highlight */
+
+pre[data-line] {
+    position: relative;
+    padding: 1em 0 1em 3em;
+}
+
+pre[data-line] .line-highlight-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+}
+
+pre[data-line] .line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: hsla(24, 20%, 50%, .08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+pre[data-line] .line-highlight:before,
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-start);
+    position: absolute;
+    top: .4em;
+    left: .6em;
+    min-width: 1em;
+    padding: 0 .5em;
+    background-color: hsla(24, 20%, 50%, .4);
+    color: hsl(24, 20%, 95%);
+    font: bold 65%/1.5 sans-serif;
+    text-align: center;
+    vertical-align: .3em;
+    text-shadow: none;
+    box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-end);
+    top: auto;
+    bottom: .4em;
+}html body {
+    font-family: "Consolas", Arial, freesans, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    color: #2F2F2F;
+    background-color: #fff;
+    overflow: initial;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+html body h1 {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3em;
+}
+
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+    color: #2b2b2b;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+html body strong {
+    color: #000
+}
+
+html body del {
+    color: #5c5c5c
+}
+
+html body a:not([href]) {
+    color: inherit;
+    text-decoration: none
+}
+
+html body a {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body a:hover {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body img {
+    max-width: 100%
+}
+
+html body>p {
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    word-wrap: break-word;
+}
+
+html body>ul,
+html body>ol {
+    margin-bottom: 0px
+}
+
+html body ul,
+html body ol {
+    padding-left: 2em
+}
+
+html body ul.no-list,
+html body ol.no-list {
+    padding: 0;
+    list-style-type: none
+}
+
+html body ul ul,
+html body ul ol,
+html body ol ol,
+html body ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body li {
+    margin-bottom: 0
+}
+
+html body li.task-list-item {
+    list-style: none
+}
+
+html body li>p {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body .task-list-item-checkbox {
+    margin: 0 .2em .25em -1.8em;
+    vertical-align: middle
+}
+
+html body .task-list-item-checkbox:hover {
+    cursor: pointer
+}
+
+html body blockquote {
+    margin: 16px 0;
+    font-size: inherit;
+    padding: 0 15px;
+    color: #5c5c5c;
+    border-left: 4px solid #d6d6d6
+}
+
+html body blockquote>:first-child {
+    margin-top: 0
+}
+
+html body blockquote>:last-child {
+    margin-bottom: 0
+}
+
+html body hr {
+    height: 4px;
+    margin: 32px 0;
+    background-color: #d6d6d6;
+    border: 0 none
+}
+
+html body table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all
+}
+
+html body table th {
+    font-weight: bold;
+    color: #000
+}
+
+html body table td,
+html body table th {
+    border: 1px solid #d6d6d6;
+    padding: 6px 13px
+}
+
+html body dl {
+    padding: 0
+}
+
+html body dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold
+}
+
+html body dl dd {
+    padding: 0 16px;
+    margin-bottom: 0px
+}
+
+html body code {
+    font-family: Consolas, monospace;
+    font-size: 12px !important;
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+html body code::before,
+html body code::after {
+    letter-spacing: -0.2em;
+    content: "\00a0"
+}
+
+html body pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: .85em !important;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0
+}
+
+html body .highlight {
+    margin-bottom: 0px
+}
+
+html body .highlight pre,
+html body pre {
+    padding: 1em;
+    overflow: auto;
+    font-size: .85em !important;
+    line-height: 1.45;
+    border: #d6d6d6;
+    border-radius: 3px
+}
+
+html body .highlight pre {
+    margin-bottom: 0;
+    word-break: normal
+}
+
+html body pre code,
+html body pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0
+}
+
+html body pre code:before,
+html body pre tt:before,
+html body pre code:after,
+html body pre tt:after {
+    content: normal
+}
+
+html body p,
+html body blockquote,
+html body ul,
+html body ol,
+html body dl,
+html body pre {
+    /* nothing */
+}
+
+html body kbd {
+    color: #000;
+    border: 1px solid #d6d6d6;
+    border-bottom: 2px solid #c7c7c7;
+    padding: 2px 4px;
+    background-color: #f0f0f0;
+    border-radius: 3px
+}
+
+@media print {
+    html body {
+        background-color: #fff
+    }
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+        color: #000;
+        page-break-after: avoid
+    }
+    html body blockquote {
+        color: #5c5c5c
+    }
+    html body pre {
+        page-break-inside: avoid
+    }
+    html body table {
+        display: table
+    }
+    html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+    }
+    html body pre,
+    html body code {
+        word-wrap: break-word;
+        white-space: pre
+    }
+}
+
+.markdown-preview {
+    float: left;
+    margin: 10px auto 10px 10px;
+    color: #2F2F2F;
+    border: 1px dashed #DDDDDD;
+    padding: 10px;
+    width: 80em;
+}
+
+p {
+    margin: 1em 0 1em 0;
+}
+
+
+/* code block theme */.markdown-preview {
+    height: 100%;
+    box-sizing: border-box
+}
+
+.markdown-preview .pagebreak,
+.markdown-preview .newpage {
+    page-break-before: always
+}
+
+.markdown-preview pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber
+}
+
+.markdown-preview pre.line-numbers>code {
+    position: relative
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 1em;
+    font-size: 100%;
+    left: 0;
+    width: 3em;
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: .8em;
+    text-align: right
+}
+
+.markdown-preview .mathjax-exps .MathJax_Display {
+    text-align: center !important
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .status {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .output-div {
+    margin-bottom: 16px
+}
+
+.scrollbar-style::-webkit-scrollbar {
+    width: 8px
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+    position: relative;
+    top: 0
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    font-size: 28px;
+    cursor: pointer;
+    color: inherit;
+    z-index: 99;
+    width: 32px;
+    text-align: center;
+    opacity: .4
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+    opacity: 1
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    padding: 32px 0 48px 0;
+    font-size: 12px;
+    border-left: 1px dashed #DDDDDD;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: inherit
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+    width: 8px
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+    text-decoration: none
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    padding: 0 1.6em;
+    margin-top: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+    margin-bottom: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    list-style-type: none
+}
+
+@media screen and (max-width:1274px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 0em
+    }
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+    display: none
+}
+
+@media screen and (max-width:914px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        width: 100%
+    }
+}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h2><a href="http://Learning-GraphQL.Reading-Notes.md">Learning-GraphQL.Reading-Notes.md</a></h2>
+<ul>
+<li>@name       GraphQL &#x5B66;&#x4E60;&#x6307;&#x5357; &#x8BFB;&#x4E66;&#x7B14;&#x8BB0;</li>
+<li>@author     karminski &lt;<a href="mailto:code.karminski@outlook.com">code.karminski@outlook.com</a>&gt;</li>
+<li>@version    20200622:1</li>
+</ul>
+<h1 class="mume-header" id="chapter-1-%E6%AC%A2%E8%BF%8E%E6%9D%A5%E5%88%B0-graphql-%E7%9A%84%E4%B8%96%E7%95%8C">Chapter 1, &#x6B22;&#x8FCE;&#x6765;&#x5230; GraphQL &#x7684;&#x4E16;&#x754C;</h1>
+
+<h2 class="mume-header" id="graphql-%E6%98%AF%E4%BB%80%E4%B9%88">GraphQL &#x662F;&#x4EC0;&#x4E48;</h2>
+
+<h3 class="mume-header" id="graphql-%E8%A7%84%E8%8C%83">GraphQL &#x89C4;&#x8303;</h3>
+
+<p>graphql-js &#x662F;&#x5B98;&#x65B9;&#x5B9E;&#x73B0;</p>
+<h3 class="mume-header" id="graphql-%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99">GraphQL &#x7684;&#x8BBE;&#x8BA1;&#x539F;&#x5219;</h3>
+
+<ul>
+<li>&#x4EE5;&#x4EA7;&#x54C1;&#x4E3A;&#x4E2D;&#x5FC3;</li>
+<li>&#x5F3A;&#x7C7B;&#x578B;</li>
+<li>&#x5BA2;&#x6237;&#x6307;&#x5B9A;&#x5B9A;&#x67E5;&#x8BE2;</li>
+<li>&#x7C7B;&#x578B;&#x81EA;&#x67E5;</li>
+</ul>
+<h2 class="mume-header" id="graphql-%E7%9A%84%E8%B5%B7%E6%BA%90">GraphQL &#x7684;&#x8D77;&#x6E90;</h2>
+
+<h2 class="mume-header" id="%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E7%9A%84%E5%8E%86%E5%8F%B2">&#x6570;&#x636E;&#x4F20;&#x8F93;&#x7684;&#x5386;&#x53F2;</h2>
+
+<h3 class="mume-header" id="%E8%A1%A8%E8%BF%B0%E6%80%A7%E7%8A%B6%E6%80%81%E4%BC%A0%E9%80%92">&#x8868;&#x8FF0;&#x6027;&#x72B6;&#x6001;&#x4F20;&#x9012;</h3>
+
+<p>REST &#x628A;&#x8D44;&#x6E90;&#x7F51;&#x7EDC;&#x582A;&#x79F0;&#x865A;&#x62DF;&#x72B6;&#x6001;&#x673A;, &#x5E76;&#x4E14;&#x7531;&#x7528;&#x6237;&#x6267;&#x884C;&#x7684;&#x52A8;&#x4F5C;&#x90FD;&#x662F;&#x673A;&#x5668;&#x5185;&#x7684;&#x72B6;&#x6001;&#x53D8;&#x5316;.</p>
+<h2 class="mume-header" id="rest-%E7%9A%84%E7%BC%BA%E7%82%B9">REST &#x7684;&#x7F3A;&#x70B9;</h2>
+
+<h3 class="mume-header" id="%E8%BF%87%E9%87%8F%E8%8E%B7%E5%8F%96">&#x8FC7;&#x91CF;&#x83B7;&#x53D6;</h3>
+
+<h3 class="mume-header" id="%E8%8E%B7%E5%8F%96%E4%B8%8D%E8%B6%B3">&#x83B7;&#x53D6;&#x4E0D;&#x8DB3;</h3>
+
+<h3 class="mume-header" id="%E7%AE%A1%E7%90%86-rest-%E6%8E%A5%E5%8F%A3">&#x7BA1;&#x7406; REST &#x63A5;&#x53E3;</h3>
+
+<p>GraphQL &#x4E0E; REST &#x8026;&#x5408;&#x662F;&#x8F83;&#x597D;&#x7684;&#x8FC7;&#x6E21;&#x6027;&#x65B9;&#x6848;</p>
+<h2 class="mume-header" id="%E7%8E%B0%E5%AE%9E%E4%B8%96%E7%95%8C%E4%B8%AD%E7%9A%84-graphql">&#x73B0;&#x5B9E;&#x4E16;&#x754C;&#x4E2D;&#x7684; GraphQL</h2>
+
+<h3 class="mume-header" id="graphql-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BA%93">GraphQL &#x5BA2;&#x6237;&#x7AEF;&#x5E93;</h3>
+
+<p>Realy &#x548C; Apollo</p>
+<h1 class="mume-header" id="chapter-2-%E5%9B%BE%E8%AE%BA">Chapter 2, &#x56FE;&#x8BBA;</h1>
+
+<h2 class="mume-header" id="%E5%9B%BE%E8%AE%BA%E7%9B%B8%E5%85%B3%E8%AF%8D%E6%B1%87">&#x56FE;&#x8BBA;&#x76F8;&#x5173;&#x8BCD;&#x6C47;</h2>
+
+<p>G = (V ,E). G &#x4EE3;&#x8868;&#x56FE;&#x5F62;, V&#x4EE3;&#x8868;&#x4E00;&#x7EC4;&#x9876;&#x70B9; (Vertice) &#x6216;&#x8282;&#x70B9; (Node). &#x4F8B;&#x5982; V = {1,2,3,4}.</p>
+<p>E &#x4EE3;&#x8868;&#x4E00;&#x7EC4;&#x8FB9; (Edge). &#x4F8B;&#x5982; E = {{1,2},{1,3},{1,4},{2,4},{3,4}}. &#x8FD9;&#x662F;&#x65E0;&#x5411;&#x56FE; (undirected graph). &#x5982;&#x679C;&#x7528;&#x5706;&#x62EC;&#x53F7;&#x5305;&#x88F9;, &#x5219;&#x4E3A;&#x6709;&#x5411;&#x56FE;, &#x5982; E = ({1,2},{1,3},{1,4},{2,4},{3,4}).</p>
+<h2 class="mume-header" id="%E5%9B%BE%E8%AE%BA%E7%9A%84%E5%8E%86%E5%8F%B2">&#x56FE;&#x8BBA;&#x7684;&#x5386;&#x53F2;</h2>
+
+<p>&#x67EF;&#x5C3C;&#x65AF;&#x5821;&#x4E03;&#x6865;&#x95EE;&#x9898;</p>
+<p>&#x8282;&#x70B9;&#x7684;&#x5EA6;&#x6570; (degree) &#x7B49;&#x4E8E;&#x8FDE;&#x63A5;&#x8BE5;&#x8282;&#x70B9;&#x7684;&#x8FB9;&#x7684;&#x6570;&#x91CF;.</p>
+<p>&#x6211;&#x4EEC;&#x628A;&#x6BCF;&#x5929;&#x4FBF;&#x53EA;&#x80FD;&#x8BBF;&#x95EE;&#x4E00;&#x6B21;&#x7684;&#x56FE;&#x79F0;&#x4E3A;&#x6B27;&#x62C9;&#x8DEF;&#x5F84; (Eulerian Path).</p>
+<h2 class="mume-header" id="%E6%A0%91%E5%B0%B1%E6%98%AF%E5%9B%BE">&#x6811;&#x5C31;&#x662F;&#x56FE;</h2>
+
+<h2 class="mume-header" id="%E7%8E%B0%E5%AE%9E%E4%B8%96%E7%95%8C%E4%B8%AD%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%BB%93%E6%9E%84">&#x73B0;&#x5B9E;&#x4E16;&#x754C;&#x4E2D;&#x7684;&#x56FE;&#x5F62;&#x7ED3;&#x6784;</h2>
+
+<h1 class="mume-header" id="chapter-3-graphql-%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80">Chapter 3, GraphQL &#x67E5;&#x8BE2;&#x8BED;&#x8A00;</h1>
+
+<p>&#x652F;&#x6301; &#x67E5;&#x8BE2; (Query), &#x53D8;&#x66F4; (Mutation), &#x8BA2;&#x9605; (subscription).</p>
+<h2 class="mume-header" id="graphql-api-%E5%B7%A5%E5%85%B7">GraphQL API &#x5DE5;&#x5177;</h2>
+
+<h3 class="mume-header" id="graphiql">GraphiQL</h3>
+
+<h3 class="mume-header" id="graphql-playground">GraphQL Playground</h3>
+
+<h3 class="mume-header" id="%E5%85%AC%E5%85%B1-graphql-api">&#x516C;&#x5171; GraphQL API</h3>
+
+<h2 class="mume-header" id="graphql-%E6%9F%A5%E8%AF%A2%E5%AD%97%E6%AE%B5">GraphQL &#x67E5;&#x8BE2;&#x5B57;&#x6BB5;</h2>
+
+<p>&#x7F51;&#x9875;&#x7248;&#x7684; playground &#x867D;&#x7136;&#x4E00;&#x4E2A;&#x8BF7;&#x6C42;&#x53EF;&#x4EE5;&#x5199;&#x4E24;&#x4E2A; query, &#x4F46;&#x662F;&#x53EA;&#x4F1A;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;&#x7ED3;&#x679C;, &#x60F3;&#x8981;&#x5168;&#x90E8;&#x8FD4;&#x56DE;&#x9700;&#x8981;&#x5199;&#x5230;&#x4E00;&#x4E2A; query &#x91CC;&#x9762;.</p>
+<p>Query &#x662F;<strong>&#x6839;&#x7C7B;&#x578B; (Root Type)</strong></p>
+<p>&#x7F16;&#x5199;&#x67E5;&#x8BE2;&#x65F6;, &#x628A;&#x9700;&#x8981;&#x7684;&#x6761;&#x4EF6;&#x5B57;&#x6BB5;&#x7528;&#x5927;&#x62EC;&#x53F7;&#x62EC;&#x8D77;&#x6765;, &#x8FD9;&#x4E9B;&#x5FEB;&#x88AB;&#x79F0;&#x4E3A;<strong>&#x9009;&#x62E9;&#x96C6; (Selection Set)</strong>, &#x9009;&#x62E9;&#x96C6;&#x53EF;&#x4EE5;&#x5D4C;&#x5957;.</p>
+<h3 class="mume-header" id="%E8%BE%B9%E5%92%8C%E8%BF%9E%E6%8E%A5">&#x8FB9;&#x548C;&#x8FDE;&#x63A5;</h3>
+
+<p>&#x67E5;&#x8BE2;&#x5B57;&#x6BB5;&#x53EF;&#x4EE5;&#x662F;<strong>&#x6807;&#x91CF;&#x7C7B;&#x578B;</strong>&#x6216;<strong>&#x5BF9;&#x8C61;&#x7C7B;&#x578B;</strong>. GraphQL &#x6709; 5 &#x79CD;&#x6807;&#x91CF;&#x7C7B;&#x578B;: &#x6574;&#x6570; (int), &#x6D6E;&#x70B9;&#x6570; (float), &#x5B57;&#x7B26;&#x4E32; (string), &#x5E03;&#x5C14;&#x503C; (bool), &#x552F;&#x4E00;&#x6807;&#x8BC6;&#x7B26; (ID). ID &#x867D;&#x7136;&#x8FD4;&#x56DE;&#x4E5F;&#x662F; JSON &#x5B57;&#x7B26;&#x4E32;, &#x4F46;&#x4F1A;&#x786E;&#x4FDD;&#x8FD4;&#x56DE;&#x662F;&#x552F;&#x4E00;&#x7684;.</p>
+<h3 class="mume-header" id="%E7%89%87%E6%AE%B5">&#x7247;&#x6BB5;</h3>
+
+<p>&#x7247;&#x6BB5; (fragment) &#x53EF;&#x4EE5;&#x5728;&#x591A;&#x4E2A;&#x64CD;&#x4F5C;&#x4E2D;&#x91CD;&#x7528;&#x9009;&#x62E9;&#x96C6;.</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token comment"># fragment</span>
+<span class="token keyword">fragment</span> liftInfo <span class="token keyword">on</span> List <span class="token punctuation">{</span>
+    name
+    status
+    capacity
+    night
+    elevationGain
+<span class="token punctuation">}</span>
+
+<span class="token comment"># query</span>
+<span class="token keyword">query</span> <span class="token punctuation">{</span>
+    Lift<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span><span class="token string">&quot;jazz-cat&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>liftInfo
+        trailAccess <span class="token punctuation">{</span>
+            name
+            difficulty
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    Trail<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span><span class="token string">&quot;river-run&quot;</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        name
+        difficulty
+        accessedByLifts <span class="token punctuation">{</span>
+            <span class="token operator">...</span>liftInfo
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</pre><p>&#x5E76;&#x4E14; fragment &#x53EF;&#x4EE5;&#x8FDB;&#x884C;&#x5D4C;&#x5957;.</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token keyword">query</span> <span class="token punctuation">{</span>
+    List<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span> <span class="token string">&quot;jazz-cat&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>liftInfo
+        trailAccess <span class="token punctuation">{</span>
+            <span class="token operator">...</span>trailInfo
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    Trail<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span> <span class="token string">&quot;river-run&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>trailInfo
+        groomed
+        trees
+        night
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">fragment</span> trailInfo <span class="token keyword">on</span> Trail <span class="token punctuation">{</span>
+    name
+    difficulty
+    accessedByLifts <span class="token punctuation">{</span>
+        <span class="token operator">...</span>liftInfo
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">fragment</span> liftInfo <span class="token keyword">on</span> Lift <span class="token punctuation">{</span>
+    name
+    status
+    capacity
+    night
+    elevationGain
+<span class="token punctuation">}</span>
+
+</pre><h3 class="mume-header" id="%E8%81%94%E5%90%88%E7%B1%BB%E5%9E%8B">&#x8054;&#x5408;&#x7C7B;&#x578B;</h3>
+
+<p>&#x5B57;&#x6BB5;&#x8FD4;&#x56DE;&#x591A;&#x79CD;&#x7C7B;&#x578B;:</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token keyword">query</span> schedule <span class="token punctuation">{</span>
+    agenda <span class="token punctuation">{</span>
+        <span class="token operator">...</span><span class="token keyword">on</span> Workout <span class="token punctuation">{</span>
+            name
+            reps
+        <span class="token punctuation">}</span>
+        <span class="token operator">...</span><span class="token keyword">on</span> StudyGroup <span class="token punctuation">{</span>
+            name 
+            subject
+            students
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># returns :</span>
+
+<span class="token punctuation">{</span>
+    <span class="token string">&quot;data&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token string">&quot;agenda&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>
+            <span class="token punctuation">{</span>
+                <span class="token string">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;Comp Sci&quot;</span><span class="token punctuation">,</span>
+                <span class="token string">&quot;subject&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;CS&quot;</span><span class="token punctuation">,</span>
+                <span class="token string">&quot;students&quot;</span><span class="token punctuation">:</span> <span class="token number">12</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token punctuation">{</span>
+                <span class="token string">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;Cardio&quot;</span><span class="token punctuation">,</span>
+                <span class="token string">&quot;reps&quot;</span><span class="token punctuation">:</span> <span class="token number">100</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token operator">...</span>
+        <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><h3 class="mume-header" id="%E6%8E%A5%E5%8F%A3">&#x63A5;&#x53E3;</h3>
+
+<p>?</p>
+<h2 class="mume-header" id="%E5%8F%98%E6%9B%B4">&#x53D8;&#x66F4;</h2>
+
+<p>&#x65B0;&#x589E;&#x6570;&#x636E;:</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token keyword">mutation</span> createSong <span class="token punctuation">{</span>
+    addSong<span class="token punctuation">(</span><span class="token attr-name">title</span><span class="token punctuation">:</span><span class="token string">&quot;No Scrubs&quot;</span><span class="token punctuation">,</span> <span class="token attr-name">numberOne</span><span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token attr-name">performanceName</span><span class="token punctuation">:</span> <span class="token string">&quot;TLC&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        id
+        title
+        numberOne
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># returns</span>
+
+<span class="token punctuation">{</span>
+    <span class="token string">&quot;data&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token string">&quot;addSong&quot;</span><span class="token punctuation">:</span><span class="token punctuation">{</span>
+            <span class="token string">&quot;id&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;5cac5283&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;title&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;No Scrubs&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;numberOne&quot;</span><span class="token punctuation">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p>&#x4FEE;&#x6539;&#x6570;&#x636E;:</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token keyword">mutation</span> closeLift <span class="token punctuation">{</span>
+    setLiftStatus<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span> <span class="token string">&quot;jazz-cat&quot;</span><span class="token punctuation">,</span> <span class="token attr-name">status</span><span class="token punctuation">:</span> CLOSED<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        name
+        status
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><h3 class="mume-header" id="%E4%BD%BF%E7%94%A8%E6%9F%A5%E8%AF%A2%E5%8F%98%E9%87%8F">&#x4F7F;&#x7528;&#x67E5;&#x8BE2;&#x53D8;&#x91CF;</h3>
+
+<p>&#x5C06;&#x8868;&#x8FBE;&#x5F0F;&#x4E2D;&#x63D2;&#x5165;&#x53D8;&#x91CF;:</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token keyword">mutation</span> createSong<span class="token punctuation">(</span><span class="token variable">$title</span><span class="token punctuation">:</span>String<span class="token operator">!</span><span class="token punctuation">,</span> <span class="token variable">$numberOne</span><span class="token punctuation">:</span>Int<span class="token punctuation">,</span> <span class="token variable">$by</span><span class="token punctuation">:</span>String<span class="token operator">!</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    addSong<span class="token punctuation">(</span><span class="token attr-name">title</span><span class="token punctuation">:</span><span class="token variable">$title</span><span class="token punctuation">,</span> <span class="token attr-name">numberOne</span><span class="token punctuation">:</span><span class="token variable">$numberOne</span><span class="token punctuation">,</span> <span class="token attr-name">performerName</span><span class="token punctuation">:</span><span class="token variable">$by</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        id
+        title
+        numberOne
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># var ref by json</span>
+
+<span class="token punctuation">{</span>
+    <span class="token string">&quot;title&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;No Scrubs&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;numberOne&quot;</span><span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;by&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;TLC&quot;</span>
+<span class="token punctuation">}</span>
+</pre><h2 class="mume-header" id="%E8%AE%A2%E9%98%85">&#x8BA2;&#x9605;</h2>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">subscription <span class="token punctuation">{</span>
+    liftStatusChange <span class="token punctuation">{</span>
+        name
+        capacity
+        status
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</pre><h2 class="mume-header" id="%E8%87%AA%E6%A3%80">&#x81EA;&#x68C0;</h2>
+
+<p>&#x81EA;&#x68C0; (inrospection)</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token keyword">query</span> <span class="token punctuation">{</span>
+    __schema <span class="token punctuation">{</span>
+        types <span class="token punctuation">{</span>
+            name
+            description
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+
+</pre><p>__schema &#x7528;&#x6765;&#x67E5;&#x8BE2;&#x7C7B;&#x578B;, __type&#x7528;&#x6765;&#x67E5;&#x8BE2;&#x7279;&#x5B9A;&#x7C7B;&#x578B;&#x7684;&#x8BE6;&#x7EC6;&#x4FE1;&#x606F;.</p>
+<h2 class="mume-header" id="%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91">&#x62BD;&#x8C61;&#x8BED;&#x6CD5;&#x6811;</h2>
+
+<p>e.g.</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token keyword">query</span> jazzCarStatus <span class="token punctuation">{</span>
+    Lift<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span> <span class="token string">&quot;jazz-cat&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        name
+        night
+        elevationGain
+        trailAccess <span class="token punctuation">{</span>
+            name
+            difficulty
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> 
+<span class="token punctuation">}</span>
+
+<span class="token keyword">mutation</span> vloseLift<span class="token punctuation">(</span><span class="token variable">$lift</span><span class="token punctuation">:</span> ID<span class="token operator">!</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    setLiftStatus<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span> <span class="token variable">$lift</span><span class="token punctuation">,</span> <span class="token attr-name">status</span><span class="token punctuation">:</span> CLOSED<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>liftStatus
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">fragment</span> liftStatus <span class="token keyword">on</span> Lift <span class="token punctuation">{</span>
+    name
+    status
+<span class="token punctuation">}</span>
+</pre><h1 class="mume-header" id="chapter-4-%E8%AE%BE%E8%AE%A1-schema">Chapter 4, &#x8BBE;&#x8BA1; Schema</h1>
+
+<h2 class="mume-header" id="%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B">&#x5B9A;&#x4E49;&#x7C7B;&#x578B;</h2>
+
+<h2 class="mume-header" id="%E7%B1%BB%E5%9E%8B">&#x7C7B;&#x578B;</h2>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type Photo <span class="token punctuation">{</span>
+    <span class="token attr-name">id</span><span class="token punctuation">:</span> ID<span class="token operator">!</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">url</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">description</span><span class="token punctuation">:</span> String
+<span class="token punctuation">}</span>
+
+
+</pre><p>&#x611F;&#x53F9;&#x53F7; (!) &#x8868;&#x793A;&#x662F;&#x611F;&#x53F9;&#x53F7;&#x524D;&#x9762;&#x7684;&#x662F;&#x975E;&#x7A7A;&#x5B57;&#x6BB5;.</p>
+<h2 class="mume-header" id="%E6%A0%87%E9%87%8F%E7%B1%BB%E5%9E%8B">&#x6807;&#x91CF;&#x7C7B;&#x578B;</h2>
+
+<p>&#x81EA;&#x5B9A;&#x4E49;&#x6807;&#x91CF;&#x7C7B;&#x578B; DateTime:</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">scalar DateTime
+
+type Photo <span class="token punctuation">{</span>
+    <span class="token attr-name">id</span><span class="token punctuation">:</span> ID<span class="token operator">!</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">url</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">description</span><span class="token punctuation">:</span> String
+    <span class="token attr-name">created</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+</pre><h3 class="mume-header" id="%E6%9E%9A%E4%B8%BE">&#x679A;&#x4E3E;</h3>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">enum PhotoCategory <span class="token punctuation">{</span>
+    SELFIE
+    PORTAIT
+    ACTION
+    LANDSCAPE
+    GRAPHIC
+<span class="token punctuation">}</span>
+
+type Photo <span class="token punctuation">{</span>
+    <span class="token attr-name">id</span><span class="token punctuation">:</span> ID<span class="token operator">!</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">category</span><span class="token punctuation">:</span> PhotoCategory<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+</pre><h2 class="mume-header" id="%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%88%97%E8%A1%A8">&#x8FDE;&#x63A5;&#x548C;&#x5217;&#x8868;</h2>
+
+<h3 class="mume-header" id="%E4%B8%80%E5%AF%B9%E4%B8%80%E8%BF%9E%E6%8E%A5">&#x4E00;&#x5BF9;&#x4E00;&#x8FDE;&#x63A5;</h3>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type User <span class="token punctuation">{</span>
+    <span class="token attr-name">githubLogin</span><span class="token punctuation">:</span> ID<span class="token operator">!</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String
+    <span class="token attr-name">avatar</span><span class="token punctuation">:</span> String
+<span class="token punctuation">}</span>
+
+type Photo <span class="token punctuation">{</span>
+    <span class="token attr-name">id</span><span class="token punctuation">:</span> ID<span class="token operator">!</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">url</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">description</span><span class="token punctuation">:</span> String
+    <span class="token attr-name">created</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+    <span class="token attr-name">category</span><span class="token punctuation">:</span> PhotoCategory<span class="token operator">!</span>
+    <span class="token attr-name">postedBy</span><span class="token punctuation">:</span> User<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+
+
+</pre><h3 class="mume-header" id="%E4%B8%80%E5%AF%B9%E5%A4%9A%E8%BF%9E%E6%8E%A5">&#x4E00;&#x5BF9;&#x591A;&#x8FDE;&#x63A5;</h3>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type User <span class="token punctuation">{</span>
+    <span class="token attr-name">githubLogin</span><span class="token punctuation">:</span> ID<span class="token operator">!</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String
+    <span class="token attr-name">avatar</span><span class="token punctuation">:</span> String
+    <span class="token attr-name">postedPhotos</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type Query <span class="token punctuation">{</span>
+    <span class="token attr-name">totalPhotos</span><span class="token punctuation">:</span> Int<span class="token operator">!</span>
+    <span class="token attr-name">allPhotos</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+    <span class="token attr-name">totalUsers</span><span class="token punctuation">:</span> Int<span class="token operator">!</span>
+    <span class="token attr-name">allUsers</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>User<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+schema <span class="token punctuation">{</span>
+    <span class="token attr-name">query</span><span class="token punctuation">:</span> Query
+<span class="token punctuation">}</span>
+
+
+<span class="token comment"># query</span>
+
+<span class="token keyword">query</span> <span class="token punctuation">{</span>
+    totalPhotos
+    allPhotos <span class="token punctuation">{</span>
+        name
+        url
+    <span class="token punctuation">}</span>
+
+<span class="token punctuation">}</span>
+
+</pre><h3 class="mume-header" id="%E5%A4%9A%E5%AF%B9%E5%A4%9A%E8%BF%9E%E6%8E%A5">&#x591A;&#x5BF9;&#x591A;&#x8FDE;&#x63A5;</h3>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type User<span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    <span class="token attr-name">inPhotots</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Photot<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type User<span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    <span class="token attr-name">taggedPhotots</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Photot<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+</pre><h4 class="mume-header" id="%E7%9B%B4%E9%80%9A%E7%B1%BB%E5%9E%8B">&#x76F4;&#x901A;&#x7C7B;&#x578B;</h4>
+
+<h3 class="mume-header" id="%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%88%97%E8%A1%A8">&#x4E0D;&#x540C;&#x7C7B;&#x578B;&#x7684;&#x5217;&#x8868;</h3>
+
+<h4 class="mume-header" id="%E8%81%94%E5%90%88%E7%B1%BB%E5%9E%8B-1">&#x8054;&#x5408;&#x7C7B;&#x578B;</h4>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">union AgendaItem <span class="token operator">=</span> StudyGroup | Workout
+
+type StudyGroup <span class="token punctuation">{</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">subject</span><span class="token punctuation">:</span> String
+    <span class="token attr-name">students</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>User<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type Workout <span class="token punctuation">{</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">reps</span><span class="token punctuation">:</span> Int<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type Query <span class="token punctuation">{</span>
+    <span class="token attr-name">agenda</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>AgendaItem<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+</pre><p>union &#x5173;&#x952E;&#x5B57;&#x548C;&#x7AD6;&#x7EBF; (|) &#x53EF;&#x4EE5;&#x7528;&#x4E8E;&#x58F0;&#x660E;&#x8054;&#x5408;&#x7C7B;&#x578B;.</p>
+<h4 class="mume-header" id="%E6%8E%A5%E5%8F%A3-1">&#x63A5;&#x53E3;</h4>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token keyword">query</span> schedule <span class="token punctuation">{</span>
+    agenda <span class="token punctuation">{</span>
+        name
+        start
+        end
+        <span class="token operator">...</span><span class="token keyword">on</span> Workout <span class="token punctuation">{</span>
+            reps
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># schema</span>
+
+scalar DateTime
+
+interface AgendaItem <span class="token punctuation">{</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">start</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+    <span class="token attr-name">end</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type StudyGroup implements AgendaItem <span class="token punctuation">{</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">start</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+    <span class="token attr-name">end</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+    <span class="token attr-name">participants</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>User<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+    <span class="token attr-name">topic</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type Workout implements AgendaItem <span class="token punctuation">{</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">start</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+    <span class="token attr-name">end</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+    <span class="token attr-name">reps</span><span class="token punctuation">:</span> Int<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type Query <span class="token punctuation">{</span>
+    <span class="token attr-name">agenda</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>AgendaItem<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+
+</pre><h2 class="mume-header" id="%E5%8F%82%E6%95%B0">&#x53C2;&#x6570;</h2>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type Query <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    User<span class="token punctuation">(</span><span class="token attr-name">githubLogin</span><span class="token punctuation">:</span> ID<span class="token operator">!</span><span class="token punctuation">)</span><span class="token punctuation">:</span> User<span class="token operator">!</span>
+    Photo<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span> ID<span class="token operator">!</span><span class="token punctuation">)</span><span class="token punctuation">:</span> Photo<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># query call</span>
+
+<span class="token keyword">query</span> <span class="token punctuation">{</span>
+    User<span class="token punctuation">(</span><span class="token attr-name">githubLogin</span><span class="token punctuation">:</span> <span class="token string">&quot;MoonTahoe&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        name
+        avatar
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">query</span> <span class="token punctuation">{</span>
+    Photo<span class="token punctuation">(</span><span class="token attr-name">id</span><span class="token punctuation">:</span><span class="token string">&quot;1235234&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        name
+        description
+        url
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+
+
+</pre><h3 class="mume-header" id="%E7%AD%9B%E9%80%89%E6%95%B0%E6%8D%AE">&#x7B5B;&#x9009;&#x6570;&#x636E;</h3>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token comment"># schema</span>
+type Query <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    allPhotos<span class="token punctuation">(</span><span class="token attr-name">category</span><span class="token punctuation">:</span> PhotoCategory<span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># query</span>
+<span class="token keyword">query</span> <span class="token punctuation">{</span>
+    allPhoto<span class="token punctuation">(</span><span class="token attr-name">category</span><span class="token punctuation">:</span> <span class="token string">&quot;SELFIE&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        name
+        description
+        url
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><h4 class="mume-header" id="%E6%95%B0%E6%8D%AE%E5%88%86%E9%A1%B5">&#x6570;&#x636E;&#x5206;&#x9875;</h4>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type Qeury <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    allUsers<span class="token punctuation">(</span><span class="token attr-name">first</span><span class="token punctuation">:</span> Int<span class="token operator">=</span><span class="token number">50</span> <span class="token attr-name">start</span><span class="token punctuation">:</span> Int<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>User<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+    allPhotos<span class="token punctuation">(</span><span class="token attr-name">first</span><span class="token punctuation">:</span> Int<span class="token operator">=</span><span class="token number">25</span> <span class="token attr-name">start</span><span class="token punctuation">:</span> Int<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># query</span>
+
+<span class="token keyword">query</span> <span class="token punctuation">{</span>
+    allUsers<span class="token punctuation">(</span><span class="token attr-name">first</span><span class="token punctuation">:</span> <span class="token number">10</span><span class="token punctuation">,</span> <span class="token attr-name">start</span><span class="token punctuation">:</span><span class="token number">90</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        name
+        avatar
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><h4 class="mume-header" id="%E6%8E%92%E5%BA%8F">&#x6392;&#x5E8F;</h4>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">enum SortDirection <span class="token punctuation">{</span>
+    ASCENDING
+    DESCENDING
+<span class="token punctuation">}</span>
+
+enum SortablePhotoField <span class="token punctuation">{</span>
+    name
+    description
+    category
+    created
+<span class="token punctuation">}</span>
+
+Query <span class="token punctuation">{</span>
+    allPhotos<span class="token punctuation">(</span>
+        <span class="token attr-name">sort</span><span class="token punctuation">:</span> SortDirection <span class="token operator">=</span> DESCENDING
+        <span class="token attr-name">sortBy</span><span class="token punctuation">:</span> SortablePhotoField <span class="token operator">=</span> created
+    <span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+
+<span class="token comment"># query</span>
+
+<span class="token keyword">query</span> <span class="token punctuation">{</span>
+    allPhotos<span class="token punctuation">(</span><span class="token attr-name">sortBy</span><span class="token punctuation">:</span> name<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># query 2</span>
+
+type User <span class="token punctuation">{</span>
+    postedPhotos<span class="token punctuation">(</span>
+        <span class="token attr-name">first</span><span class="token punctuation">:</span> Int <span class="token operator">=</span> <span class="token number">25</span>
+        <span class="token attr-name">start</span><span class="token punctuation">:</span> Int <span class="token operator">=</span> <span class="token number">0</span>
+        <span class="token attr-name">sort</span><span class="token punctuation">:</span> SortDirection <span class="token operator">=</span> DESCENDING
+        <span class="token attr-name">sortBy</span><span class="token punctuation">:</span> SortablePhotoField <span class="token operator">=</span> created
+        <span class="token attr-name">category</span><span class="token punctuation">:</span> PhotoCategory
+    <span class="token punctuation">)</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+
+</pre><h4 class="mume-header" id="%E5%8F%98%E6%9B%B4-1">&#x53D8;&#x66F4;</h4>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type Mutation <span class="token punctuation">{</span>
+    postPhoto<span class="token punctuation">(</span>
+        <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+        <span class="token attr-name">description</span><span class="token punctuation">:</span> String
+        <span class="token attr-name">category</span><span class="token punctuation">:</span> PhotoCategory <span class="token operator">=</span> PORTRAIT
+    <span class="token punctuation">)</span><span class="token punctuation">:</span>Photo<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+schema <span class="token punctuation">{</span>
+    <span class="token attr-name">query</span><span class="token punctuation">:</span> Query
+    <span class="token attr-name">mutation</span><span class="token punctuation">:</span> Mutation
+<span class="token punctuation">}</span>
+
+
+<span class="token comment"># create</span>
+
+<span class="token keyword">mutation</span> <span class="token punctuation">{</span>
+    postPhoto<span class="token punctuation">(</span><span class="token attr-name">name</span><span class="token punctuation">:</span> <span class="token string">&quot;Sending the palisades&quot;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        id
+        url
+        created
+        postedBy <span class="token punctuation">{</span>
+            name
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><h2 class="mume-header" id="%E8%BE%93%E5%85%A5%E7%B1%BB%E5%9E%8B">&#x8F93;&#x5165;&#x7C7B;&#x578B;</h2>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">input PostPhotoInput <span class="token punctuation">{</span>
+    <span class="token attr-name">name</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+    <span class="token attr-name">description</span><span class="token punctuation">:</span> String
+    <span class="token attr-name">category</span><span class="token punctuation">:</span> PhotoCategory <span class="token operator">=</span> PORTRAIT
+<span class="token punctuation">}</span>
+
+type Mutation <span class="token punctuation">{</span>
+    postPhoto<span class="token punctuation">(</span><span class="token attr-name">input</span><span class="token punctuation">:</span> PostPhotoInput<span class="token operator">!</span><span class="token punctuation">)</span><span class="token punctuation">:</span> Photo<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+
+<span class="token comment"># create</span>
+
+<span class="token keyword">mutation</span> newPhoto<span class="token punctuation">(</span><span class="token variable">$input</span><span class="token punctuation">:</span> PostPhotoInput<span class="token operator">!</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    postPhoto<span class="token punctuation">(</span><span class="token attr-name">input</span><span class="token punctuation">:</span> <span class="token variable">$input</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        id
+        url
+        created
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token punctuation">{</span>
+    <span class="token string">&quot;input&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token string">&quot;name&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;Hanging&quot;</span><span class="token punctuation">,</span>
+        <span class="token string">&quot;description&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;sunny ....&quot;</span><span class="token punctuation">,</span>
+        <span class="token string">&quot;category&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;LANDSCAPE&quot;</span>
+
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p>&#x8F93;&#x5165;&#x7C7B;&#x578B;&#x91CD;&#x65B0;&#x7EC4;&#x7EC7;&#x548C;&#x91CD;&#x7528;.</p>
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token comment"># schema</span>
+input PhotoFilter <span class="token punctuation">{</span>
+    <span class="token attr-name">category</span><span class="token punctuation">:</span> PhotoCategory
+    <span class="token attr-name">createdBetween</span><span class="token punctuation">:</span> CateRange
+    <span class="token attr-name">taggedUsers</span><span class="token punctuation">:</span> <span class="token punctuation">[</span>ID<span class="token operator">!</span><span class="token punctuation">]</span>
+    <span class="token attr-name">searchText</span><span class="token punctuation">:</span> String
+<span class="token punctuation">}</span>
+
+input DateRange <span class="token punctuation">{</span>
+    <span class="token attr-name">start</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+    <span class="token attr-name">end</span><span class="token punctuation">:</span> DateTime<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+input DataPage <span class="token punctuation">{</span>
+    <span class="token attr-name">first</span><span class="token punctuation">:</span> Int <span class="token operator">=</span> <span class="token number">25</span>
+    <span class="token attr-name">start</span><span class="token punctuation">:</span> Int <span class="token operator">=</span> <span class="token number">0</span>
+<span class="token punctuation">}</span>
+
+input DataSort <span class="token punctuation">{</span>
+    <span class="token attr-name">sort</span><span class="token punctuation">:</span> SortDirection <span class="token operator">=</span> DESCENDING
+    <span class="token attr-name">sortBy</span><span class="token punctuation">:</span> SortablePhotoField <span class="token operator">=</span> created
+<span class="token punctuation">}</span>
+
+type User <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    postedPhotos<span class="token punctuation">(</span><span class="token attr-name">filter</span><span class="token punctuation">:</span>PhotoFilter <span class="token attr-name">paging</span><span class="token punctuation">:</span>DataPage <span class="token attr-name">sorting</span><span class="token punctuation">:</span> DataSort<span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+    inPhotos<span class="token punctuation">(</span><span class="token attr-name">filter</span><span class="token punctuation">:</span>PhotoFilter <span class="token attr-name">paging</span><span class="token punctuation">:</span>DataPage <span class="token attr-name">sorting</span><span class="token punctuation">:</span> DataSort<span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type Photo <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    taggedUsers<span class="token punctuation">(</span><span class="token attr-name">sorting</span><span class="token punctuation">:</span>Datasort<span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token punctuation">[</span>User<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type Query <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    allUser<span class="token punctuation">(</span><span class="token attr-name">paging</span><span class="token punctuation">:</span> DataPage <span class="token attr-name">sorting</span><span class="token punctuation">:</span> DataSort<span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token punctuation">[</span>User<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+    allPhotos<span class="token punctuation">(</span><span class="token attr-name">filter</span><span class="token punctuation">:</span>PhotoFilter <span class="token attr-name">paging</span><span class="token punctuation">:</span>DataPage <span class="token attr-name">sorting</span><span class="token punctuation">:</span> DataSort<span class="token punctuation">)</span><span class="token punctuation">:</span><span class="token punctuation">[</span>Photo<span class="token operator">!</span><span class="token punctuation">]</span><span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment"># query</span>
+
+<span class="token keyword">query</span> getPhotos<span class="token punctuation">(</span><span class="token variable">$filter</span><span class="token punctuation">:</span>PhotoFilter <span class="token variable">$page</span><span class="token punctuation">:</span>DataPage <span class="token variable">$sort</span><span class="token punctuation">:</span>DataSort<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    allPhotos<span class="token punctuation">(</span><span class="token attr-name">filter</span><span class="token punctuation">:</span><span class="token variable">$filter</span> <span class="token attr-name">paging</span><span class="token punctuation">:</span><span class="token variable">$page</span> <span class="token attr-name">sorting</span><span class="token punctuation">:</span><span class="token variable">$sort</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        id
+        name
+        url
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token punctuation">{</span>
+    <span class="token string">&quot;filter&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token string">&quot;category&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;ACTION&quot;</span><span class="token punctuation">,</span>
+        <span class="token string">&quot;taggedUsers&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">&quot;MoonTahoe&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;EvePorcello&quot;</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token string">&quot;createdBetween&quot;</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+            <span class="token string">&quot;start&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;2018-11-06&quot;</span>
+            <span class="token string">&quot;end&quot;</span><span class="token punctuation">:</span> <span class="token string">&quot;2018-05-31&quot;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;page&quot;</span><span class="token punctuation">:</span><span class="token punctuation">{</span>
+        <span class="token string">&quot;first&quot;</span><span class="token punctuation">:</span> <span class="token number">100</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</pre><h2 class="mume-header" id="%E8%BF%94%E5%9B%9E%E7%B1%BB%E5%9E%8B">&#x8FD4;&#x56DE;&#x7C7B;&#x578B;</h2>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type AuthPayload <span class="token punctuation">{</span>
+    <span class="token attr-name">user</span><span class="token punctuation">:</span> User<span class="token operator">!</span>
+    <span class="token attr-name">token</span><span class="token punctuation">:</span> String<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+type Mutation <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    githunAuth<span class="token punctuation">(</span><span class="token attr-name">code</span><span class="token punctuation">:</span> String<span class="token operator">!</span><span class="token punctuation">)</span><span class="token punctuation">:</span> AuthPayload<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+
+
+</pre><h2 class="mume-header" id="%E8%AE%A2%E9%98%85%E7%B1%BB%E5%9E%8B">&#x8BA2;&#x9605;&#x7C7B;&#x578B;</h2>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql">type Subscription <span class="token punctuation">{</span>
+    <span class="token attr-name">newPhoto</span><span class="token punctuation">:</span> Photo<span class="token operator">!</span>
+    <span class="token attr-name">newUser</span><span class="token punctuation">:</span> User<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+schema <span class="token punctuation">{</span>
+    <span class="token attr-name">query</span><span class="token punctuation">:</span> Query
+    <span class="token attr-name">mutation</span><span class="token punctuation">:</span> Mutation
+    <span class="token attr-name">subscription</span><span class="token punctuation">:</span> Subscription
+<span class="token punctuation">}</span>
+
+<span class="token comment"># sub</span>
+
+type Subscription<span class="token punctuation">{</span>
+    newPhoto<span class="token punctuation">(</span><span class="token attr-name">category</span><span class="token punctuation">:</span> PhotoCategory<span class="token punctuation">)</span><span class="token punctuation">:</span> Photo<span class="token operator">!</span>
+    <span class="token attr-name">newUser</span><span class="token punctuation">:</span> User<span class="token operator">!</span>
+<span class="token punctuation">}</span>
+
+subscription <span class="token punctuation">{</span>
+    newPhoto<span class="token punctuation">(</span><span class="token attr-name">category</span><span class="token punctuation">:</span> <span class="token string">&quot;ACTION&quot;</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+        id
+        name
+        url
+        postedBy <span class="token punctuation">{</span>
+            name
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</pre><h2 class="mume-header" id="schema-%E6%96%87%E6%A1%A3">schema &#x6587;&#x6863;</h2>
+
+<pre data-role="codeBlock" data-info="graphql" class="language-graphql"><span class="token string">&quot;&quot;</span>&quot;
+comment
+<span class="token string">&quot;&quot;</span>&quot;
+type User <span class="token punctuation">{</span>
+
+<span class="token punctuation">}</span>
+
+</pre><h1 class="mume-header" id="chapter-5-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-graphql-api">Chapter 5, &#x521B;&#x5EFA;&#x4E00;&#x4E2A; GraphQL API</h1>
+
+<h2 class="mume-header" id="%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE">&#x9879;&#x76EE;&#x8BBE;&#x7F6E;</h2>
+
+
+      </div>
+      <div class="md-sidebar-toc"><ul>
+<li><a href="#chapter-1-%E6%AC%A2%E8%BF%8E%E6%9D%A5%E5%88%B0-graphql-%E7%9A%84%E4%B8%96%E7%95%8C">Chapter 1, &#x6B22;&#x8FCE;&#x6765;&#x5230; GraphQL &#x7684;&#x4E16;&#x754C;</a>
+<ul>
+<li><a href="#graphql-%E6%98%AF%E4%BB%80%E4%B9%88">GraphQL &#x662F;&#x4EC0;&#x4E48;</a>
+<ul>
+<li><a href="#graphql-%E8%A7%84%E8%8C%83">GraphQL &#x89C4;&#x8303;</a></li>
+<li><a href="#graphql-%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99">GraphQL &#x7684;&#x8BBE;&#x8BA1;&#x539F;&#x5219;</a></li>
+</ul>
+</li>
+<li><a href="#graphql-%E7%9A%84%E8%B5%B7%E6%BA%90">GraphQL &#x7684;&#x8D77;&#x6E90;</a></li>
+<li><a href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E7%9A%84%E5%8E%86%E5%8F%B2">&#x6570;&#x636E;&#x4F20;&#x8F93;&#x7684;&#x5386;&#x53F2;</a>
+<ul>
+<li><a href="#%E8%A1%A8%E8%BF%B0%E6%80%A7%E7%8A%B6%E6%80%81%E4%BC%A0%E9%80%92">&#x8868;&#x8FF0;&#x6027;&#x72B6;&#x6001;&#x4F20;&#x9012;</a></li>
+</ul>
+</li>
+<li><a href="#rest-%E7%9A%84%E7%BC%BA%E7%82%B9">REST &#x7684;&#x7F3A;&#x70B9;</a>
+<ul>
+<li><a href="#%E8%BF%87%E9%87%8F%E8%8E%B7%E5%8F%96">&#x8FC7;&#x91CF;&#x83B7;&#x53D6;</a></li>
+<li><a href="#%E8%8E%B7%E5%8F%96%E4%B8%8D%E8%B6%B3">&#x83B7;&#x53D6;&#x4E0D;&#x8DB3;</a></li>
+<li><a href="#%E7%AE%A1%E7%90%86-rest-%E6%8E%A5%E5%8F%A3">&#x7BA1;&#x7406; REST &#x63A5;&#x53E3;</a></li>
+</ul>
+</li>
+<li><a href="#%E7%8E%B0%E5%AE%9E%E4%B8%96%E7%95%8C%E4%B8%AD%E7%9A%84-graphql">&#x73B0;&#x5B9E;&#x4E16;&#x754C;&#x4E2D;&#x7684; GraphQL</a>
+<ul>
+<li><a href="#graphql-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%BA%93">GraphQL &#x5BA2;&#x6237;&#x7AEF;&#x5E93;</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#chapter-2-%E5%9B%BE%E8%AE%BA">Chapter 2, &#x56FE;&#x8BBA;</a>
+<ul>
+<li><a href="#%E5%9B%BE%E8%AE%BA%E7%9B%B8%E5%85%B3%E8%AF%8D%E6%B1%87">&#x56FE;&#x8BBA;&#x76F8;&#x5173;&#x8BCD;&#x6C47;</a></li>
+<li><a href="#%E5%9B%BE%E8%AE%BA%E7%9A%84%E5%8E%86%E5%8F%B2">&#x56FE;&#x8BBA;&#x7684;&#x5386;&#x53F2;</a></li>
+<li><a href="#%E6%A0%91%E5%B0%B1%E6%98%AF%E5%9B%BE">&#x6811;&#x5C31;&#x662F;&#x56FE;</a></li>
+<li><a href="#%E7%8E%B0%E5%AE%9E%E4%B8%96%E7%95%8C%E4%B8%AD%E7%9A%84%E5%9B%BE%E5%BD%A2%E7%BB%93%E6%9E%84">&#x73B0;&#x5B9E;&#x4E16;&#x754C;&#x4E2D;&#x7684;&#x56FE;&#x5F62;&#x7ED3;&#x6784;</a></li>
+</ul>
+</li>
+<li><a href="#chapter-3-graphql-%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80">Chapter 3, GraphQL &#x67E5;&#x8BE2;&#x8BED;&#x8A00;</a>
+<ul>
+<li><a href="#graphql-api-%E5%B7%A5%E5%85%B7">GraphQL API &#x5DE5;&#x5177;</a>
+<ul>
+<li><a href="#graphiql">GraphiQL</a></li>
+<li><a href="#graphql-playground">GraphQL Playground</a></li>
+<li><a href="#%E5%85%AC%E5%85%B1-graphql-api">&#x516C;&#x5171; GraphQL API</a></li>
+</ul>
+</li>
+<li><a href="#graphql-%E6%9F%A5%E8%AF%A2%E5%AD%97%E6%AE%B5">GraphQL &#x67E5;&#x8BE2;&#x5B57;&#x6BB5;</a>
+<ul>
+<li><a href="#%E8%BE%B9%E5%92%8C%E8%BF%9E%E6%8E%A5">&#x8FB9;&#x548C;&#x8FDE;&#x63A5;</a></li>
+<li><a href="#%E7%89%87%E6%AE%B5">&#x7247;&#x6BB5;</a></li>
+<li><a href="#%E8%81%94%E5%90%88%E7%B1%BB%E5%9E%8B">&#x8054;&#x5408;&#x7C7B;&#x578B;</a></li>
+<li><a href="#%E6%8E%A5%E5%8F%A3">&#x63A5;&#x53E3;</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%98%E6%9B%B4">&#x53D8;&#x66F4;</a>
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8%E6%9F%A5%E8%AF%A2%E5%8F%98%E9%87%8F">&#x4F7F;&#x7528;&#x67E5;&#x8BE2;&#x53D8;&#x91CF;</a></li>
+</ul>
+</li>
+<li><a href="#%E8%AE%A2%E9%98%85">&#x8BA2;&#x9605;</a></li>
+<li><a href="#%E8%87%AA%E6%A3%80">&#x81EA;&#x68C0;</a></li>
+<li><a href="#%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91">&#x62BD;&#x8C61;&#x8BED;&#x6CD5;&#x6811;</a></li>
+</ul>
+</li>
+<li><a href="#chapter-4-%E8%AE%BE%E8%AE%A1-schema">Chapter 4, &#x8BBE;&#x8BA1; Schema</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B">&#x5B9A;&#x4E49;&#x7C7B;&#x578B;</a></li>
+<li><a href="#%E7%B1%BB%E5%9E%8B">&#x7C7B;&#x578B;</a></li>
+<li><a href="#%E6%A0%87%E9%87%8F%E7%B1%BB%E5%9E%8B">&#x6807;&#x91CF;&#x7C7B;&#x578B;</a>
+<ul>
+<li><a href="#%E6%9E%9A%E4%B8%BE">&#x679A;&#x4E3E;</a></li>
+</ul>
+</li>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E5%92%8C%E5%88%97%E8%A1%A8">&#x8FDE;&#x63A5;&#x548C;&#x5217;&#x8868;</a>
+<ul>
+<li><a href="#%E4%B8%80%E5%AF%B9%E4%B8%80%E8%BF%9E%E6%8E%A5">&#x4E00;&#x5BF9;&#x4E00;&#x8FDE;&#x63A5;</a></li>
+<li><a href="#%E4%B8%80%E5%AF%B9%E5%A4%9A%E8%BF%9E%E6%8E%A5">&#x4E00;&#x5BF9;&#x591A;&#x8FDE;&#x63A5;</a></li>
+<li><a href="#%E5%A4%9A%E5%AF%B9%E5%A4%9A%E8%BF%9E%E6%8E%A5">&#x591A;&#x5BF9;&#x591A;&#x8FDE;&#x63A5;</a>
+<ul>
+<li><a href="#%E7%9B%B4%E9%80%9A%E7%B1%BB%E5%9E%8B">&#x76F4;&#x901A;&#x7C7B;&#x578B;</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%8D%E5%90%8C%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%88%97%E8%A1%A8">&#x4E0D;&#x540C;&#x7C7B;&#x578B;&#x7684;&#x5217;&#x8868;</a>
+<ul>
+<li><a href="#%E8%81%94%E5%90%88%E7%B1%BB%E5%9E%8B-1">&#x8054;&#x5408;&#x7C7B;&#x578B;</a></li>
+<li><a href="#%E6%8E%A5%E5%8F%A3-1">&#x63A5;&#x53E3;</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%8F%82%E6%95%B0">&#x53C2;&#x6570;</a>
+<ul>
+<li><a href="#%E7%AD%9B%E9%80%89%E6%95%B0%E6%8D%AE">&#x7B5B;&#x9009;&#x6570;&#x636E;</a>
+<ul>
+<li><a href="#%E6%95%B0%E6%8D%AE%E5%88%86%E9%A1%B5">&#x6570;&#x636E;&#x5206;&#x9875;</a></li>
+<li><a href="#%E6%8E%92%E5%BA%8F">&#x6392;&#x5E8F;</a></li>
+<li><a href="#%E5%8F%98%E6%9B%B4-1">&#x53D8;&#x66F4;</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E8%BE%93%E5%85%A5%E7%B1%BB%E5%9E%8B">&#x8F93;&#x5165;&#x7C7B;&#x578B;</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9E%E7%B1%BB%E5%9E%8B">&#x8FD4;&#x56DE;&#x7C7B;&#x578B;</a></li>
+<li><a href="#%E8%AE%A2%E9%98%85%E7%B1%BB%E5%9E%8B">&#x8BA2;&#x9605;&#x7C7B;&#x578B;</a></li>
+<li><a href="#schema-%E6%96%87%E6%A1%A3">schema &#x6587;&#x6863;</a></li>
+</ul>
+</li>
+<li><a href="#chapter-5-%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA-graphql-api">Chapter 5, &#x521B;&#x5EFA;&#x4E00;&#x4E2A; GraphQL API</a>
+<ul>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E8%AE%BE%E7%BD%AE">&#x9879;&#x76EE;&#x8BBE;&#x7F6E;</a></li>
+</ul>
+</li>
+</ul>
+</div>
+      <a id="sidebar-toc-btn">&#x2261;</a>
+    
+    
+    
+    
+    
+    
+    
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  
+    </body></html>

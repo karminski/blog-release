@@ -1,0 +1,1092 @@
+<!DOCTYPE html><html><head>
+      <title>dynamic-programming-patterns-translation</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+
+      <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #000000;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+    background: #C1DEF1;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+    background: #C1DEF1;
+}
+
+
+/* Code blocks */
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    background-color: #f9f9f9;
+}
+
+
+/* Inline code */
+
+:not(pre)>code[class*="language-"] {
+    padding: .2em;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #EEE;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #0066FF;
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.string {
+    color: #036A07;
+}
+
+.token.punctuation {
+    color: #000000;
+}
+
+.token.operator {
+    color: #0066FF;
+    font-weight: 900;
+    /* no highlight */
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: #0000CD;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*="language-css"] {
+    color: #0000ff;
+    font-weight: 900;
+}
+
+.token.function {
+    color: #000000;
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: #9a050f;
+}
+
+.token.selector,
+.language-autohotkey .token.keyword {
+    color: #00009f;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.language-json .token.property {
+    color: #2B91AF;
+}
+
+.token.tag,
+.token.selector {
+    color: #800000;
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: #19921c;
+}
+
+.token.directive.tag .tag {
+    background: #ffff00;
+    color: #000000;
+}
+
+
+/* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+
+.line-numbers .line-numbers-rows {
+    border-right-color: #a5a5a5;
+}
+
+.line-numbers-rows>span:before {
+    color: #2B91AF;
+}
+
+
+/* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+
+.line-highlight {
+    background: rgba(193, 222, 241, 0.2);
+    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+}
+
+
+/* highlight */
+
+pre[data-line] {
+    position: relative;
+    padding: 1em 0 1em 3em;
+}
+
+pre[data-line] .line-highlight-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+}
+
+pre[data-line] .line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: hsla(24, 20%, 50%, .08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+pre[data-line] .line-highlight:before,
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-start);
+    position: absolute;
+    top: .4em;
+    left: .6em;
+    min-width: 1em;
+    padding: 0 .5em;
+    background-color: hsla(24, 20%, 50%, .4);
+    color: hsl(24, 20%, 95%);
+    font: bold 65%/1.5 sans-serif;
+    text-align: center;
+    vertical-align: .3em;
+    text-shadow: none;
+    box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-end);
+    top: auto;
+    bottom: .4em;
+}html body {
+    font-family: "Consolas", Arial, freesans, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    color: #2F2F2F;
+    background-color: #fff;
+    overflow: initial;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+html body h1 {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3em;
+}
+
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+    color: #2b2b2b;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+html body strong {
+    color: #000
+}
+
+html body del {
+    color: #5c5c5c
+}
+
+html body a:not([href]) {
+    color: inherit;
+    text-decoration: none
+}
+
+html body a {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body a:hover {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body img {
+    max-width: 100%
+}
+
+html body>p {
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    word-wrap: break-word;
+}
+
+html body>ul,
+html body>ol {
+    margin-bottom: 0px
+}
+
+html body ul,
+html body ol {
+    padding-left: 2em
+}
+
+html body ul.no-list,
+html body ol.no-list {
+    padding: 0;
+    list-style-type: none
+}
+
+html body ul ul,
+html body ul ol,
+html body ol ol,
+html body ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body li {
+    margin-bottom: 0
+}
+
+html body li.task-list-item {
+    list-style: none
+}
+
+html body li>p {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body .task-list-item-checkbox {
+    margin: 0 .2em .25em -1.8em;
+    vertical-align: middle
+}
+
+html body .task-list-item-checkbox:hover {
+    cursor: pointer
+}
+
+html body blockquote {
+    margin: 16px 0;
+    font-size: inherit;
+    padding: 0 15px;
+    color: #5c5c5c;
+    border-left: 4px solid #d6d6d6
+}
+
+html body blockquote>:first-child {
+    margin-top: 0
+}
+
+html body blockquote>:last-child {
+    margin-bottom: 0
+}
+
+html body hr {
+    height: 4px;
+    margin: 32px 0;
+    background-color: #d6d6d6;
+    border: 0 none
+}
+
+html body table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all
+}
+
+html body table th {
+    font-weight: bold;
+    color: #000
+}
+
+html body table td,
+html body table th {
+    border: 1px solid #d6d6d6;
+    padding: 6px 13px
+}
+
+html body dl {
+    padding: 0
+}
+
+html body dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold
+}
+
+html body dl dd {
+    padding: 0 16px;
+    margin-bottom: 0px
+}
+
+html body code {
+    font-family: Consolas, monospace;
+    font-size: 12px !important;
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+html body code::before,
+html body code::after {
+    letter-spacing: -0.2em;
+    content: "\00a0"
+}
+
+html body pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: .85em !important;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0
+}
+
+html body .highlight {
+    margin-bottom: 0px
+}
+
+html body .highlight pre,
+html body pre {
+    padding: 1em;
+    overflow: auto;
+    font-size: .85em !important;
+    line-height: 1.45;
+    border: #d6d6d6;
+    border-radius: 3px
+}
+
+html body .highlight pre {
+    margin-bottom: 0;
+    word-break: normal
+}
+
+html body pre code,
+html body pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0
+}
+
+html body pre code:before,
+html body pre tt:before,
+html body pre code:after,
+html body pre tt:after {
+    content: normal
+}
+
+html body p,
+html body blockquote,
+html body ul,
+html body ol,
+html body dl,
+html body pre {
+    /* nothing */
+}
+
+html body kbd {
+    color: #000;
+    border: 1px solid #d6d6d6;
+    border-bottom: 2px solid #c7c7c7;
+    padding: 2px 4px;
+    background-color: #f0f0f0;
+    border-radius: 3px
+}
+
+@media print {
+    html body {
+        background-color: #fff
+    }
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+        color: #000;
+        page-break-after: avoid
+    }
+    html body blockquote {
+        color: #5c5c5c
+    }
+    html body pre {
+        page-break-inside: avoid
+    }
+    html body table {
+        display: table
+    }
+    html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+    }
+    html body pre,
+    html body code {
+        word-wrap: break-word;
+        white-space: pre
+    }
+}
+
+.markdown-preview {
+    float: left;
+    margin: 10px auto 10px 10px;
+    color: #2F2F2F;
+    border: 1px dashed #DDDDDD;
+    padding: 10px;
+    width: 80em;
+}
+
+p {
+    margin: 1em 0 1em 0;
+}
+
+
+/* code block theme */.markdown-preview {
+    height: 100%;
+    box-sizing: border-box
+}
+
+.markdown-preview .pagebreak,
+.markdown-preview .newpage {
+    page-break-before: always
+}
+
+.markdown-preview pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber
+}
+
+.markdown-preview pre.line-numbers>code {
+    position: relative
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 1em;
+    font-size: 100%;
+    left: 0;
+    width: 3em;
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: .8em;
+    text-align: right
+}
+
+.markdown-preview .mathjax-exps .MathJax_Display {
+    text-align: center !important
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .status {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .output-div {
+    margin-bottom: 16px
+}
+
+.scrollbar-style::-webkit-scrollbar {
+    width: 8px
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+    position: relative;
+    top: 0
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    font-size: 28px;
+    cursor: pointer;
+    color: inherit;
+    z-index: 99;
+    width: 32px;
+    text-align: center;
+    opacity: .4
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+    opacity: 1
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    padding: 32px 0 48px 0;
+    font-size: 12px;
+    border-left: 1px dashed #DDDDDD;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: inherit
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+    width: 8px
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+    text-decoration: none
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    padding: 0 1.6em;
+    margin-top: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+    margin-bottom: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    list-style-type: none
+}
+
+@media screen and (max-width:1274px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 0em
+    }
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+    display: none
+}
+
+@media screen and (max-width:914px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        width: 100%
+    }
+}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h2><a href="http://Dynamic-Programming-Patterns-Translation.md">Dynamic-Programming-Patterns-Translation.md</a></h2>
+<ul>
+<li>@name             &#x52A8;&#x6001;&#x89C4;&#x5212;&#x6A21;&#x5F0F;  &#x8BD1;&#x6587;</li>
+<li>@author           karminski &lt;<a href="mailto:code.karminski@outlook.com">code.karminski@outlook.com</a>&gt;</li>
+<li>@version          20200211:1</li>
+<li>@original-link    <a href="https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns">https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns</a></li>
+<li>@original-author  <a href="https://leetcode.com/aatalyk">@aatalyk</a></li>
+</ul>
+<p>&#x5728;&#x5F00;&#x59CB;&#x8FD9;&#x4E2A;&#x8BDD;&#x9898;&#x4E4B;&#x524D;, &#x8BA9;&#x6211;&#x5148;&#x4ECB;&#x7ECD;&#x4E00;&#x4E0B;&#x81EA;&#x5DF1;. &#x6211;&#x662F;&#x4E00;&#x540D;&#x79FB;&#x52A8;&#x5F00;&#x53D1;&#x8005;, &#x76EE;&#x524D;&#x5728;&#x534E;&#x6C99;&#x5DE5;&#x4F5C;, &#x5229;&#x7528;&#x4E1A;&#x4F59;&#x65F6;&#x95F4;&#x4E3A;&#x9762;&#x8BD5;&#x505A;&#x51C6;&#x5907;. &#x4E24;&#x5E74;&#x524D;&#x6211;&#x5C31;&#x5F00;&#x59CB;&#x51C6;&#x5907;&#x9762;&#x8BD5;&#x4E86;.<br>
+&#x5728;&#x90A3;&#x4E2A;&#x65F6;&#x5019;, &#x6211;&#x5E94;&#x8BE5;&#x8BF4;&#x6211;&#x4E0D;&#x80FD;&#x89E3;&#x51B3;&#x4E24;&#x4E2A;&#x548C;&#x7684;&#x95EE;&#x9898;. &#x5728;&#x6211;&#x770B;&#x6765;, &#x7B80;&#x5355;&#x7684;&#x95EE;&#x9898;&#x5C31;&#x50CF;&#x56F0;&#x96BE;&#x7684;&#x95EE;&#x9898;&#x4E00;&#x6837;, &#x6240;&#x4EE5;&#x5927;&#x591A;&#x6570;&#x65F6;&#x95F4;&#x6211;&#x4E0D;&#x5F97;&#x4E0D;&#x770B;&#x793E;&#x8BBA;&#x548C;&#x8BA8;&#x8BBA;&#x90E8;&#x5206;.<br>
+&#x76EE;&#x524D;, &#x6211;&#x5DF2;&#x7ECF;&#x89E3;&#x51B3;&#x4E86;&#x7EA6; 800 &#x4E2A;&#x95EE;&#x9898;, &#x5E76;&#x7ECF;&#x5E38;&#x53C2;&#x52A0;&#x6BD4;&#x8D5B;. &#x6211;&#x901A;&#x5E38;&#x5728;&#x6BD4;&#x8D5B;&#x4E2D;&#x89E3;&#x51B3; 3 &#x4E2A;&#x95EE;&#x9898;, &#x6709;&#x65F6; 4 &#x4E2A;&#x95EE;&#x9898;. &#x597D;&#x7684;, &#x6211;&#x4EEC;&#x56DE;&#x5230;&#x8BDD;&#x9898;&#x4E0A;&#x6765;.</p>
+<p>&#x6700;&#x8FD1;&#x6211;&#x628A;&#x6CE8;&#x610F;&#x529B;&#x96C6;&#x4E2D;&#x5728;&#x52A8;&#x6001;&#x89C4;&#x5212;&#x4E0A;, &#x56E0;&#x4E3A;&#x5B83;&#x662F;&#x9762;&#x8BD5;&#x51C6;&#x5907;&#x4E2D;&#x6700;&#x96BE;&#x7684;&#x8BDD;&#x9898;&#x4E4B;&#x4E00;.<br>
+&#x5728;DP&#x4E2D;&#x89E3;&#x51B3;&#x4E86;140&#x4E2A;&#x95EE;&#x9898;&#x4E4B;&#x540E;, &#x6211;&#x53D1;&#x73B0;&#x5728;&#x4E0D;&#x540C;&#x7684;&#x95EE;&#x9898;&#x4E2D;&#x53EF;&#x4EE5;&#x627E;&#x5230;&#x7684;&#x6A21;&#x5F0F;&#x5F88;&#x5C11;. &#x6240;&#x4EE5;&#x6211;&#x505A;&#x4E86;&#x4E00;&#x4E2A;&#x7814;&#x7A76;, &#x627E;&#x5230;&#x4E86;&#x4EE5;&#x4E0B;&#x7684;&#x4E3B;&#x9898;.<br>
+&#x6211;&#x4E0D;&#x4F1A;&#x7ED9;&#x51FA;&#x5B8C;&#x6574;&#x7684;&#x65B9;&#x6CD5;&#x6765;&#x89E3;&#x51B3;&#x95EE;&#x9898;, &#x4F46;&#x8FD9;&#x4E9B;&#x6A21;&#x5F0F;&#x53EF;&#x80FD;&#x6709;&#x52A9;&#x4E8E;&#x4F60;&#x89E3;&#x51B3;DP&#x95EE;&#x9898;.</p>
+<h1 class="mume-header" id="%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB">&#x6A21;&#x5F0F;&#x5206;&#x7C7B;</h1>
+
+<ul>
+<li><a href="https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns#Minimum-(Maximum)-Path-to-Reach-a-Target">Minimum (Maximum) Path to Reach a Target</a></li>
+<li><a href="https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns#distinct-ways">Distinct Ways</a></li>
+<li><a href="https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns#Merging-Intervals">Merging Intervals</a></li>
+<li><a href="https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns#DP-on-Strings">DP on Strings</a></li>
+<li><a href="https://leetcode.com/discuss/general-discussion/458695/dynamic-programming-patterns#Decision-Making">Decision Making</a></li>
+</ul>
+<h1 class="mume-header" id="minimum-maximum-path-to-reach-a-target-%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E7%9A%84%E6%9C%80%E7%9F%AD%E6%88%96%E6%9C%80%E5%A4%A7%E8%B7%9D%E7%A6%BB%E9%97%AE%E9%A2%98">Minimum (Maximum) Path to Reach a Target &#x5230;&#x8FBE;&#x76EE;&#x6807;&#x7684;&#x6700;&#x77ED;(&#x6216;&#x6700;&#x5927;)&#x8DDD;&#x79BB;&#x95EE;&#x9898;</h1>
+
+<p>&#x8FD9;&#x7C7B;&#x95EE;&#x9898;&#x6A21;&#x5F0F;&#x7684;&#x5B9A;&#x4E49;:</p>
+<h2 class="mume-header" id="%E5%AE%9A%E4%B9%89">&#x5B9A;&#x4E49;</h2>
+
+<p>Given a target find minimum (maximum) cost / path / sum to reach the target.</p>
+<p>&#x7ED9;&#x5B9A;&#x76EE;&#x6807;&#x5E76;&#x5BFB;&#x8FBE;&#x5230;&#x76EE;&#x6807;&#x7684;&#x6700;&#x77ED;(&#x6216;&#x6700;&#x5927;)&#x5F00;&#x9500;/&#x8DEF;&#x5F84;/&#x548C;</p>
+<h2 class="mume-header" id="%E8%A7%A3">&#x89E3;</h2>
+
+<p>Choose minimum (maximum) path among all possible paths before the current state, then add value for the current state.</p>
+<p>&#x4E3A;&#x5F53;&#x524D;&#x72B6;&#x6001;&#x5BFB;&#x627E;&#x4E4B;&#x524D;&#x7684;&#x6240;&#x6709;&#x89E3;&#x4E2D;&#x7684;&#x6700;&#x5C0F;(&#x6700;&#x5927;)&#x503C;, &#x7136;&#x540E;&#x5E94;&#x7528;&#x5230;&#x5F53;&#x524D;&#x72B6;&#x6001;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go">routes<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">min</span><span class="token punctuation">(</span>routes<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> routes<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">...</span> <span class="token punctuation">,</span> routes<span class="token punctuation">[</span>i<span class="token operator">-</span>k<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> cost<span class="token punctuation">[</span>i<span class="token punctuation">]</span>
+</pre><p>Generate optimal solutions for all values in the target and return the value for the target.</p>
+<p>&#x4E3A;&#x76EE;&#x6807;&#x4E2D;&#x7684;&#x6240;&#x6709;&#x503C;&#x751F;&#x6210;&#x6700;&#x4F18;&#x89E3;&#x5E76;&#x8FD4;&#x56DE;&#x76EE;&#x6807;&#x7684;&#x503C;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> target<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> j <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> j <span class="token operator">&lt;</span> ways<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token operator">++</span>j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token keyword">if</span> <span class="token punctuation">(</span>ways<span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">min</span><span class="token punctuation">(</span>dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i <span class="token operator">-</span> ways<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> cost <span class="token operator">/</span> path <span class="token operator">/</span> sum<span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token keyword">return</span> dp<span class="token punctuation">[</span>target<span class="token punctuation">]</span>
+</pre><h2 class="mume-header" id="%E7%9B%B8%E4%BC%BC%E9%97%AE%E9%A2%98">&#x76F8;&#x4F3C;&#x95EE;&#x9898;</h2>
+
+<p><a href="https://leetcode.com/problems/min-cost-climbing-stairs/">746. Min Cost Climbing Stairs</a> <code>Easy</code></p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">min</span><span class="token punctuation">(</span>dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token punctuation">(</span>i <span class="token operator">==</span> n ? <span class="token number">0</span> <span class="token punctuation">:</span> cost<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token keyword">return</span> dp<span class="token punctuation">[</span>n<span class="token punctuation">]</span>
+</pre><p><a href="https://leetcode.com/problems/minimum-path-sum/">64. Minimum Path Sum</a> <code>Medium</code></p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;</span> m<span class="token punctuation">;</span> <span class="token operator">++</span>j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       grid<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">min</span><span class="token punctuation">(</span>grid<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">,</span> grid<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">+</span> grid<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">;</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token keyword">return</span> grid<span class="token punctuation">[</span>n<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>m<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+</pre><p><a href="https://leetcode.com/problems/coin-change/">322. Coin Change</a> <code>Medium</code></p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> amount<span class="token punctuation">;</span> <span class="token operator">++</span>j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> coins<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token keyword">if</span> <span class="token punctuation">(</span>coins<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">min</span><span class="token punctuation">(</span>dp<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>j <span class="token operator">-</span> coins<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p><a href="https://leetcode.com/problems/minimum-falling-path-sum/">931. Minimum Falling Path Sum</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/minimum-cost-for-tickets/">983. Minimum Cost For Tickets</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/2-keys-keyboard/">650. 2 Keys Keyboard</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/perfect-squares/">279. Perfect Squares</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/last-stone-weight-ii/">1049. Last Stone Weight II</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/triangle/">120. Triangle</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/ones-and-zeroes/">474. Ones and Zeroes</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/maximal-square/">221. Maximal Square</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/coin-change/">322. Coin Change</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/tiling-a-rectangle-with-the-fewest-squares/">1240. Tiling a Rectangle with the Fewest Squares</a> <code>Hard</code><br>
+<a href="https://leetcode.com/problems/dungeon-game/">174. Dungeon Game</a> <code>Hard</code><br>
+<a href="https://leetcode.com/problems/minimum-number-of-refueling-stops/">871. Minimum Number of Refueling Stops</a> <code>Hard</code></p>
+<h1 class="mume-header" id="distinct-ways-%E5%94%AF%E4%B8%80%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98">Distinct Ways &#x552F;&#x4E00;&#x8DEF;&#x5F84;&#x95EE;&#x9898;</h1>
+
+<p>&#x8FD9;&#x7C7B;&#x95EE;&#x9898;&#x6A21;&#x5F0F;&#x7684;&#x5B9A;&#x4E49;:</p>
+<h2 class="mume-header" id="%E5%AE%9A%E4%B9%89-1">&#x5B9A;&#x4E49;</h2>
+
+<p>Given a target find a number of distinct ways to reach the target.</p>
+<p>&#x7ED9;&#x5B9A;&#x76EE;&#x6807;, &#x627E;&#x51FA;&#x4E0D;&#x540C;&#x7684;&#x65B9;&#x6CD5;&#x6765;&#x8FBE;&#x5230;&#x76EE;&#x6807;.</p>
+<h2 class="mume-header" id="%E8%A7%A3-1">&#x89E3;</h2>
+
+<p>Sum all possible ways to reach the current state.</p>
+<p>&#x5C06;&#x6240;&#x6709;&#x53EF;&#x80FD;&#x8FBE;&#x5230;&#x5F53;&#x524D;&#x72B6;&#x6001;&#x7684;&#x65B9;&#x6CD5;&#x76F8;&#x52A0;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go">routes<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> routes<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> routes<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token operator">...</span> <span class="token punctuation">,</span> <span class="token operator">+</span> routes<span class="token punctuation">[</span>i<span class="token operator">-</span>k<span class="token punctuation">]</span>
+</pre><p>Generate sum for all values in the target and return the value for the target.</p>
+<p>&#x4E3A;&#x76EE;&#x6807;&#x4E2D;&#x7684;&#x6240;&#x6709;&#x503C;&#x751F;&#x6210;&#x548C;, &#x5E76;&#x8FD4;&#x56DE;&#x76EE;&#x6807;&#x7684;&#x503C;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> target<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> j <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> j <span class="token operator">&lt;</span> ways<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token operator">++</span>j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token keyword">if</span> <span class="token punctuation">(</span>ways<span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">+=</span> dp<span class="token punctuation">[</span>i <span class="token operator">-</span> ways<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token keyword">return</span> dp<span class="token punctuation">[</span>target<span class="token punctuation">]</span>
+</pre><h2 class="mume-header" id="%E7%9B%B8%E4%BC%BC%E9%97%AE%E9%A2%98-1">&#x76F8;&#x4F3C;&#x95EE;&#x9898;</h2>
+
+<p><a href="https://leetcode.com/problems/climbing-stairs/">70. Climbing Stairs</a> <code>Easy</code></p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> stair <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span> stair <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>stair<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> step <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> step <span class="token operator">&lt;=</span> <span class="token number">2</span><span class="token punctuation">;</span> <span class="token operator">++</span>step<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       dp<span class="token punctuation">[</span>stair<span class="token punctuation">]</span> <span class="token operator">+=</span> dp<span class="token punctuation">[</span>stair<span class="token operator">-</span>step<span class="token punctuation">]</span><span class="token punctuation">;</span>   
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p><a href="https://leetcode.com/problems/unique-paths/">62. Unique Paths</a> Medium</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> m<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">;</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p><a href="https://leetcode.com/problems/number-of-dice-rolls-with-target-sum/">1155. Number of Dice Rolls With Target Sum</a> Medium</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> rep <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> rep <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span> <span class="token operator">++</span>rep<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   vector<span class="token operator">&lt;</span><span class="token builtin">int</span><span class="token operator">&gt;</span> <span class="token function">new_ways</span><span class="token punctuation">(</span>target<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> already <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> already <span class="token operator">&lt;=</span> target<span class="token punctuation">;</span> <span class="token operator">++</span>already<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> pipe <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> pipe <span class="token operator">&lt;=</span> f<span class="token punctuation">;</span> <span class="token operator">++</span>pipe<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           <span class="token keyword">if</span> <span class="token punctuation">(</span>already <span class="token operator">-</span> pipe <span class="token operator">&gt;=</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+               new_ways<span class="token punctuation">[</span>already<span class="token punctuation">]</span> <span class="token operator">+=</span> ways<span class="token punctuation">[</span>already <span class="token operator">-</span> pipe<span class="token punctuation">]</span><span class="token punctuation">;</span>
+               new_ways<span class="token punctuation">[</span>already<span class="token punctuation">]</span> <span class="token operator">%=</span> mod<span class="token punctuation">;</span>
+           <span class="token punctuation">}</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+   ways <span class="token operator">=</span> new_ways<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</pre><h2 class="mume-header" id="note">Note</h2>
+
+<p>&#x6709;&#x4E9B;&#x95EE;&#x9898;&#x9700;&#x8981;&#x6307;&#x51FA;&#x91CD;&#x590D;&#x7684;&#x6B21;&#x6570;, &#x5728;&#x8FD9;&#x79CD;&#x60C5;&#x51B5;&#x4E0B;, &#x53EF;&#x4EE5;&#x589E;&#x52A0;&#x4E00;&#x4E2A;&#x5FAA;&#x73AF;&#x6765;&#x6A21;&#x62DF;&#x6BCF;&#x6B21;&#x7684;&#x91CD;&#x590D;.</p>
+<p><a href="https://leetcode.com/problems/knight-probability-in-chessboard/">688. Knight Probability in Chessboard</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/target-sum/">494. Target Sum</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/combination-sum-iv/">377. Combination Sum IV</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/knight-dialer/">935. Knight Dialer</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/dice-roll-simulation/">1223. Dice Roll Simulation</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/partition-equal-subset-sum/">416. Partition Equal Subset Sum</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/soup-servings/">808. Soup Servings</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/domino-and-tromino-tiling/">790. Domino and Tromino Tiling</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/minimum-swaps-to-make-sequences-increasing/">801. Minimum Swaps To Make Sequences Increasing</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/number-of-longest-increasing-subsequence/">673. Number of Longest Increasing Subsequence</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/unique-paths-ii/">63. Unique Paths II</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/out-of-boundary-paths/">576. Out of Boundary Paths</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/number-of-ways-to-stay-in-the-same-place-after-some-steps/">1269. Number of Ways to Stay in the Same Place After Some Steps</a> <code>Hard</code><br>
+<a href="https://leetcode.com/problems/count-vowels-permutation/">1220. Count Vowels Permutation</a> <code>Hard</code></p>
+<h1 class="mume-header" id="merging-intervals-%E5%90%88%E5%B9%B6%E9%97%B4%E9%9A%94%E9%97%AE%E9%A2%98">Merging Intervals &#x5408;&#x5E76;&#x95F4;&#x9694;&#x95EE;&#x9898;</h1>
+
+<p>&#x8FD9;&#x7C7B;&#x95EE;&#x9898;&#x6A21;&#x5F0F;&#x7684;&#x5B9A;&#x4E49;:</p>
+<h2 class="mume-header" id="%E5%AE%9A%E4%B9%89-2">&#x5B9A;&#x4E49;</h2>
+
+<p>Given a set of numbers find an optimal solution for a problem considering the current number and the best you can get from the left and right sides.</p>
+<p>&#x7ED9;&#x5B9A;&#x4E00;&#x7EC4;&#x6570;&#x5B57;, &#x8003;&#x8651;&#x5230;&#x5F53;&#x524D;&#x7684;&#x6570;&#x5B57;&#x548C;&#x4F60;&#x80FD;&#x4ECE;&#x5DE6;&#x8FB9;&#x548C;&#x53F3;&#x8FB9;&#x5F97;&#x5230;&#x7684;&#x6700;&#x597D;&#x7684;&#x7ED3;&#x679C;, &#x627E;&#x5230;&#x95EE;&#x9898;&#x7684;&#x6700;&#x4F18;&#x89E3;.</p>
+<h2 class="mume-header" id="%E8%A7%A3-2">&#x89E3;</h2>
+
+<p>Find all optimal solutions for every interval and return the best possible answer.</p>
+<p>&#x627E;&#x51FA;&#x6BCF;&#x4E2A;&#x533A;&#x95F4;&#x7684;&#x6240;&#x6709;&#x6700;&#x4F18;&#x89E3;, &#x5E76;&#x8FD4;&#x56DE;&#x53EF;&#x80FD;&#x7684;&#x6700;&#x4F73;&#x7B54;&#x6848;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token comment">// from i to j</span>
+dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">+</span> result<span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">+</span> dp<span class="token punctuation">[</span>k<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span>
+</pre><p>Get the best from the left and right sides and add a solution for the current position.</p>
+<p>&#x4ECE;&#x5DE6;&#x8FB9;&#x548C;&#x53F3;&#x8FB9;&#x5F97;&#x5230;&#x6700;&#x597D;&#x7684;&#x7ED3;&#x679C;, &#x5E76;&#x4E3A;&#x5F53;&#x524D;&#x4F4D;&#x7F6E;&#x6DFB;&#x52A0;&#x4E00;&#x4E2A;&#x89E3;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span><span class="token punctuation">(</span><span class="token builtin">int</span> l <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> l<span class="token operator">&lt;</span>n<span class="token punctuation">;</span> l<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i<span class="token operator">&lt;</span>n<span class="token operator">-</span>l<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token builtin">int</span> j <span class="token operator">=</span> i<span class="token operator">+</span>l<span class="token punctuation">;</span>
+       <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token builtin">int</span> k <span class="token operator">=</span> i<span class="token punctuation">;</span> k<span class="token operator">&lt;</span>j<span class="token punctuation">;</span> k<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">max</span><span class="token punctuation">(</span>dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">+</span> result<span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">+</span> dp<span class="token punctuation">[</span>k<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+ 
+<span class="token keyword">return</span> dp<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">[</span>n<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+</pre><h2 class="mume-header" id="%E7%9B%B8%E4%BC%BC%E9%97%AE%E9%A2%98-2">&#x76F8;&#x4F3C;&#x95EE;&#x9898;</h2>
+
+<p><a href="https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/">1130. Minimum Cost Tree From Leaf Values</a> Medium</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> l <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> l <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>l<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n <span class="token operator">-</span> l<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token builtin">int</span> j <span class="token operator">=</span> i <span class="token operator">+</span> l<span class="token punctuation">;</span>
+       dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> INT_MAX<span class="token punctuation">;</span>
+       <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> k <span class="token operator">=</span> i<span class="token punctuation">;</span> k <span class="token operator">&lt;</span> j<span class="token punctuation">;</span> <span class="token operator">++</span>k<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">min</span><span class="token punctuation">(</span>dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">+</span> dp<span class="token punctuation">[</span>k<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">+</span> maxs<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>k<span class="token punctuation">]</span> <span class="token operator">*</span> maxs<span class="token punctuation">[</span>k<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p><a href="https://leetcode.com/problems/unique-binary-search-trees/">96. Unique Binary Search Trees</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/minimum-score-triangulation-of-polygon/">1039. Minimum Score Triangulation of Polygon</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/remove-boxes/">546. Remove Boxes</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/minimum-cost-to-merge-stones/">1000. Minimum Cost to Merge Stones</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/burst-balloons/">312. Burst Balloons</a> <code>Hard</code><br>
+<a href="https://leetcode.com/problems/guess-number-higher-or-lower-ii/">375. Guess Number Higher or Lower II</a> <code>Medium</code></p>
+<h2 class="mume-header" id="dp-on-strings-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84-dp-%E9%97%AE%E9%A2%98">DP on Strings &#x5B57;&#x7B26;&#x4E32;&#x7684; DP &#x95EE;&#x9898;</h2>
+
+<p>&#x8FD9;&#x79CD;&#x6A21;&#x5F0F;&#x7684;&#x63CF;&#x8FF0;&#x53EF;&#x80FD;&#x4F1A;&#x6709;&#x6240;&#x4E0D;&#x540C;, &#x4F46;&#x5927;&#x591A;&#x6570;&#x60C5;&#x51B5;&#x4E0B;, &#x7ED9;&#x5B9A;&#x7684;&#x4E24;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;&#x7684;&#x957F;&#x5EA6;&#x5E76;&#x4E0D;&#x5927;.</p>
+<h2 class="mume-header" id="%E5%AE%9A%E4%B9%89-3">&#x5B9A;&#x4E49;</h2>
+
+<p>Given two strings s1 and s2, return some result.</p>
+<p>&#x7ED9;&#x5B9A;&#x4E24;&#x4E2A;&#x5B57;&#x7B26;&#x4E32;s1&#x548C;s2, &#x8FD4;&#x56DE;&#x4E00;&#x4E9B;&#x7ED3;&#x679C;.</p>
+<h2 class="mume-header" id="%E8%A7%A3-3">&#x89E3;</h2>
+
+<p>Most of the problems on this pattern requires a solution that can be accepted in O(n^2) complexity.</p>
+<p>&#x8FD9;&#x79CD;&#x6A21;&#x5F0F;&#x4E2D;&#x7684;&#x5927;&#x591A;&#x6570;&#x95EE;&#x9898;&#x90FD;&#x6709;&#x5C0F;&#x4E8E; O(n^2) &#x590D;&#x6742;&#x5EA6;&#x7684;&#x89E3;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token comment">// i - indexing string s1</span>
+<span class="token comment">// j - indexing string s2</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> m<span class="token punctuation">;</span> <span class="token operator">++</span>j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token keyword">if</span> <span class="token punctuation">(</span>s1<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">==</span> s2<span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token comment">/*code*/</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token comment">/*code*/</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p>If you are given one string s the approach may little vary</p>
+<p>&#x5982;&#x679C;&#x53EA;&#x7ED9;&#x5B9A;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;&#x4E32; s, &#x89E3;&#x6CD5;&#x53D8;&#x5316;&#x4E0D;&#x5927;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> l <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> l <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>l<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token operator">-</span>l<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token builtin">int</span> j <span class="token operator">=</span> i <span class="token operator">+</span> l<span class="token punctuation">;</span>
+       <span class="token keyword">if</span> <span class="token punctuation">(</span>s<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">==</span> s<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token comment">/*code*/</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token comment">/*code*/</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p><a href="https://leetcode.com/problems/longest-common-subsequence/">1143. Longest Common Subsequence</a> Medium</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> m<span class="token punctuation">;</span> <span class="token operator">++</span>j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token keyword">if</span> <span class="token punctuation">(</span>text1<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">==</span> text2<span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">max</span><span class="token punctuation">(</span>dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p><a href="https://leetcode.com/problems/palindromic-substrings/">647. Palindromic Substrings</a> Medium</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> l <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> l <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>l<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token operator">-</span>l<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token builtin">int</span> j <span class="token operator">=</span> i <span class="token operator">+</span> l<span class="token punctuation">;</span>
+       <span class="token keyword">if</span> <span class="token punctuation">(</span>s<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">==</span> s<span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span> dp<span class="token punctuation">[</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">==</span> j<span class="token operator">-</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> dp<span class="token punctuation">[</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">2</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+           dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</pre><p><a href="https://leetcode.com/problems/longest-palindromic-subsequence/">516. Longest Palindromic Subsequence</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/shortest-common-supersequence/">1092. Shortest Common Supersequence</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/edit-distance/">72. Edit Distance</a> <code>Hard</code><br>
+<a href="https://leetcode.com/problems/distinct-subsequences/">115. Distinct Subsequences</a> <code>Hard</code><br>
+<a href="https://leetcode.com/problems/minimum-ascii-delete-sum-for-two-strings/">712. Minimum ASCII Delete Sum for Two Strings</a> <code>Medium</code><br>
+<a href="https://leetcode.com/problems/longest-palindromic-substring/">5. Longest Palindromic Substring</a> <code>Medium</code></p>
+<h1 class="mume-header" id="decision-making-%E5%86%B3%E7%AD%96%E9%97%AE%E9%A2%98">Decision Making &#x51B3;&#x7B56;&#x95EE;&#x9898;</h1>
+
+<p>The general problem statement for this pattern is forgiven situation decide whether to use or not to use the current state. So, the problem requires you to make a decision at a current state.</p>
+<p>&#x8FD9;&#x79CD;&#x95EE;&#x9898;&#x7684;&#x67D0;&#x4E9B;&#x4E2D;&#x95F4;&#x89E3;&#x4E00;&#x822C;&#x662F;&#x53EF;&#x4EE5;&#x820D;&#x5F03;&#x7684;.&#x9700;&#x8981;&#x6839;&#x636E;&#x60C5;&#x51B5;&#x51B3;&#x5B9A;&#x662F;&#x5426;&#x4F7F;&#x7528;&#x5F53;&#x524D;&#x72B6;&#x6001;. &#x6240;&#x4EE5;, &#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x9700;&#x8981;&#x4F60;&#x5728;&#x5F53;&#x524D;&#x7684;&#x72B6;&#x6001;&#x4E0B;&#x505A;&#x51FA;&#x51B3;&#x5B9A;.</p>
+<h2 class="mume-header" id="%E5%AE%9A%E4%B9%89-4">&#x5B9A;&#x4E49;</h2>
+
+<p>Given a set of values find an answer with an option to choose or ignore the current value.</p>
+<p>&#x7ED9;&#x5B9A;&#x4E00;&#x7EC4;&#x503C;, &#x901A;&#x8FC7;&#x9009;&#x62E9;&#x6216;&#x5FFD;&#x7565;&#x5F53;&#x524D;&#x503C;, &#x6765;&#x5F97;&#x51FA;&#x6700;&#x7EC8;&#x89E3;.</p>
+<h2 class="mume-header" id="%E8%A7%A3-4">&#x89E3;</h2>
+
+<p>If you decide to choose the current value use the previous result where the value was ignored; vice-versa, if you decide to ignore the current value use previous result where value was used.</p>
+<p>&#x5982;&#x679C;&#x60A8;&#x51B3;&#x5B9A;&#x9009;&#x62E9;&#x5F53;&#x524D;&#x503C;, &#x5C31;&#x9700;&#x8981;&#x5FFD;&#x7565;&#x4E4B;&#x524D;&#x7684;&#x503C;; &#x53CD;&#x4E4B;&#x4EA6;&#x7136;, &#x5982;&#x679C;&#x60A8;&#x51B3;&#x5B9A;&#x5FFD;&#x7565;&#x5F53;&#x524D;&#x503C;, &#x5219;&#x5F53;&#x524D;&#x7ED3;&#x679C;&#x5904;&#x4F7F;&#x7528;&#x4E4B;&#x524D;&#x7684;&#x503C;.</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token comment">// i - indexing a set of values</span>
+<span class="token comment">// j - options to ignore j values</span>
+<span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> j <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> k<span class="token punctuation">;</span> <span class="token operator">++</span>j<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">max</span><span class="token punctuation">(</span><span class="token punctuation">{</span>dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">+</span> arr<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">max</span><span class="token punctuation">(</span><span class="token punctuation">{</span>dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span>j<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> arr<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> arr<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p><a href="https://leetcode.com/problems/house-robber/">198. House Robber</a> Easy</p>
+<pre data-role="codeBlock" data-info="go" class="language-go"><span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token builtin">int</span> i <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+   dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token function">max</span><span class="token punctuation">(</span>dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> nums<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   dp<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> dp<span class="token punctuation">[</span>i<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</pre><p><a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock/">121. Best Time to Buy and Sell Stock</a> Easy<br>
+<a href="https://leetcode.com/problems/best-time-to-buy%5B-and-sell-stock-with-transaction-fee/">714. Best Time to Buy and Sell Stock with Transaction Fee</a> Medium<br>
+<a href="https://leetcode.com/problems/best-time-to-buy-and-se%5Bll-stock-with-cooldown/">309. Best Time to Buy and Sell Stock with Cooldown</a> Medium<br>
+<a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-i%5Bii/">123. Best Time to Buy and Sell Stock III</a> Hard<br>
+<a href="https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv%5B/">188. Best Time to Buy and Sell Stock IV</a> Hard</p>
+<p>&#x5E0C;&#x671B;&#x672C;&#x6587;&#x5BF9;&#x4F60;&#x6709;&#x6240;&#x5E2E;&#x52A9;.</p>
+
+      </div>
+      <div class="md-sidebar-toc"><ul>
+<li><a href="#%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB">&#x6A21;&#x5F0F;&#x5206;&#x7C7B;</a></li>
+<li><a href="#minimum-maximum-path-to-reach-a-target-%E5%88%B0%E8%BE%BE%E7%9B%AE%E6%A0%87%E7%9A%84%E6%9C%80%E7%9F%AD%E6%88%96%E6%9C%80%E5%A4%A7%E8%B7%9D%E7%A6%BB%E9%97%AE%E9%A2%98">Minimum (Maximum) Path to Reach a Target &#x5230;&#x8FBE;&#x76EE;&#x6807;&#x7684;&#x6700;&#x77ED;(&#x6216;&#x6700;&#x5927;)&#x8DDD;&#x79BB;&#x95EE;&#x9898;</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89">&#x5B9A;&#x4E49;</a></li>
+<li><a href="#%E8%A7%A3">&#x89E3;</a></li>
+<li><a href="#%E7%9B%B8%E4%BC%BC%E9%97%AE%E9%A2%98">&#x76F8;&#x4F3C;&#x95EE;&#x9898;</a></li>
+</ul>
+</li>
+<li><a href="#distinct-ways-%E5%94%AF%E4%B8%80%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98">Distinct Ways &#x552F;&#x4E00;&#x8DEF;&#x5F84;&#x95EE;&#x9898;</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89-1">&#x5B9A;&#x4E49;</a></li>
+<li><a href="#%E8%A7%A3-1">&#x89E3;</a></li>
+<li><a href="#%E7%9B%B8%E4%BC%BC%E9%97%AE%E9%A2%98-1">&#x76F8;&#x4F3C;&#x95EE;&#x9898;</a></li>
+<li><a href="#note">Note</a></li>
+</ul>
+</li>
+<li><a href="#merging-intervals-%E5%90%88%E5%B9%B6%E9%97%B4%E9%9A%94%E9%97%AE%E9%A2%98">Merging Intervals &#x5408;&#x5E76;&#x95F4;&#x9694;&#x95EE;&#x9898;</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89-2">&#x5B9A;&#x4E49;</a></li>
+<li><a href="#%E8%A7%A3-2">&#x89E3;</a></li>
+<li><a href="#%E7%9B%B8%E4%BC%BC%E9%97%AE%E9%A2%98-2">&#x76F8;&#x4F3C;&#x95EE;&#x9898;</a></li>
+<li><a href="#dp-on-strings-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84-dp-%E9%97%AE%E9%A2%98">DP on Strings &#x5B57;&#x7B26;&#x4E32;&#x7684; DP &#x95EE;&#x9898;</a></li>
+<li><a href="#%E5%AE%9A%E4%B9%89-3">&#x5B9A;&#x4E49;</a></li>
+<li><a href="#%E8%A7%A3-3">&#x89E3;</a></li>
+</ul>
+</li>
+<li><a href="#decision-making-%E5%86%B3%E7%AD%96%E9%97%AE%E9%A2%98">Decision Making &#x51B3;&#x7B56;&#x95EE;&#x9898;</a>
+<ul>
+<li><a href="#%E5%AE%9A%E4%B9%89-4">&#x5B9A;&#x4E49;</a></li>
+<li><a href="#%E8%A7%A3-4">&#x89E3;</a></li>
+</ul>
+</li>
+</ul>
+</div>
+      <a id="sidebar-toc-btn">&#x2261;</a>
+    
+    
+    
+    
+    
+    
+    
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  
+    </body></html>

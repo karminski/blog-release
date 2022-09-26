@@ -1,0 +1,895 @@
+<!DOCTYPE html><html><head>
+      <title>ceph-diary-1-remove-osd</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+
+      <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #000000;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+    background: #C1DEF1;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+    background: #C1DEF1;
+}
+
+
+/* Code blocks */
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    background-color: #f9f9f9;
+}
+
+
+/* Inline code */
+
+:not(pre)>code[class*="language-"] {
+    padding: .2em;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #EEE;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #0066FF;
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.string {
+    color: #036A07;
+}
+
+.token.punctuation {
+    color: #000000;
+}
+
+.token.operator {
+    color: #0066FF;
+    font-weight: 900;
+    /* no highlight */
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: #0000CD;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*="language-css"] {
+    color: #0000ff;
+    font-weight: 900;
+}
+
+.token.function {
+    color: #000000;
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: #9a050f;
+}
+
+.token.selector,
+.language-autohotkey .token.keyword {
+    color: #00009f;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.language-json .token.property {
+    color: #2B91AF;
+}
+
+.token.tag,
+.token.selector {
+    color: #800000;
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: #19921c;
+}
+
+.token.directive.tag .tag {
+    background: #ffff00;
+    color: #000000;
+}
+
+
+/* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+
+.line-numbers .line-numbers-rows {
+    border-right-color: #a5a5a5;
+}
+
+.line-numbers-rows>span:before {
+    color: #2B91AF;
+}
+
+
+/* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+
+.line-highlight {
+    background: rgba(193, 222, 241, 0.2);
+    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+}
+
+
+/* highlight */
+
+pre[data-line] {
+    position: relative;
+    padding: 1em 0 1em 3em;
+}
+
+pre[data-line] .line-highlight-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+}
+
+pre[data-line] .line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: hsla(24, 20%, 50%, .08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+pre[data-line] .line-highlight:before,
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-start);
+    position: absolute;
+    top: .4em;
+    left: .6em;
+    min-width: 1em;
+    padding: 0 .5em;
+    background-color: hsla(24, 20%, 50%, .4);
+    color: hsl(24, 20%, 95%);
+    font: bold 65%/1.5 sans-serif;
+    text-align: center;
+    vertical-align: .3em;
+    text-shadow: none;
+    box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-end);
+    top: auto;
+    bottom: .4em;
+}html body {
+    font-family: "Consolas", Arial, freesans, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    color: #2F2F2F;
+    background-color: #fff;
+    overflow: initial;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+html body h1 {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3em;
+}
+
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+    color: #2b2b2b;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+html body strong {
+    color: #000
+}
+
+html body del {
+    color: #5c5c5c
+}
+
+html body a:not([href]) {
+    color: inherit;
+    text-decoration: none
+}
+
+html body a {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body a:hover {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body img {
+    max-width: 100%
+}
+
+html body>p {
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    word-wrap: break-word;
+}
+
+html body>ul,
+html body>ol {
+    margin-bottom: 0px
+}
+
+html body ul,
+html body ol {
+    padding-left: 2em
+}
+
+html body ul.no-list,
+html body ol.no-list {
+    padding: 0;
+    list-style-type: none
+}
+
+html body ul ul,
+html body ul ol,
+html body ol ol,
+html body ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body li {
+    margin-bottom: 0
+}
+
+html body li.task-list-item {
+    list-style: none
+}
+
+html body li>p {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body .task-list-item-checkbox {
+    margin: 0 .2em .25em -1.8em;
+    vertical-align: middle
+}
+
+html body .task-list-item-checkbox:hover {
+    cursor: pointer
+}
+
+html body blockquote {
+    margin: 16px 0;
+    font-size: inherit;
+    padding: 0 15px;
+    color: #5c5c5c;
+    border-left: 4px solid #d6d6d6
+}
+
+html body blockquote>:first-child {
+    margin-top: 0
+}
+
+html body blockquote>:last-child {
+    margin-bottom: 0
+}
+
+html body hr {
+    height: 4px;
+    margin: 32px 0;
+    background-color: #d6d6d6;
+    border: 0 none
+}
+
+html body table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all
+}
+
+html body table th {
+    font-weight: bold;
+    color: #000
+}
+
+html body table td,
+html body table th {
+    border: 1px solid #d6d6d6;
+    padding: 6px 13px
+}
+
+html body dl {
+    padding: 0
+}
+
+html body dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold
+}
+
+html body dl dd {
+    padding: 0 16px;
+    margin-bottom: 0px
+}
+
+html body code {
+    font-family: Consolas, monospace;
+    font-size: 12px !important;
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+html body code::before,
+html body code::after {
+    letter-spacing: -0.2em;
+    content: "\00a0"
+}
+
+html body pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: .85em !important;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0
+}
+
+html body .highlight {
+    margin-bottom: 0px
+}
+
+html body .highlight pre,
+html body pre {
+    padding: 1em;
+    overflow: auto;
+    font-size: .85em !important;
+    line-height: 1.45;
+    border: #d6d6d6;
+    border-radius: 3px
+}
+
+html body .highlight pre {
+    margin-bottom: 0;
+    word-break: normal
+}
+
+html body pre code,
+html body pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0
+}
+
+html body pre code:before,
+html body pre tt:before,
+html body pre code:after,
+html body pre tt:after {
+    content: normal
+}
+
+html body p,
+html body blockquote,
+html body ul,
+html body ol,
+html body dl,
+html body pre {
+    /* nothing */
+}
+
+html body kbd {
+    color: #000;
+    border: 1px solid #d6d6d6;
+    border-bottom: 2px solid #c7c7c7;
+    padding: 2px 4px;
+    background-color: #f0f0f0;
+    border-radius: 3px
+}
+
+@media print {
+    html body {
+        background-color: #fff
+    }
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+        color: #000;
+        page-break-after: avoid
+    }
+    html body blockquote {
+        color: #5c5c5c
+    }
+    html body pre {
+        page-break-inside: avoid
+    }
+    html body table {
+        display: table
+    }
+    html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+    }
+    html body pre,
+    html body code {
+        word-wrap: break-word;
+        white-space: pre
+    }
+}
+
+.markdown-preview {
+    float: left;
+    margin: 10px auto 10px 10px;
+    color: #2F2F2F;
+    border: 1px dashed #DDDDDD;
+    padding: 10px;
+    width: 80em;
+}
+
+p {
+    margin: 1em 0 1em 0;
+}
+
+
+/* code block theme */.markdown-preview {
+    height: 100%;
+    box-sizing: border-box
+}
+
+.markdown-preview .pagebreak,
+.markdown-preview .newpage {
+    page-break-before: always
+}
+
+.markdown-preview pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber
+}
+
+.markdown-preview pre.line-numbers>code {
+    position: relative
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 1em;
+    font-size: 100%;
+    left: 0;
+    width: 3em;
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: .8em;
+    text-align: right
+}
+
+.markdown-preview .mathjax-exps .MathJax_Display {
+    text-align: center !important
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .status {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .output-div {
+    margin-bottom: 16px
+}
+
+.scrollbar-style::-webkit-scrollbar {
+    width: 8px
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+    position: relative;
+    top: 0
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    font-size: 28px;
+    cursor: pointer;
+    color: inherit;
+    z-index: 99;
+    width: 32px;
+    text-align: center;
+    opacity: .4
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+    opacity: 1
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    padding: 32px 0 48px 0;
+    font-size: 12px;
+    border-left: 1px dashed #DDDDDD;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: inherit
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+    width: 8px
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+    text-decoration: none
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    padding: 0 1.6em;
+    margin-top: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+    margin-bottom: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    list-style-type: none
+}
+
+@media screen and (max-width:1274px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 0em
+    }
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+    display: none
+}
+
+@media screen and (max-width:914px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        width: 100%
+    }
+}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h2><a href="http://ceph-diary-1-remove-osd.md">ceph-diary-1-remove-osd.md</a></h2>
+<ul>
+<li>@name       CEPH &#x65E5;&#x8BB0; 1 - &#x5982;&#x4F55;&#x79FB;&#x9664;OSD</li>
+<li>@author     karminski &lt;<a href="mailto:code.karminski@outlook.com">code.karminski@outlook.com</a>&gt;</li>
+<li>@version    20190710:1</li>
+</ul>
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#name">Name</a></li>
+</ul>
+<h2>Name</h2>
+<ul>
+<li>CEPH &#x65E5;&#x8BB0; 1 - &#x5982;&#x4F55;&#x79FB;&#x9664;OSD</li>
+</ul>
+<h2>Environment</h2>
+<p>&#x672C;&#x6587;&#x57FA;&#x4E8E; ceph version 13.2.6 (7b695f835b03642f85998b2ae7b6dd093d9fbce4) mimic (stable)</p>
+<p>&#x8BE5; CEPH &#x5B9E;&#x4F8B; &#x5177;&#x4F53;&#x914D;&#x7F6E;&#x4E3A;:<br>
+2 &#x8282;&#x70B9; OSD, &#x6BCF;&#x8282;&#x70B9; Intel E5-2670, 32GB REG ECC.<br>
+OSD 0-10 &#x4E3A; Seaggate ST6000NM0034 SAS HDD 6TB  x 11.<br>
+OSD 13-20 &#x4E3A; Intel P3700 NVMe 800GB x 2, &#x6BCF;&#x4E2A;NVMe&#x5206;&#x4E3A;4&#x4E2A;200GB&#x7684;LVM&#x5377;, &#x4EE5;&#x4FBF;&#x5145;&#x5206;&#x5229;&#x7528;NVMe&#x7684;&#x6027;&#x80FD;.<br>
+HBA &#x5361;&#x4E3A; Fujitsu PRAID CP400i, &#x7F51;&#x5361;&#x4E3A; Mellanox ConnectX-3 56G.</p>
+<h2>Content</h2>
+<p>&#x4ECA;&#x5929;&#x68C0;&#x67E5; CEPH &#x53D1;&#x73B0; &#x6709;&#x4E00;&#x4E2A; OSD &#x63A5;&#x8FD1;&#x8981;&#x6EE1;&#x4E86;&#x7684;&#x72B6;&#x6001;.</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage02-ib ~]# ceph osd status
++----+----------------------------+-------+-------+--------+---------+--------+---------+------------------------+
+| id |            host            |  used | avail | wr ops | wr data | rd ops | rd data |         state          |
++----+----------------------------+-------+-------+--------+---------+--------+---------+------------------------+
+| 0  | storage02-ib.lobj.eth6.org | 1599G | 3989G |    0   |     0   |    0   |     0   |       exists,up        |
+| 1  | storage02-ib.lobj.eth6.org | 1625G | 3963G |    0   |     0   |    0   |     0   |       exists,up        |
+| 2  | storage02-ib.lobj.eth6.org | 1666G | 3922G |    0   |     0   |    0   |     0   |       exists,up        |
+| 3  | storage02-ib.lobj.eth6.org | 1817G | 3771G |    0   |     0   |    0   |     0   |       exists,up        |
+| 4  | storage02-ib.lobj.eth6.org | 1868G | 3720G |    0   |     0   |    0   |     0   |       exists,up        |
+| 5  | storage03-ib.lobj.eth6.org | 1685G | 3903G |    0   |     0   |    0   |     0   |       exists,up        |
+| 6  | storage03-ib.lobj.eth6.org | 1686G | 3902G |    0   |     0   |    0   |     0   |       exists,up        |
+| 7  | storage03-ib.lobj.eth6.org | 1153G | 4435G |    0   |     0   |    1   |     0   |       exists,up        |
+| 8  | storage03-ib.lobj.eth6.org | 1374G | 4214G |    0   |     0   |    0   |     0   |       exists,up        |
+| 9  | storage03-ib.lobj.eth6.org | 2098G | 3490G |    0   |     0   |    0   |     0   |       exists,up        |
+| 10 | storage03-ib.lobj.eth6.org | 1715G | 3873G |    0   |     0   |    0   |     0   |       exists,up        |
+| 13 | storage02-ib.lobj.eth6.org |  172G | 13.7G |    0   |     0   |    0   |     0   | backfillfull,exists,up |
+| 14 | storage02-ib.lobj.eth6.org | 43.9G |  142G |    0   |     0   |    0   |     0   |       exists,up        |
+| 15 | storage02-ib.lobj.eth6.org | 79.2G |  106G |    0   |     0   |    0   |     0   |       exists,up        |
+| 16 | storage02-ib.lobj.eth6.org | 10.1G |  176G |    0   |     0   |    0   |     0   |       exists,up        |
+| 17 | storage03-ib.lobj.eth6.org |  102G | 83.4G |    0   |     0   |    0   |     0   |       exists,up        |
+| 18 | storage03-ib.lobj.eth6.org | 10.2G |  176G |    0   |     0   |    0   |     0   |       exists,up        |
+| 19 | storage03-ib.lobj.eth6.org | 10.1G |  176G |    0   |     0   |    0   |     0   |       exists,up        |
+| 20 | storage03-ib.lobj.eth6.org |  137G | 49.1G |    0   |     0   |    0   |     0   |       exists,up        |
++----+----------------------------+-------+-------+--------+---------+--------+---------+------------------------+
+</code></pre><p>&#x60C5;&#x51B5;&#x5982;&#x4E0A;, ceph osd status &#x547D;&#x4EE4;&#x53EF;&#x4EE5;&#x53D1;&#x73B0; OSD 13 &#x5DF2;&#x7ECF;&#x63A5;&#x8FD1;&#x8981;&#x6EE1;&#x4E86;&#x7684;&#x72B6;&#x6001;.</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage02-ib ~]# ceph -s
+  cluster:
+    id:     0f7be0a4-2a05-4658-8829-f3d2f62579d2
+    health: HEALTH_WARN
+            1 backfillfull osd(s)
+            5 pool(s) backfillfull
+            367931/4527742 objects misplaced (8.126%)
+ 
+  services:
+    mon: 3 daemons, quorum storage01-ib,storage02-ib,storage03-ib
+    mgr: storage01-ib(active), standbys: storage03-ib, storage02-ib
+    osd: 19 osds: 19 up, 18 in; 41 remapped pgs
+    rgw: 2 daemons active
+ 
+  data:
+    pools:   5 pools, 288 pgs
+    objects: 2.26 M objects, 8.6 TiB
+    usage:   18 TiB used, 43 TiB / 61 TiB avail
+    pgs:     367931/4527742 objects misplaced (8.126%)
+             247 active+clean
+             40  active+remapped+backfill_wait
+             1   active+remapped+backfilling
+ 
+  io:
+    client:   1.0 MiB/s rd, 65 op/s rd, 0 op/s wr
+</code></pre><p>ceph -s &#x547D;&#x4EE4;&#x4E5F;&#x53EF;&#x4EE5;&#x770B;&#x89C1;&#x63D0;&#x793A; 1 backfillfull osd(s), &#x7531;&#x4E8E; OSD pool &#x6CA1;&#x6709;&#x6307;&#x5B9A;&#x4E0E; OSD &#x7684; map &#x5173;&#x7CFB;, &#x6240;&#x4EE5;&#x9ED8;&#x8BA4;&#x6240;&#x6709;OSD&#x90FD;&#x627F;&#x8F7D;&#x8FD9;&#x4E9B; pool &#x7684;, &#x6240;&#x4EE5;&#x4E5F;&#x63D0;&#x793A;&#x4E86; 5 pool(s) backfillfull.<br>
+&#x4E4B;&#x6240;&#x4EE5;&#x8FD8;&#x4F1A;&#x63D0;&#x793A; objects misplaced &#x662F;&#x56E0;&#x4E3A;&#x4E4B;&#x524D;&#x7EF4;&#x62A4;&#x66FF;&#x6362;&#x4E86;&#x4E00;&#x5757;&#x786C;&#x76D8;, &#x6B63;&#x5728;&#x6570;&#x636E;&#x6062;&#x590D;&#x4E2D;.</p>
+<p>&#x7531;&#x4E8E;&#x8FD9;&#x4E2A;&#x6EE1;&#x4E86;&#x7684; OSD &#x6B63;&#x597D;&#x662F;&#x4E4B;&#x524D;&#x8FD8;&#x6CA1;&#x6765;&#x5F97;&#x53CA;&#x4E0B;&#x6389;&#x7684; NVMe &#x5B58;&#x50A8;, NVMe &#x60F3;&#x7528;&#x505A;&#x5176;&#x4ED6;&#x7528;&#x9014;, &#x6240;&#x4EE5;&#x8FD9;&#x6B21;&#x51C6;&#x5907;&#x5E72;&#x8106;&#x628A; NVMe &#x4E0B;&#x6389;&#x4E86;.<br>
+&#x4E0B;&#x6389; 13 - 20 &#x8FD9;&#x51E0;&#x4E2A; NVMe &#x7684; OSD, CEPH &#x4F1A;&#x81EA;&#x52A8;&#x5C06;&#x6570;&#x636E;&#x5E73;&#x8861;&#x5230;&#x5176;&#x4ED6; OSD &#x4E2D;. &#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x53EA;&#x9700;&#x8981;&#x5148; mark OSD out, &#x7136;&#x540E;&#x5220;&#x9664; OSD, &#x6700;&#x540E;&#x79FB;&#x9664;&#x786C;&#x4EF6;&#x5373;&#x53EF;.</p>
+<p>&#x5728;&#x79FB;&#x9664;&#x8FC7;&#x7A0B;&#x4E00;&#x5B9A;&#x5148;&#x63D0;&#x524D;&#x8BA1;&#x7B97;&#x597D;&#x5BB9;&#x91CF;&#x662F;&#x5426;&#x8DB3;&#x591F;, &#x5982;&#x679C;&#x4E0B;&#x6389;&#x8FC7;&#x591A; OSD &#x5BFC;&#x81F4;&#x6574;&#x4F53;&#x5BB9;&#x91CF;&#x4E0D;&#x8DB3;, &#x5C06;&#x4F1A;&#x5BFC;&#x81F4; OSD &#x8D8B;&#x8FD1;&#x4E8E;&#x6EE1;&#x7684;&#x60C5;&#x51B5;, &#x4F1A;&#x9020;&#x6210;&#x96C6;&#x7FA4;&#x8BFB;&#x5199;&#x6027;&#x80FD;&#x4E0B;&#x964D;&#x751A;&#x81F3;&#x5B8C;&#x5168;&#x4E0D;&#x80FD;&#x8BFB;&#x5199;.<br>
+&#x5728;&#x79FB;&#x9664;&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;, &#x4E5F;&#x4F1A;&#x5360;&#x7528;&#x7CFB;&#x7EDF;&#x7684;&#x78C1;&#x76D8; IO &#x548C;&#x7F51;&#x7EDC;&#x5E26;&#x5BBD;, &#x56E0;&#x6B64;&#x5982;&#x679C;&#x662F;&#x7EBF;&#x4E0A;&#x4E1A;&#x52A1;, &#x4E00;&#x5B9A;&#x89C4;&#x5212;&#x597D;&#x79FB;&#x9664;&#x65F6;&#x95F4;, &#x907F;&#x514D;&#x5F71;&#x54CD;&#x4E1A;&#x52A1;.</p>
+<p>&#x9996;&#x5148;, &#x6211;&#x4EEC;&#x79FB;&#x9664; OSD 13, 14 &#x4F5C;&#x4E3A;&#x6F14;&#x793A;.</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage02-ib ~]# ceph osd out 13 14;
+marked out osd.13 osd.14 
+</code></pre><pre data-role="codeBlock" data-info class="language-"><code>  cluster:
+    id:     0f7be0a4-2a05-4658-8829-f3d2f62579d2
+    health: HEALTH_WARN
+            258661/4527742 objects misplaced (5.713%)
+            Degraded data redundancy: 22131/4527742 objects degraded (0.489%), 3 pgs degraded
+ 
+  services:
+    mon: 3 daemons, quorum storage01-ib,storage02-ib,storage03-ib
+    mgr: storage01-ib(active), standbys: storage03-ib, storage02-ib
+    osd: 19 osds: 19 up, 11 in; 36 remapped pgs
+    rgw: 2 daemons active
+ 
+  data:
+    pools:   5 pools, 288 pgs
+    objects: 2.26 M objects, 8.6 TiB
+    usage:   18 TiB used, 43 TiB / 61 TiB avail
+    pgs:     22131/4527742 objects degraded (0.489%)
+             258661/4527742 objects misplaced (5.713%)
+             252 active+clean
+             28  active+remapped+backfill_wait
+             5   active+remapped+backfilling
+             2   active+undersized+degraded+remapped+backfill_wait
+             1   active+undersized+degraded+remapped+backfilling
+ 
+  io:
+    recovery: 90 MiB/s, 22 objects/s
+
+</code></pre><p>&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x63D0;&#x793A; 258661/4527742 objects misplaced,  22131/4527742 objects degraded, &#x8FD9;&#x4E9B;&#x90FD;&#x662F;&#x6B63;&#x5728;&#x81EA;&#x52A8;&#x8C03;&#x6574;&#x7684;&#x6570;&#x636E;.<br>
+&#x7B49;&#x5F85;&#x8C03;&#x6574;&#x5B8C;&#x6BD5;&#x540E;, &#x6211;&#x4EEC;&#x4F9D;&#x6B21;&#x4E0B;&#x6389;&#x5176;&#x4ED6;&#x7684;OSD&#x5373;&#x53EF;.</p>
+<p>&#x7136;&#x540E;&#x5230;&#x5BF9;&#x5E94;&#x7684; OSD &#x7684;&#x673A;&#x5668;&#x4E0A;, &#x505C;&#x6B62;&#x76F8;&#x5E94;&#x7684; OSD daemon.</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage02-ib ~]# systemctl stop ceph-osd@20
+[root@storage02-ib ~]# 
+</code></pre><p>&#x6700;&#x540E;&#x786E;&#x8BA4; daemon &#x90FD;&#x505C;&#x6B62;&#x540E;, &#x6267;&#x884C; purge, &#x4ECE;&#x96C6;&#x7FA4;&#x4E2D;&#x5F7B;&#x5E95;&#x79FB;&#x9664;&#x8BE5; OSD.</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage02-ib ~]# ceph osd purge 20 --yes-i-really-mean-it
+</code></pre><p>&#x5982;&#x679C;&#x5728; ceph.conf &#x6587;&#x4EF6;&#x4E2D;&#x4E5F;&#x914D;&#x7F6E;&#x4E86; OSD &#x7684;&#x4FE1;&#x606F;, &#x4E5F;&#x9700;&#x8981;&#x79FB;&#x9664;&#x6389;, &#x7136;&#x540E;&#x91CD;&#x65B0;&#x5206;&#x53D1;&#x914D;&#x7F6E;.</p>
+<p>&#x6700;&#x540E;, &#x505C;&#x673A;&#x62D4;&#x6389;&#x786C;&#x4EF6;&#x5C31;&#x53EF;&#x4EE5;&#x4E86;.</p>
+<h2>Reference</h2>
+<ul>
+<li><a href="http://docs.ceph.com/docs/master/rados/operations/add-or-rm-osds/">add-or-rm-osds</a></li>
+</ul>
+
+      </div>
+      <div class="md-sidebar-toc"></div>
+      <a id="sidebar-toc-btn">&#x2261;</a>
+    
+    
+    
+    
+    
+    
+    
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  
+    </body></html>

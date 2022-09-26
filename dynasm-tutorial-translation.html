@@ -1,0 +1,1742 @@
+<!DOCTYPE html><html><head>
+      <title>dynasm-tutorial-translation</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+
+      <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #000000;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+    background: #C1DEF1;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+    background: #C1DEF1;
+}
+
+
+/* Code blocks */
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    background-color: #f9f9f9;
+}
+
+
+/* Inline code */
+
+:not(pre)>code[class*="language-"] {
+    padding: .2em;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #EEE;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #0066FF;
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.string {
+    color: #036A07;
+}
+
+.token.punctuation {
+    color: #000000;
+}
+
+.token.operator {
+    color: #0066FF;
+    font-weight: 900;
+    /* no highlight */
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: #0000CD;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*="language-css"] {
+    color: #0000ff;
+    font-weight: 900;
+}
+
+.token.function {
+    color: #000000;
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: #9a050f;
+}
+
+.token.selector,
+.language-autohotkey .token.keyword {
+    color: #00009f;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.language-json .token.property {
+    color: #2B91AF;
+}
+
+.token.tag,
+.token.selector {
+    color: #800000;
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: #19921c;
+}
+
+.token.directive.tag .tag {
+    background: #ffff00;
+    color: #000000;
+}
+
+
+/* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+
+.line-numbers .line-numbers-rows {
+    border-right-color: #a5a5a5;
+}
+
+.line-numbers-rows>span:before {
+    color: #2B91AF;
+}
+
+
+/* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+
+.line-highlight {
+    background: rgba(193, 222, 241, 0.2);
+    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+}
+
+
+/* highlight */
+
+pre[data-line] {
+    position: relative;
+    padding: 1em 0 1em 3em;
+}
+
+pre[data-line] .line-highlight-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+}
+
+pre[data-line] .line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: hsla(24, 20%, 50%, .08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+pre[data-line] .line-highlight:before,
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-start);
+    position: absolute;
+    top: .4em;
+    left: .6em;
+    min-width: 1em;
+    padding: 0 .5em;
+    background-color: hsla(24, 20%, 50%, .4);
+    color: hsl(24, 20%, 95%);
+    font: bold 65%/1.5 sans-serif;
+    text-align: center;
+    vertical-align: .3em;
+    text-shadow: none;
+    box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-end);
+    top: auto;
+    bottom: .4em;
+}html body {
+    font-family: "Consolas", Arial, freesans, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    color: #2F2F2F;
+    background-color: #fff;
+    overflow: initial;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+html body h1 {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3em;
+}
+
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+    color: #2b2b2b;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+html body strong {
+    color: #000
+}
+
+html body del {
+    color: #5c5c5c
+}
+
+html body a:not([href]) {
+    color: inherit;
+    text-decoration: none
+}
+
+html body a {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body a:hover {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body img {
+    max-width: 100%
+}
+
+html body>p {
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    word-wrap: break-word;
+}
+
+html body>ul,
+html body>ol {
+    margin-bottom: 0px
+}
+
+html body ul,
+html body ol {
+    padding-left: 2em
+}
+
+html body ul.no-list,
+html body ol.no-list {
+    padding: 0;
+    list-style-type: none
+}
+
+html body ul ul,
+html body ul ol,
+html body ol ol,
+html body ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body li {
+    margin-bottom: 0
+}
+
+html body li.task-list-item {
+    list-style: none
+}
+
+html body li>p {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body .task-list-item-checkbox {
+    margin: 0 .2em .25em -1.8em;
+    vertical-align: middle
+}
+
+html body .task-list-item-checkbox:hover {
+    cursor: pointer
+}
+
+html body blockquote {
+    margin: 16px 0;
+    font-size: inherit;
+    padding: 0 15px;
+    color: #5c5c5c;
+    border-left: 4px solid #d6d6d6
+}
+
+html body blockquote>:first-child {
+    margin-top: 0
+}
+
+html body blockquote>:last-child {
+    margin-bottom: 0
+}
+
+html body hr {
+    height: 4px;
+    margin: 32px 0;
+    background-color: #d6d6d6;
+    border: 0 none
+}
+
+html body table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all
+}
+
+html body table th {
+    font-weight: bold;
+    color: #000
+}
+
+html body table td,
+html body table th {
+    border: 1px solid #d6d6d6;
+    padding: 6px 13px
+}
+
+html body dl {
+    padding: 0
+}
+
+html body dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold
+}
+
+html body dl dd {
+    padding: 0 16px;
+    margin-bottom: 0px
+}
+
+html body code {
+    font-family: Consolas, monospace;
+    font-size: 12px !important;
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+html body code::before,
+html body code::after {
+    letter-spacing: -0.2em;
+    content: "\00a0"
+}
+
+html body pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: .85em !important;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0
+}
+
+html body .highlight {
+    margin-bottom: 0px
+}
+
+html body .highlight pre,
+html body pre {
+    padding: 1em;
+    overflow: auto;
+    font-size: .85em !important;
+    line-height: 1.45;
+    border: #d6d6d6;
+    border-radius: 3px
+}
+
+html body .highlight pre {
+    margin-bottom: 0;
+    word-break: normal
+}
+
+html body pre code,
+html body pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0
+}
+
+html body pre code:before,
+html body pre tt:before,
+html body pre code:after,
+html body pre tt:after {
+    content: normal
+}
+
+html body p,
+html body blockquote,
+html body ul,
+html body ol,
+html body dl,
+html body pre {
+    /* nothing */
+}
+
+html body kbd {
+    color: #000;
+    border: 1px solid #d6d6d6;
+    border-bottom: 2px solid #c7c7c7;
+    padding: 2px 4px;
+    background-color: #f0f0f0;
+    border-radius: 3px
+}
+
+@media print {
+    html body {
+        background-color: #fff
+    }
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+        color: #000;
+        page-break-after: avoid
+    }
+    html body blockquote {
+        color: #5c5c5c
+    }
+    html body pre {
+        page-break-inside: avoid
+    }
+    html body table {
+        display: table
+    }
+    html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+    }
+    html body pre,
+    html body code {
+        word-wrap: break-word;
+        white-space: pre
+    }
+}
+
+.markdown-preview {
+    float: left;
+    margin: 10px auto 10px 10px;
+    color: #2F2F2F;
+    border: 1px dashed #DDDDDD;
+    padding: 10px;
+    width: 80em;
+}
+
+p {
+    margin: 1em 0 1em 0;
+}
+
+
+/* code block theme */.markdown-preview {
+    height: 100%;
+    box-sizing: border-box
+}
+
+.markdown-preview .pagebreak,
+.markdown-preview .newpage {
+    page-break-before: always
+}
+
+.markdown-preview pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber
+}
+
+.markdown-preview pre.line-numbers>code {
+    position: relative
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 1em;
+    font-size: 100%;
+    left: 0;
+    width: 3em;
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: .8em;
+    text-align: right
+}
+
+.markdown-preview .mathjax-exps .MathJax_Display {
+    text-align: center !important
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .status {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .output-div {
+    margin-bottom: 16px
+}
+
+.scrollbar-style::-webkit-scrollbar {
+    width: 8px
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+    position: relative;
+    top: 0
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    font-size: 28px;
+    cursor: pointer;
+    color: inherit;
+    z-index: 99;
+    width: 32px;
+    text-align: center;
+    opacity: .4
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+    opacity: 1
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    padding: 32px 0 48px 0;
+    font-size: 12px;
+    border-left: 1px dashed #DDDDDD;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: inherit
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+    width: 8px
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+    text-decoration: none
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    padding: 0 1.6em;
+    margin-top: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+    margin-bottom: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    list-style-type: none
+}
+
+@media screen and (max-width:1274px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 0em
+    }
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+    display: none
+}
+
+@media screen and (max-width:914px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        width: 100%
+    }
+}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h2><a href="http://DynASM-Tutorial-Translation.md">DynASM-Tutorial-Translation.md</a></h2>
+<ul>
+<li>@name             DynASM &#x6559;&#x7A0B; &#x8BD1;&#x6587;</li>
+<li>@author           karminski &lt;<a href="mailto:code.karminski@outlook.com">code.karminski@outlook.com</a>&gt;</li>
+<li>@version          20200116:1</li>
+<li>@original-link    <a href="http://corsix.github.io/dynasm-doc/tutorial.html">http://corsix.github.io/dynasm-doc/tutorial.html</a></li>
+</ul>
+<p>&#x6700;&#x8FD1;&#x6B63;&#x5728;&#x7528; DynASM, &#x987A;&#x4FBF;&#x7FFB;&#x8BD1;&#x4E86;&#x4E0B; DynASM &#x975E;&#x5B98;&#x65B9;&#x6587;&#x6863;&#x6559;&#x7A0B;. DynASM &#x662F;&#x4E3A; luajit &#x7F16;&#x5199;&#x7684; JIT &#x6C47;&#x7F16;&#x9884;&#x5904;&#x7406;&#x5668;&#x548C;&#x5FAE;&#x578B;&#x8FD0;&#x884C;&#x65F6;&#x5E93; (&#x7B80;&#x5355;&#x6765;&#x8BB2;, DynASM&#x5B8C;&#x6210;&#x4E24;&#x4E2A;&#x5DE5;&#x4F5C;, &#x4E00;&#x4E2A;&#x662F;&#x9884;&#x5904;&#x7406;, &#x628A;&#x4F60;&#x5199;&#x7684;&#x6C47;&#x7F16;&#x6307;&#x4EE4; (&#x5BF9;, &#x6CA1;&#x6709;Elixir, DynASM&#x5E76;&#x4E0D;&#x80FD;&#x76F4;&#x63A5;&#x628A;&#x903B;&#x8F91;&#x53D8;&#x6210;&#x6C47;&#x7F16;, &#x9700;&#x8981;&#x4F60;&#x624B;&#x52A8;&#x628A;&#x4F60;&#x7684;&#x903B;&#x8F91;&#x7528;&#x6C47;&#x7F16;&#x8BED;&#x8A00;&#x91CD;&#x5199;&#x4E00;&#x904D;, &#x56E0;&#x6B64;&#x6027;&#x80FD;&#x4E5F;&#x53D6;&#x51B3;&#x4E8E;&#x4F60;&#x7684;&#x6C47;&#x7F16;&#x4EE3;&#x7801;&#x5199;&#x7684;&#x597D;&#x574F;) &#x53D8;&#x6210;&#x771F;&#x6B63;&#x7684;&#x4E8C;&#x8FDB;&#x5236;&#x673A;&#x5668;&#x7801;, &#x53E6;&#x4E00;&#x4E2A;&#x662F;&#x63D0;&#x4F9B;&#x4E00;&#x4E2A;&#x5FAE;&#x578B;&#x8FD0;&#x884C;&#x65F6;, &#x6765;&#x5904;&#x7406;&#x90A3;&#x4E9B;&#x5FC5;&#x987B;&#x63A8;&#x8FDF;&#x5230;&#x8FD0;&#x884C;&#x65F6;&#x624D;&#x80FD;&#x6267;&#x884C;&#x7684;&#x4EE3;&#x7801;).</p>
+<p>&#x4E00;&#x4E9B;C&#x6216;C++&#x7F16;&#x5199;&#x7684;&#x8BED;&#x8A00;, &#x751A;&#x81F3;&#x534F;&#x8BAE;&#x89E3;&#x91CA;&#x7A0B;&#x5E8F; (&#x6BD4;&#x5982;&#x6B63;&#x5219;&#x89E3;&#x91CA;&#x5668;&#x6216; json &#x89E3;&#x91CA;&#x5668;) &#x5747;&#x53EF;&#x4EE5;&#x7528; DynASM JIT &#x5316;&#x6765;&#x63D0;&#x5347;&#x6027;&#x80FD;. &#x6BD4;&#x5982;&#x8FD9;&#x4E2A;&#x9879;&#x76EE; <a href="https://github.com/openresty/sregex">https://github.com/openresty/sregex</a> &#x5C31;&#x662F; @agentzh &#x5199;&#x7684; JIT &#x5316;&#x7684;&#x6B63;&#x5219;&#x89E3;&#x91CA;&#x5668;, &#x7528;&#x4E8E; nginx &#x7684;&#x914D;&#x7F6E;&#x4E2D;&#x7684;&#x5404;&#x79CD;&#x6B63;&#x5219;&#x5339;&#x914D;.</p>
+<p>&#x672C;&#x6559;&#x7A0B;&#x628A; brainfuck &#x8BED;&#x8A00;&#x7684;&#x89E3;&#x91CA;&#x5668; (C&#x8BED;&#x8A00;&#x5B9E;&#x73B0;) &#x7528; DynASM &#x4FEE;&#x6539;&#x6210;&#x4E86; brainfuck JIT &#x89E3;&#x91CA;&#x5668;, &#x6027;&#x80FD;&#x63D0;&#x5347;&#x4E86;17&#x500D; (&#x8FD0;&#x884C;Mandelbrot set&#x6D4B;&#x8BD5;).</p>
+<p>&#x8BF4;&#x5B9E;&#x8BDD;&#x8FD9;&#x4E2A;&#x6559;&#x7A0B;&#x4E5F;&#x4E0D;&#x80FD;&#x592A;&#x7B97;&#x5F97;&#x4E0A;&quot;&#x6559;&#x7A0B;&quot;, &#x9700;&#x8981;&#x7406;&#x89E3; DynASM &#x7684;&#x4E00;&#x4E9B;&#x57FA;&#x7840;&#x8BBE;&#x8BA1;, &#x9605;&#x8BFB;&#x5E76;&#x7406;&#x89E3; brainfuck &#x89E3;&#x91CA;&#x5668;&#x6E90;&#x7801;, &#x4EE5;&#x53CA;&#x9002;&#x5F53;&#x7684;&#x6C47;&#x7F16;&#x57FA;&#x7840;&#x548C;&#x4E86;&#x89E3;&#x4EC0;&#x4E48;&#x662F;JIT. &#x540E;&#x7EED;&#x6211;&#x8FD8;&#x4F1A;&#x7FFB;&#x8BD1;&#x4E00;&#x4E9B;&#x7B80;&#x5355;&#x7684;&#x6559;&#x7A0B;&#x4F9B;&#x611F;&#x5174;&#x8DA3;&#x7684;&#x540C;&#x5B66;&#x9605;&#x8BFB;.</p>
+<p>repo &#x5730;&#x5740;: <a href="https://github.com/karminski/dynasm-doc">https://github.com/karminski/dynasm-doc</a></p>
+<p>&#x7FFB;&#x8BD1;&#x7248;&#x5728;: <a href="https://karminski.github.io/dynasm-doc/">https://karminski.github.io/dynasm-doc/</a></p>
+<p>&#x539F;&#x7248;&#x6587;&#x6863;&#x5728;: <a href="http://corsix.github.io/dynasm-doc/">http://corsix.github.io/dynasm-doc/</a></p>
+<h1 class="mume-header" id="introduction-%E7%AE%80%E4%BB%8B">Introduction &#x7B80;&#x4ECB;</h1>
+
+<p>&#x6211;&#x4EEC;&#x4ECE; <a href="http://en.wikipedia.org/wiki/Brainfsck">brainfuck</a> &#x89E3;&#x91CA;&#x5668;&#x5F00;&#x59CB;&#x6211;&#x4EEC;&#x7684;&#x6559;&#x7A0B;.</p>
+<pre data-role="codeBlock" data-info="c" class="language-c"><span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+
+<span class="token macro property">#<span class="token directive keyword">define</span> TAPE_SIZE 30000</span>
+<span class="token macro property">#<span class="token directive keyword">define</span> MAX_NESTING 100</span>
+
+<span class="token keyword">typedef</span> <span class="token keyword">struct</span> bf_state
+<span class="token punctuation">{</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token operator">*</span> tape<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span> <span class="token punctuation">(</span><span class="token operator">*</span>get_ch<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token keyword">struct</span> bf_state<span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">void</span> <span class="token punctuation">(</span><span class="token operator">*</span>put_ch<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token keyword">struct</span> bf_state<span class="token operator">*</span><span class="token punctuation">,</span> <span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> bf_state_t<span class="token punctuation">;</span>
+
+<span class="token macro property">#<span class="token directive keyword">define</span> bad_program(s) exit(fprintf(stderr, &quot;bad program near %.16s: %s\n&quot;, program, s))</span>
+
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">bf_interpret</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> program<span class="token punctuation">,</span> bf_state_t<span class="token operator">*</span> state<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> loops<span class="token punctuation">[</span>MAX_NESTING<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> nloops <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> n<span class="token punctuation">;</span>
+  <span class="token keyword">int</span> nskip <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token operator">*</span> tape_begin <span class="token operator">=</span> state<span class="token operator">-&gt;</span>tape <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token operator">*</span> ptr <span class="token operator">=</span> state<span class="token operator">-&gt;</span>tape<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token operator">*</span> tape_end <span class="token operator">=</span> state<span class="token operator">-&gt;</span>tape <span class="token operator">+</span> TAPE_SIZE <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token punctuation">;</span><span class="token punctuation">;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span><span class="token punctuation">(</span><span class="token operator">*</span>program<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;&lt;&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">for</span><span class="token punctuation">(</span>n <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token operator">*</span>program <span class="token operator">==</span> <span class="token string">&apos;&lt;&apos;</span><span class="token punctuation">;</span> <span class="token operator">++</span>n<span class="token punctuation">,</span> <span class="token operator">++</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nskip<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        ptr <span class="token operator">-=</span> n<span class="token punctuation">;</span>
+        <span class="token keyword">while</span><span class="token punctuation">(</span>ptr <span class="token operator">&lt;=</span> tape_begin<span class="token punctuation">)</span>
+          ptr <span class="token operator">+=</span> TAPE_SIZE<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;&gt;&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">for</span><span class="token punctuation">(</span>n <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token operator">*</span>program <span class="token operator">==</span> <span class="token string">&apos;&gt;&apos;</span><span class="token punctuation">;</span> <span class="token operator">++</span>n<span class="token punctuation">,</span> <span class="token operator">++</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nskip<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        ptr <span class="token operator">+=</span> n<span class="token punctuation">;</span>
+        <span class="token keyword">while</span><span class="token punctuation">(</span>ptr <span class="token operator">&gt;</span> tape_end<span class="token punctuation">)</span>
+          ptr <span class="token operator">-=</span> TAPE_SIZE<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;+&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">for</span><span class="token punctuation">(</span>n <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token operator">*</span>program <span class="token operator">==</span> <span class="token string">&apos;+&apos;</span><span class="token punctuation">;</span> <span class="token operator">++</span>n<span class="token punctuation">,</span> <span class="token operator">++</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nskip<span class="token punctuation">)</span>
+        <span class="token operator">*</span>ptr <span class="token operator">+=</span> n<span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;-&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">for</span><span class="token punctuation">(</span>n <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token operator">*</span>program <span class="token operator">==</span> <span class="token string">&apos;-&apos;</span><span class="token punctuation">;</span> <span class="token operator">++</span>n<span class="token punctuation">,</span> <span class="token operator">++</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nskip<span class="token punctuation">)</span>
+        <span class="token operator">*</span>ptr <span class="token operator">-=</span> n<span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;,&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nskip<span class="token punctuation">)</span>
+        <span class="token operator">*</span>ptr <span class="token operator">=</span> state<span class="token operator">-&gt;</span><span class="token function">get_ch</span><span class="token punctuation">(</span>state<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;.&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nskip<span class="token punctuation">)</span>
+        state<span class="token operator">-&gt;</span><span class="token function">put_ch</span><span class="token punctuation">(</span>state<span class="token punctuation">,</span> <span class="token operator">*</span>ptr<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;[&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>nloops <span class="token operator">==</span> MAX_NESTING<span class="token punctuation">)</span>
+        <span class="token function">bad_program</span><span class="token punctuation">(</span><span class="token string">&quot;Nesting too deep&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      loops<span class="token punctuation">[</span>nloops<span class="token operator">++</span><span class="token punctuation">]</span> <span class="token operator">=</span> program<span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token operator">*</span>ptr<span class="token punctuation">)</span>
+        <span class="token operator">++</span>nskip<span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;]&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>nloops <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span>
+        <span class="token function">bad_program</span><span class="token punctuation">(</span><span class="token string">&quot;] without matching [&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">*</span>ptr<span class="token punctuation">)</span>
+        program <span class="token operator">=</span> loops<span class="token punctuation">[</span>nloops<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">else</span>
+        <span class="token operator">--</span>nloops<span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>nskip<span class="token punctuation">)</span>
+        <span class="token operator">--</span>nskip<span class="token punctuation">;</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token number">0</span><span class="token operator">:</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>nloops <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+        program <span class="token operator">=</span> <span class="token string">&quot;&lt;EOF&gt;&quot;</span><span class="token punctuation">,</span> <span class="token function">bad_program</span><span class="token punctuation">(</span><span class="token string">&quot;[ without matching ]&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">bf_putchar</span><span class="token punctuation">(</span>bf_state_t<span class="token operator">*</span> s<span class="token punctuation">,</span> <span class="token keyword">unsigned</span> <span class="token keyword">char</span> c<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token function">putchar</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">static</span> <span class="token keyword">unsigned</span> <span class="token keyword">char</span> <span class="token function">bf_getchar</span><span class="token punctuation">(</span>bf_state_t<span class="token operator">*</span> s<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token punctuation">)</span><span class="token function">getchar</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">bf_run</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> program<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  bf_state_t state<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span> tape<span class="token punctuation">[</span>TAPE_SIZE<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token number">0</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+  state<span class="token punctuation">.</span>tape <span class="token operator">=</span> tape<span class="token punctuation">;</span>
+  state<span class="token punctuation">.</span>get_ch <span class="token operator">=</span> bf_getchar<span class="token punctuation">;</span>
+  state<span class="token punctuation">.</span>put_ch <span class="token operator">=</span> bf_putchar<span class="token punctuation">;</span>
+  <span class="token function">bf_interpret</span><span class="token punctuation">(</span>program<span class="token punctuation">,</span> <span class="token operator">&amp;</span>state<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span><span class="token operator">*</span><span class="token operator">*</span> argv<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>argc <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">long</span> sz<span class="token punctuation">;</span>
+    <span class="token keyword">char</span><span class="token operator">*</span> program<span class="token punctuation">;</span>
+    FILE<span class="token operator">*</span> f <span class="token operator">=</span> <span class="token function">fopen</span><span class="token punctuation">(</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token string">&quot;r&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>f<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">&quot;Cannot open %s\n&quot;</span><span class="token punctuation">,</span> argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">fseek</span><span class="token punctuation">(</span>f<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token constant">SEEK_END</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    sz <span class="token operator">=</span> <span class="token function">ftell</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    program <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">char</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span>sz <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">fseek</span><span class="token punctuation">(</span>f<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token constant">SEEK_SET</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    program<span class="token punctuation">[</span><span class="token function">fread</span><span class="token punctuation">(</span>program<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> sz<span class="token punctuation">,</span> f<span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token function">fclose</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">bf_run</span><span class="token punctuation">(</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">&quot;Usage: %s INFILE.bf\n&quot;</span><span class="token punctuation">,</span> argv<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</pre><p>&#x6211;&#x4EEC;&#x5728;&#x8FD9;&#x4E2A;&#x6559;&#x7A0B;&#x91CC;, &#x7528; DynASM &#x5C06;&#x8FD9;&#x4E2A; brainfuck &#x89E3;&#x91CA;&#x5668;&#x7F16;&#x5199;&#x6210; brainfuck JIT &#x7F16;&#x8BD1;&#x5668;. &#x6765;&#x770B;&#x770B;&#x662F;&#x5426;&#x4F1A;&#x63D0;&#x5347;&#x8FD0;&#x884C;&#x901F;&#x5EA6;.</p>
+<p>&#x9996;&#x5148;, clone &#x8FD9;&#x4E2A; repo, &#x7136;&#x540E;&#x4ECE; <code>bf_c.c</code> (&#x5C31;&#x662F;&#x4E0A;&#x9762;&#x8FD9;&#x4E00;&#x5927;&#x6BB5;&#x4EE3;&#x7801;) &#x5F00;&#x59CB;:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">$ <span class="token function">git</span> clone https://github.com/corsix/dynasm-doc.git
+$ <span class="token function">cd</span> dynasm-doc
+$ <span class="token function">git</span> submodule update --init
+$ <span class="token function">cp</span> bf_c.c tutorial.c
+</pre><p>&#x6211;&#x4EEC;&#x901A;&#x8FC7;&#x8FD0;&#x884C;&#x8FD9;&#x4E2A;&#x7A0B;&#x5E8F;&#x6765;&#x6F14;&#x793A;&#x529F;&#x80FD;, &#x8FD9;&#x4E2A;&#x7A0B;&#x5E8F;&#x4F1A;&#x7F13;&#x6162;&#x7684;&#x6E32;&#x67D3;&#x66FC;&#x5FB7;&#x535A;&#x96C6;&#x5408;(Mandelbrot set):</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">$ gcc -o tutorial tutorial.c
+$ ./tutorial mandelbrot.bf
+</pre><p>(P.S. &#x6211;&#x7684;CPU&#x662F; Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz, &#x6700;&#x9AD8; 3.5GHz, &#x4E0B;&#x9762;&#x662F;&#x8F93;&#x51FA;&#x7ED3;&#x679C;, &#x6E32;&#x67D3;&#x9700;&#x8981;35.4s)</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@m01 dynasm-doc]# time ./tutorial mandelbrot.bf
+AAAAAAAAAAAAAAAABBBBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDEGFFEEEEDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAAAAABBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDEEEFGIIGFFEEEDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEFFFI KHGGGHGEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAABBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEFFGHIMTKLZOGFEEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAABBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEEFGGHHIKPPKIHGFFEEEDDDDDDDDDCCCCCCCCCCBBBBBBBBBBBBBBBBBB
+AAAAAAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEEFFGHIJKS  X KHHGFEEEEEDDDDDDDDDCCCCCCCCCCBBBBBBBBBBBBBBBB
+AAAAAAAAABBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEEFFGQPUVOTY   ZQL[MHFEEEEEEEDDDDDDDCCCCCCCCCCCBBBBBBBBBBBBBB
+AAAAAAAABBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEFFFFFGGHJLZ         UKHGFFEEEEEEEEDDDDDCCCCCCCCCCCCBBBBBBBBBBBB
+AAAAAAABBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEFFFFFFGGGGHIKP           KHHGGFFFFEEEEEEDDDDDCCCCCCCCCCCBBBBBBBBBBB
+AAAAAAABBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEEFGGHIIHHHHHIIIJKMR        VMKJIHHHGFFFFFFGSGEDDDDCCCCCCCCCCCCBBBBBBBBB
+AAAAAABBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDEEEEEEFFGHK   MKJIJO  N R  X      YUSR PLV LHHHGGHIOJGFEDDDCCCCCCCCCCCCBBBBBBBB
+AAAAABBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDEEEEEEEEEFFFFGH O    TN S                       NKJKR LLQMNHEEDDDCCCCCCCCCCCCBBBBBBB
+AAAAABBCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDEEEEEEEEEEEEFFFFFGHHIN                                 Q     UMWGEEEDDDCCCCCCCCCCCCBBBBBB
+AAAABBCCCCCCCCCCCCCCCCCCCCCCCCCDDDDEEEEEEEEEEEEEEEFFFFFFGHIJKLOT                                     [JGFFEEEDDCCCCCCCCCCCCCBBBBB
+AAAABCCCCCCCCCCCCCCCCCCCCCCDDDDEEEEEEEEEEEEEEEEFFFFFFGGHYV RQU                                     QMJHGGFEEEDDDCCCCCCCCCCCCCBBBB
+AAABCCCCCCCCCCCCCCCCCDDDDDDDEEFJIHFFFFFFFFFFFFFFGGGGGGHIJN                                            JHHGFEEDDDDCCCCCCCCCCCCCBBB
+AAABCCCCCCCCCCCDDDDDDDDDDEEEEFFHLKHHGGGGHHMJHGGGGGGHHHIKRR                                           UQ L HFEDDDDCCCCCCCCCCCCCCBB
+AABCCCCCCCCDDDDDDDDDDDEEEEEEFFFHKQMRKNJIJLVS JJKIIIIIIJLR                                               YNHFEDDDDDCCCCCCCCCCCCCBB
+AABCCCCCDDDDDDDDDDDDEEEEEEEFFGGHIJKOU  O O   PR LLJJJKL                                                OIHFFEDDDDDCCCCCCCCCCCCCCB
+AACCCDDDDDDDDDDDDDEEEEEEEEEFGGGHIJMR              RMLMN                                                 NTFEEDDDDDDCCCCCCCCCCCCCB
+AACCDDDDDDDDDDDDEEEEEEEEEFGGGHHKONSZ                QPR                                                NJGFEEDDDDDDCCCCCCCCCCCCCC
+ABCDDDDDDDDDDDEEEEEFFFFFGIPJIIJKMQ                   VX                                                 HFFEEDDDDDDCCCCCCCCCCCCCC
+ACDDDDDDDDDDEFFFFFFFGGGGHIKZOOPPS                                                                      HGFEEEDDDDDDCCCCCCCCCCCCCC
+ADEEEEFFFGHIGGGGGGHHHHIJJLNY                                                                        TJHGFFEEEDDDDDDDCCCCCCCCCCCCC
+A                                                                                                 PLJHGGFFEEEDDDDDDDCCCCCCCCCCCCC
+ADEEEEFFFGHIGGGGGGHHHHIJJLNY                                                                        TJHGFFEEEDDDDDDDCCCCCCCCCCCCC
+ACDDDDDDDDDDEFFFFFFFGGGGHIKZOOPPS                                                                      HGFEEEDDDDDDCCCCCCCCCCCCCC
+ABCDDDDDDDDDDDEEEEEFFFFFGIPJIIJKMQ                   VX                                                 HFFEEDDDDDDCCCCCCCCCCCCCC
+AACCDDDDDDDDDDDDEEEEEEEEEFGGGHHKONSZ                QPR                                                NJGFEEDDDDDDCCCCCCCCCCCCCC
+AACCCDDDDDDDDDDDDDEEEEEEEEEFGGGHIJMR              RMLMN                                                 NTFEEDDDDDDCCCCCCCCCCCCCB
+AABCCCCCDDDDDDDDDDDDEEEEEEEFFGGHIJKOU  O O   PR LLJJJKL                                                OIHFFEDDDDDCCCCCCCCCCCCCCB
+AABCCCCCCCCDDDDDDDDDDDEEEEEEFFFHKQMRKNJIJLVS JJKIIIIIIJLR                                               YNHFEDDDDDCCCCCCCCCCCCCBB
+AAABCCCCCCCCCCCDDDDDDDDDDEEEEFFHLKHHGGGGHHMJHGGGGGGHHHIKRR                                           UQ L HFEDDDDCCCCCCCCCCCCCCBB
+AAABCCCCCCCCCCCCCCCCCDDDDDDDEEFJIHFFFFFFFFFFFFFFGGGGGGHIJN                                            JHHGFEEDDDDCCCCCCCCCCCCCBBB
+AAAABCCCCCCCCCCCCCCCCCCCCCCDDDDEEEEEEEEEEEEEEEEFFFFFFGGHYV RQU                                     QMJHGGFEEEDDDCCCCCCCCCCCCCBBBB
+AAAABBCCCCCCCCCCCCCCCCCCCCCCCCCDDDDEEEEEEEEEEEEEEEFFFFFFGHIJKLOT                                     [JGFFEEEDDCCCCCCCCCCCCCBBBBB
+AAAAABBCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDEEEEEEEEEEEEFFFFFGHHIN                                 Q     UMWGEEEDDDCCCCCCCCCCCCBBBBBB
+AAAAABBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDEEEEEEEEEFFFFGH O    TN S                       NKJKR LLQMNHEEDDDCCCCCCCCCCCCBBBBBBB
+AAAAAABBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDEEEEEEFFGHK   MKJIJO  N R  X      YUSR PLV LHHHGGHIOJGFEDDDCCCCCCCCCCCCBBBBBBBB
+AAAAAAABBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEEFGGHIIHHHHHIIIJKMR        VMKJIHHHGFFFFFFGSGEDDDDCCCCCCCCCCCCBBBBBBBBB
+AAAAAAABBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEFFFFFFGGGGHIKP           KHHGGFFFFEEEEEEDDDDDCCCCCCCCCCCBBBBBBBBBBB
+AAAAAAAABBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEFFFFFGGHJLZ         UKHGFFEEEEEEEEDDDDDCCCCCCCCCCCCBBBBBBBBBBBB
+AAAAAAAAABBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEEFFGQPUVOTY   ZQL[MHFEEEEEEEDDDDDDDCCCCCCCCCCCBBBBBBBBBBBBBB
+AAAAAAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEEFFGHIJKS  X KHHGFEEEEEDDDDDDDDDCCCCCCCCCCBBBBBBBBBBBBBBBB
+AAAAAAAAAAABBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEEFGGHHIKPPKIHGFFEEEDDDDDDDDDCCCCCCCCCCBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAABBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEFFGHIMTKLZOGFEEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEFFFI KHGGGHGEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAAAAABBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDEEEFGIIGFFEEEDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+
+real	0m35.466s
+user	0m35.462s
+sys	0m0.002s
+
+</code></pre><h1 class="mume-header" id="groundwork-%E5%9F%BA%E7%A1%80%E5%B7%A5%E4%BD%9C">Groundwork &#x57FA;&#x7840;&#x5DE5;&#x4F5C;</h1>
+
+<p>&#x597D;&#x620F;&#x4E0A;&#x6F14;&#x4E4B;&#x524D;, &#x6211;&#x4EEC;&#x5148;&#x8981;&#x505A;&#x4E00;&#x4E9B;&#x57FA;&#x7840;&#x5DE5;&#x4F5C;.</p>
+<h2 class="mume-header" id="includes">Includes</h2>
+
+<p>&#x9996;&#x5148;, &#x6211;&#x4EEC;&#x9700;&#x8981; <code>#include</code> DynASM &#x7684;&#x5934;&#x6587;&#x4EF6;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ #include &quot;luajit-2.0/dynasm/dasm_proto.h&quot;</span>
+<span class="token inserted">+ #include &quot;luajit-2.0/dynasm/dasm_x86.h&quot;</span>
+</pre><p>&#x6B63;&#x5982;&#x53C2;&#x8003;&#x6587;&#x6863;&#x4E2D;&#x5199;&#x7684;, <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_proto_h">dasm_proto.h</a> &#x5B9A;&#x4E49; DynASM API, <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_x86_h">dasm_x86.h</a> &#x5219;&#x5305;&#x542B;&#x4E86;&#x4E0A;&#x8FF0; API &#x7684;&#x5B9E;&#x73B0; (x86/ x64).</p>
+<h2 class="mume-header" id="types">Types</h2>
+
+<p>&#x63A5;&#x4E0B;&#x6765;, &#x6211;&#x4EEC;&#x5C06; <code>bf_interpret</code> &#x91CD;&#x547D;&#x540D;&#x4E3A; <code>bf_compile</code>, &#x5E76;&#x66F4;&#x6539;&#x5B83;&#x7684;&#x7C7B;&#x578B;&#x5B9A;&#x4E49;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- static void bf_interpret(const char* program, bf_state_t* state)</span>
+<span class="token inserted">+ static void(* bf_compile(const char* program) )(bf_state_t*)</span>
+</pre><p>&#x4FEE;&#x6539;&#x524D; <code>bf_interpret</code> &#x53EF;&#x4EE5;&#x63A5;&#x53D7;&#x53C2;&#x6570; <code>const char*</code> &#x548C; <code>bf_state_t*</code>, &#x4FEE;&#x6539;&#x540E;&#x7684; <code>bf_compile</code> &#x53EA;&#x63A5;&#x53D7;&#x53C2;&#x6570; <code>const char*</code> &#x90E8;&#x5206;, &#x5E76;&#x4E14;&#x8FD4;&#x56DE; JIT &#x7F16;&#x8BD1;&#x540E;&#x7684;&#x4EE3;&#x7801;&#x7684;&#x51FD;&#x6570;&#x6307;&#x9488;.<br>
+<code>bf_interpret</code> &#x51FD;&#x6570;&#x4E5F;&#x9700;&#x8981;&#x4FEE;&#x6539;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- bf_interpret(program, &amp;state);</span>
+<span class="token inserted">+ bf_compile(program)(&amp;state);</span>
+</pre><h1 class="mume-header" id="initialisation">Initialisation</h1>
+
+<p>&#x641E;&#x5B9A;&#x57FA;&#x7840;&#x5DE5;&#x4F5C;&#x540E;, &#x4E0B;&#x4E00;&#x6B65;&#x5C31;&#x662F;&#x521B;&#x5EFA;&#x548C;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E2A; DynASM state.</p>
+<h2 class="mume-header" id="variables">Variables</h2>
+
+<p>&#x6211;&#x4EEC;&#x9700;&#x8981;&#x4E00;&#x4E2A;&#x7C7B;&#x578B;&#x4E3A; <code>dasm_State*</code> &#x7684;&#x53D8;&#x91CF;&#x5305;&#x542B; DynASM state, &#x8FD8;&#x9700;&#x8981;&#x4E24;&#x4E2A;&#x5176;&#x4ED6;&#x7684;, &#x6211;&#x4EEC;&#x4E00;&#x4F1A;&#x518D;&#x89E3;&#x91CA;.<br>
+&#x5E76;&#x4E14;&#x8FD8;&#x9700;&#x8981;&#x79FB;&#x9664;&#x4E00;&#x4E2A;&#x89E3;&#x91CA;&#x5668;&#x53D8;&#x91CF;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- int nskip = 0;</span>
+<span class="token inserted">+ dasm_State* d;</span>
+<span class="token inserted">+ unsigned npc = 8;</span>
+<span class="token inserted">+ unsigned nextpc = 0;</span>
+</pre><h2 class="mume-header" id="arch">.arch</h2>
+
+<p>&#x73B0;&#x5728;&#x6211;&#x4EEC;&#x5C06;&#x7B2C;&#x4E00;&#x6B21;&#x63A5;&#x89E6; DynASM &#x6307;&#x4EE4;, &#x8FD9;&#x4E2A;&#x662F; DynASM &#x9884;&#x5904;&#x7406;&#x5668;&#x6307;&#x4EE4;. &#x5728;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x5B9A;&#x4E49;&#x751F;&#x6210;&#x76EE;&#x6807;&#x673A;&#x5668;&#x7801;&#x7684;&#x5E73;&#x53F0;&#x67B6;&#x6784;, x86 &#x6216; x64:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ |.if X64</span>
+<span class="token inserted">+ |.arch x64</span>
+<span class="token inserted">+ |.else</span>
+<span class="token inserted">+ |.arch x86</span>
+<span class="token inserted">+ |.endif</span>
+</pre><p>&#x5F00;&#x5934;&#x7684;&#x7AD6;&#x7EBF;&#x4F1A;&#x88AB; DynASM &#x9884;&#x5904;&#x7406;&#x5668;&#x8BC6;&#x522B;. <code>.if, .else, .endif</code> &#x6307;&#x4EE4;&#x4F1A;&#x88AB; DynASM &#x7684;&#x9884;&#x5904;&#x7406;&#x5668;&#x5904;&#x7406;, &#x5904;&#x7406;&#x65B9;&#x5F0F;&#x4E0E; C &#x8BED;&#x8A00;&#x9884;&#x5904;&#x7406;&#x4E2D;&#x7684; <code>#if, #else, #endif</code> &#x76F8;&#x4F3C;. &#x6267;&#x884C;&#x7ED3;&#x679C;&#x5C31;&#x662F;&#x53EA;&#x6709;&#x4E00;&#x4E2A; <code>.arch</code> &#x6307;&#x4EE4;&#x4F1A;&#x751F;&#x6548;.</p>
+<h2 class="mume-header" id="dasm_init">dasm_init</h2>
+
+<p>&#x6211;&#x4EEC;&#x5B9A;&#x4E49;&#x4E86; <code>dasm_State*</code>, &#x73B0;&#x5728;&#x6211;&#x4EEC;&#x8981;&#x5206;&#x914D;&#x5185;&#x5B58;&#x7A7A;&#x95F4;&#x628A;&#x5B83;&#x88C5;&#x8FDB;&#x53BB;. &#x8C03;&#x7528; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_init">dasm_init</a> &#x5373;&#x53EF;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ |.section code</span>
+<span class="token inserted">+ dasm_init(&amp;d, DASM_MAXSECTION);</span>
+</pre><p>&#x6CE8;&#x610F;&#x8DDF; <code>dasm_State**</code> &#x4E00;&#x6837;, <code>dasm_init</code> &#x9700;&#x8981;&#x4E00;&#x4E2A; <code>integer</code> &#x53C2;&#x6570;, &#x5B9A;&#x4E49;&#x751F;&#x6210;&#x7684;&#x673A;&#x5668;&#x7801;&#x7684; section.<br>
+&#x6211;&#x4EEC;&#x53EA;&#x9700;&#x8981;&#x4E00;&#x4E2A; code section. &#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x4F20;&#x5165;&#x4E00;&#x4E2A;&#x53C2;&#x6570;&#x7ED9; <a href="http://corsix.github.io/dynasm-doc/reference.html#_section">.section</a>, &#x8FD9;&#x6837; DynASM &#x9884;&#x5904;&#x7406;&#x5668;&#x5C31;&#x4F1A;&#x5904;&#x7406;&#x6210; <code>#define DASM_MAXSECTION 1</code> (amongst other things), &#x4E5F;&#x8BB8;&#x7ED9; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_init">dasm_init</a> &#x4F20; <code>DASM_MAXSECTION</code> &#x6CA1;&#x6709;&#x76F4;&#x63A5;&#x4F20; <code>1</code> &#x90A3;&#x4E48;&#x76F4;&#x89C2;, &#x4F46;&#x662F;&#x8FD9;&#x662F;&#x4E2A;&#x597D;&#x7684;&#x5B9E;&#x8DF5;, &#x56E0;&#x4E3A;&#x8BF4;&#x4E0D;&#x5B9A;&#x5C06;&#x6765;&#x6211;&#x4EEC;&#x5C31;&#x4F1A;&#x9700;&#x8981;&#x66F4;&#x591A;&#x7684; section.</p>
+<h2 class="mume-header" id="dasm_setupglobal">dasm_setupglobal</h2>
+
+<p><a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_init">dasm_init</a> &#x5C06;&#x4F1A;&#x5206;&#x914D; <code>dasm_State</code>, &#x4F46;&#x8FD9;&#x5E76;&#x4E0D;&#x662F;&#x5B8C;&#x5168;&#x7684;&#x521D;&#x59CB;&#x5316;. &#x60F3;&#x8981;&#x521D;&#x59CB;&#x5316; state &#x6211;&#x4EEC;&#x8FD8;&#x9700;&#x8981;&#x8C03;&#x7528;&#x51E0;&#x4E2A;&#x51FD;&#x6570;. &#x7B2C;&#x4E00;&#x4E2A;&#x5C31;&#x662F; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_setupglobal">dasm_setupglobal</a>:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ |.globals lbl_</span>
+<span class="token inserted">+ void* labels[lbl__MAX];</span>
+<span class="token inserted">+ dasm_setupglobal(&amp;d, labels, lbl__MAX);</span>
+</pre><p>&#x5E26;&#x7740;&#x53C2;&#x6570; <code>lbl_</code> &#x7684; <a href="http://corsix.github.io/dynasm-doc/reference.html#_globals">.globals</a> &#x6307;&#x4EE4;&#x4F1A;&#x88AB; DynASM &#x9884;&#x5904;&#x7406;&#x4E3A;&#x4E00;&#x4E2A;&#x5305;&#x542B;&#x4E00;&#x4E9B;&#x7ED3;&#x6784;&#x7684; <code>enum</code> &#x7C7B;&#x578B;, &#x5176;&#x4E2D;&#x4E00;&#x4E2A;&#x662F; <code>lbl__MAX</code>. &#x8FD9;&#x4E2A;&#x503C;&#x5FC5;&#x987B;&#x4E0E;&#x76F8;&#x540C;&#x957F;&#x5EA6;&#x7684; <code>void*</code> &#x6570;&#x7EC4;&#x4F20;&#x5165;&#x5230; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_setupglobal">dasm_setupglobal</a>.<br>
+&#x540E;&#x7EED;&#x6211;&#x4EEC;&#x5C06;&#x4F7F;&#x7528; <code>lables</code> &#x6570;&#x7EC4;.</p>
+<h2 class="mume-header" id="dasm_setup">dasm_setup</h2>
+
+<p>&#x63A5;&#x4E0B;&#x6765;&#x5728;&#x521D;&#x59CB;&#x5316;&#x8FC7;&#x7A0B;&#x8C03;&#x7528;&#x7684;&#x662F; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_setup">dasm_setup</a>.</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ |.actionlist bf_actions</span>
+<span class="token inserted">+ dasm_setup(&amp;d, bf_actions);</span>
+</pre><p>&#x5E26; <code>bf_actions</code> &#x53C2;&#x6570;&#x7684; <code>.actionlist</code> &#x6307;&#x4EE4;&#x4F1A;&#x88AB; DynASM &#x9884;&#x5904;&#x7406;&#x5668;&#x91CD;&#x5199;&#x4E3A; <code>bf_actions</code> &#x53D8;&#x91CF;. &#x5E76;&#x4E14;&#x9700;&#x8981;&#x4F20;&#x5165;&#x5230; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_setup">dasm_setup</a>.</p>
+<h2 class="mume-header" id="dasm_growpc">dasm_growpc</h2>
+
+<p>&#x6B63;&#x5E38;&#x60C5;&#x51B5;&#x4E0B;, <code>dasm_State</code> &#x5728;&#x8FD9;&#x4E2A;&#x8282;&#x70B9;&#x5DF2;&#x7ECF;&#x5B8C;&#x5168;&#x521D;&#x59CB;&#x5316;. &#x4E0D;&#x8FC7;&#x7531;&#x4E8E;&#x6211;&#x4EEC;&#x8FD8;&#x8981;&#x7528;&#x52A8;&#x6001; lables, &#x6240;&#x4EE5;&#x8FD8;&#x8981;&#x8C03;&#x7528; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_growpc">dasm_growpc</a> &#x518D;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E0B;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ dasm_growpc(&amp;d, npc);</span>
+</pre><p>&#x6211;&#x4EEC;&#x4F20;&#x5165;&#x4E86;&#x4E4B;&#x524D;&#x5B9A;&#x4E49;&#x7684; <code>npc</code> &#x53C2;&#x6570;, &#x8FD9;&#x4E2A;&#x53C2;&#x6570;&#x4EE3;&#x8868;&#x52A8;&#x6001; lable &#x7684;&#x6570;&#x91CF;. &#x8FD8;&#x6709;&#x4E2A;&#x4F9D;&#x8D56;&#x7684;&#x53D8;&#x91CF;&#x53EB; <code>nextpc</code> &#x662F;&#x7528;&#x6765;&#x8BB0;&#x5F55;&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x7684; lable &#x7684;&#x6570;&#x91CF;&#x7684;. &#x8FD9;&#x4E9B;&#x52A8;&#x6001; lable &#x5C06;&#x5728;&#x6211;&#x4EEC;&#x7F16;&#x8BD1; <code>[, ]</code> &#x65F6;&#x8D77;&#x4F5C;&#x7528;.</p>
+<h2 class="mume-header" id="%E5%B0%8F%E7%BB%93">&#x5C0F;&#x7ED3;</h2>
+
+<p>&#x5230;&#x76EE;&#x524D;&#x4E3A;&#x6B62;&#x5BF9;&#x5E94;&#x7684;&#x4EE3;&#x7801;&#x4E3A;:</p>
+<pre data-role="codeBlock" data-info="c" class="language-c"><span class="token keyword">static</span> <span class="token keyword">void</span><span class="token punctuation">(</span><span class="token operator">*</span> <span class="token function">bf_compile</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> program<span class="token punctuation">)</span> <span class="token punctuation">)</span><span class="token punctuation">(</span>bf_state_t<span class="token operator">*</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">unsigned</span> loops<span class="token punctuation">[</span>MAX_NESTING<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> nloops <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> n<span class="token punctuation">;</span>
+  dasm_State<span class="token operator">*</span> d<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> npc <span class="token operator">=</span> <span class="token number">8</span><span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> nextpc <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span><span class="token keyword">if</span> X64
+  <span class="token operator">|</span><span class="token punctuation">.</span>arch x64
+  <span class="token operator">|</span><span class="token punctuation">.</span><span class="token keyword">else</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span>arch x86
+  <span class="token operator">|</span><span class="token punctuation">.</span>endif
+  <span class="token operator">|</span><span class="token punctuation">.</span>section code
+  <span class="token function">dasm_init</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> DASM_MAXSECTION<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span>globals lbl_
+  <span class="token keyword">void</span><span class="token operator">*</span> labels<span class="token punctuation">[</span>lbl__MAX<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token function">dasm_setupglobal</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> labels<span class="token punctuation">,</span> lbl__MAX<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span>actionlist bf_actions
+  <span class="token function">dasm_setup</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> bf_actions<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">dasm_growpc</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> npc<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</pre><h1 class="mume-header" id="abstractions">Abstractions</h1>
+
+<p>&#x5728;&#x6211;&#x4EEC;&#x6267;&#x884C;&#x673A;&#x5668;&#x7801;&#x4E4B;&#x524D;, &#x5148;&#x5B9A;&#x4E49;&#x4E00;&#x4E9B;&#x62BD;&#x8C61;(abstraction), &#x5148;&#x5B9A;&#x4E49;&#x4E00;&#x4E9B;&#x8BA9;&#x5BC4;&#x5B58;&#x5668;&#x66F4;&#x5177;&#x6709;&#x610F;&#x4E49;&#x7684;&#x62BD;&#x8C61;&#x6982;&#x5FF5;:</p>
+<table>
+<thead>
+<tr>
+<th>Abstraction</th>
+<th>Corresponding Interpreter Variable</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>aState</td>
+<td>state</td>
+<td>ebx or rbx</td>
+</tr>
+<tr>
+<td>aPtr</td>
+<td>ptr</td>
+<td>ebp or r12</td>
+</tr>
+<tr>
+<td>aTapeBegin</td>
+<td>tape_begin</td>
+<td>esi or rsi or r13</td>
+</tr>
+<tr>
+<td>aTapeEnd</td>
+<td>tape_end</td>
+<td>edi or rdi or r14</td>
+</tr>
+</tbody>
+</table>
+<p>&#x63A5;&#x4E0B;&#x6765;&#x518D;&#x5B9A;&#x4E49;&#x4E00;&#x4E9B;&#x51FD;&#x6570;&#x8C03;&#x7528;:</p>
+<table>
+<thead>
+<tr>
+<th>Abstraction</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prologue</td>
+<td>Set up the stack frame, and set aState from the passed parameter.</td>
+</tr>
+<tr>
+<td>prepcall1 arg1</td>
+<td>Prepare to call a function with one argument, arg1.</td>
+</tr>
+<tr>
+<td>prepcall2 arg1, arg2</td>
+<td>Prepare to call a function with two arguments, arg1 and arg2.</td>
+</tr>
+<tr>
+<td>postcall n</td>
+<td>Do cleanup after a call to a function with n arguments.</td>
+</tr>
+<tr>
+<td>epilogue</td>
+<td>Tear down the stack frame.</td>
+</tr>
+</tbody>
+</table>
+<p>&#x8FD9;&#x4E9B;&#x5B9A;&#x4E49;&#x90FD;&#x662F;&#x901A;&#x8FC7; <a href="http://corsix.github.io/dynasm-doc/reference.html#_define">.define</a> (&#x901A;&#x5E38;&#x60C5;&#x51B5;&#x4E0B;) &#x6216; <a href="http://corsix.github.io/dynasm-doc/reference.html#_macro">.macro</a> (&#x66F4;&#x590D;&#x6742;&#x60C5;&#x51B5;&#x4E0B;) &#x5E76;&#x4E14; x86, x64 POSIX, x64 Windows &#x4E0B;&#x7684;&#x5B9A;&#x4E49;&#x4E5F;&#x6709;&#x6240;&#x4E0D;&#x540C;.</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ |.if X64</span>
+<span class="token inserted">+   |.define aPtr, rbx</span>
+<span class="token inserted">+   |.define aState, r12</span>
+<span class="token inserted">+   |.if WIN</span>
+<span class="token inserted">+     |.define aTapeBegin, rsi</span>
+<span class="token inserted">+     |.define aTapeEnd, rdi</span>
+<span class="token inserted">+     |.define rArg1, rcx</span>
+<span class="token inserted">+     |.define rArg2, rdx</span>
+<span class="token inserted">+   |.else</span>
+<span class="token inserted">+     |.define aTapeBegin, r13</span>
+<span class="token inserted">+     |.define aTapeEnd, r14</span>
+<span class="token inserted">+     |.define rArg1, rdi</span>
+<span class="token inserted">+     |.define rArg2, rsi</span>
+<span class="token inserted">+   |.endif</span>
+<span class="token inserted">+   |.macro prepcall1, arg1</span>
+<span class="token inserted">+     | mov rArg1, arg1</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+   |.macro prepcall2, arg1, arg2</span>
+<span class="token inserted">+     | mov rArg1, arg1</span>
+<span class="token inserted">+     | mov rArg2, arg2</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+   |.define postcall, .nop</span>
+<span class="token inserted">+   |.macro prologue</span>
+<span class="token inserted">+     | push aPtr</span>
+<span class="token inserted">+     | push aState</span>
+<span class="token inserted">+     | push aTapeBegin</span>
+<span class="token inserted">+     | push aTapeEnd</span>
+<span class="token inserted">+     | push rax</span>
+<span class="token inserted">+     | mov aState, rArg1</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+   |.macro epilogue</span>
+<span class="token inserted">+     | pop rax</span>
+<span class="token inserted">+     | pop aTapeEnd</span>
+<span class="token inserted">+     | pop aTapeBegin</span>
+<span class="token inserted">+     | pop aState</span>
+<span class="token inserted">+     | pop aPtr</span>
+<span class="token inserted">+     | ret</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+ |.else</span>
+<span class="token inserted">+   |.define aPtr, ebx</span>
+<span class="token inserted">+   |.define aState, ebp</span>
+<span class="token inserted">+   |.define aTapeBegin, esi</span>
+<span class="token inserted">+   |.define aTapeEnd, edi</span>
+<span class="token inserted">+   |.macro prepcall1, arg1</span>
+<span class="token inserted">+     | push arg1</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+   |.macro prepcall2, arg1, arg2</span>
+<span class="token inserted">+     | push arg2</span>
+<span class="token inserted">+     | push arg1</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+   |.macro postcall, n</span>
+<span class="token inserted">+     | add esp, 4*n</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+   |.macro prologue</span>
+<span class="token inserted">+     | push aPtr</span>
+<span class="token inserted">+     | push aState</span>
+<span class="token inserted">+     | push aTapeBegin</span>
+<span class="token inserted">+     | push aTapeEnd</span>
+<span class="token inserted">+     | mov aState, [esp+20]</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+   |.macro epilogue</span>
+<span class="token inserted">+     | pop aTapeEnd</span>
+<span class="token inserted">+     | pop aTapeBegin</span>
+<span class="token inserted">+     | pop aState</span>
+<span class="token inserted">+     | pop aPtr</span>
+<span class="token inserted">+     | ret 4</span>
+<span class="token inserted">+   |.endmacro</span>
+<span class="token inserted">+ |.endif</span>
+</pre><p>&#x4E3A; DynASM &#x5B9A;&#x4E49;&#x4E86;&#x6240;&#x6709;&#x8FD9;&#x4E9B;&#x4F53;&#x7CFB;&#x7ED3;&#x6784;&#x548C;&#x7CFB;&#x7EDF;&#x6709;&#x5173;&#x7684;&#x5B9A;&#x4E49;&#x4E4B;&#x540E;, &#x8FD8;&#x9700;&#x8981;&#x68C0;&#x67E5;&#x8FD9;&#x4E9B;&#x4E3A; DynASM &#x6307;&#x5B9A;&#x7684;&#x4F53;&#x7CFB;&#x7ED3;&#x6784;&#x548C;&#x7CFB;&#x7EDF;&#x662F;&#x5426;&#x4E0E; C &#x9884;&#x5904;&#x7406;&#x5668;&#x5DF2;&#x77E5;&#x7684;&#x8FD9;&#x4E9B;&#x662F;&#x5426;&#x76F8;&#x5339;&#x914D;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ ||#if ((defined(_M_X64) || defined(__amd64__)) != X64) || (defined(_WIN32) != WIN)</span>
+<span class="token inserted">+ #error &quot;Wrong DynASM flags used: pass `-D X64` and/or `-D WIN` to dynasm.lua as appropriate&quot;</span>
+<span class="token inserted">+ #endif</span>
+</pre><p>&#x8FD9;&#x4E9B;&#x4EE5;&#x4E24;&#x6761;&#x7AD6;&#x7EBF;&#x5F00;&#x5934;&#x7684;&#x5C06;&#x7531; DynASM &#x9884;&#x5904;&#x7406;&#x5668;&#x66FF;&#x6362;&#x4E3A; <a href="http://corsix.github.io/dynasm-doc/reference.html#_define">.define</a> (&#x540C;&#x6837;&#x5982;&#x679C;&#x6709;&#x7684;&#x8BDD;&#x4E5F;&#x53EF;&#x4EE5;&#x66FF;&#x6362;&#x4E3A; <a href="http://corsix.github.io/dynasm-doc/reference.html#_macro">.macro</a> ) &#x4F46;&#x5176;&#x4ED6;&#x7684;&#x4E0D;&#x4F1A;&#x88AB; DynASM &#x9884;&#x5904;&#x7406;&#x5668;&#x66F4;&#x6539;.<br>
+&#x5728;&#x7279;&#x5B9A;&#x60C5;&#x51B5;&#x4E0B;, &#x5982;&#x679C; <code>x64</code> &#x548C;\&#x6216; <code>WIN</code> &#x5728; DynASM &#x9884;&#x5904;&#x7406;&#x65F6;&#x88AB;&#x5B9A;&#x4E49; (&#x8FD9;&#x91CC;&#x4E3A; <code>1</code>), &#x90A3;&#x4E48;&#x5C31;&#x4F1A;&#x88AB;&#x66FF;&#x6362;&#x6210; <code>1</code>. &#x5982;&#x679C;&#x5728; DynASM &#x9884;&#x5904;&#x7406;&#x65F6;&#x6CA1;&#x6709;&#x88AB;&#x5B9A;&#x4E49;, &#x90A3;&#x5C31;&#x4F1A;&#x4FDD;&#x6301;&#x539F;&#x6837;, &#x5E76;&#x7531; C &#x9884;&#x5904;&#x7406;&#x5668;&#x66FF;&#x6362;&#x4E3A; <code>0</code>.</p>
+<h1 class="mume-header" id="emitting-code">Emitting Code</h1>
+
+<p>&#x5B8C;&#x6210;&#x6240;&#x6709;&#x8FD9;&#x4E9B;&#x64CD;&#x4F5C;&#x4E4B;&#x540E;&#xFF0C;&#x6211;&#x4EEC;&#x7EC8;&#x4E8E;&#x53EF;&#x4EE5;&#x6267;&#x884C;&#x4E00;&#x4E9B;&#x673A;&#x5668;&#x7801;&#x4E86;.</p>
+<h2 class="mume-header" id="prologue">Prologue</h2>
+
+<p>&#x6211;&#x4EEC;&#x9996;&#x5148;&#x8981;&#x6267;&#x884C;&#x7684;&#x662F;&#x4E00;&#x4E9B;&#x521D;&#x59CB;&#x5316;&#x4EE3;&#x7801;, &#x8FD9;&#x4E9B;&#x4EE3;&#x7801;&#x66FF;&#x6362;&#x4E86;&#x4E00;&#x90E8;&#x5206;&#x4E4B;&#x524D;&#x7684;&#x89E3;&#x91CA;&#x5668;&#x7684;&#x4EE3;&#x7801;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- unsigned char* tape_begin = state-&gt;tape - 1;</span>
+<span class="token deleted">- unsigned char* ptr = state-&gt;tape;</span>
+<span class="token deleted">- unsigned char* tape_end = state-&gt;tape + TAPE_SIZE - 1;</span>
+<span class="token inserted">+ |.type state, bf_state_t, aState</span>
+
+<span class="token inserted">+ dasm_State** Dst = &amp;d;</span>
+<span class="token inserted">+ |.code</span>
+<span class="token inserted">+ |-&gt;bf_main:</span>
+<span class="token inserted">+ | prologue</span>
+<span class="token inserted">+ | mov aPtr, state-&gt;tape</span>
+<span class="token inserted">+ | lea aTapeBegin, [aPtr-1]</span>
+<span class="token inserted">+ | lea aTapeEnd, [aPtr+TAPE_SIZE-1]</span>
+</pre><p>&#x6211;&#x4EEC;&#x9996;&#x5148;&#x770B; <a href="http://corsix.github.io/dynasm-doc/reference.html#_type">.type</a> &#x6307;&#x4EE4;, &#x8FD9;&#x4E2A;&#x6307;&#x4EE4;&#x53EF;&#x4EE5;&#x8BA9;&#x6211;&#x4EEC;&#x7528; <code>state-&gt;tape</code> &#x4F5C;&#x4E3A;&#x901F;&#x8BB0;&#x7B26;&#x6765;&#x8868;&#x8FBE; <code>[aState + offsetof(bf_state_t,tape)]</code>.</p>
+<p>&#x63A5;&#x4E0B;&#x6765;&#x8FD9;&#x4E00;&#x884C;&#x5B9A;&#x4E49;&#x4E86; <code>Dst</code>, &#x5E76;&#x4E14;&#x7528; <code>&amp;d</code> &#x521D;&#x59CB;&#x5316;. &#x8FD9;&#x6837;&#x505A;&#x662F;&#x56E0;&#x4E3A;DynASM&#x9884;&#x5904;&#x7406;&#x5668;&#x5C06;&#x628A;&#x540E;&#x7EED;&#x884C;&#x91CD;&#x5199;&#x4E3A; <code>dasm_put(Dst, ...)</code> &#x5F62;&#x5F0F;&#x7684;&#x8C03;&#x7528;, &#x5E76;&#x4E14;&#x8DDF;&#x6211;&#x4EEC;&#x4E4B;&#x524D;&#x5904;&#x7406;&#x90A3;&#x4E9B; <code>dasm_</code> &#x51FD;&#x6570;&#x4E00;&#x6837;, &#x7B2C;&#x4E00;&#x4E2A;&#x53C2;&#x6570;&#x9700;&#x8981;&#x662F; <code>&amp;d</code>.</p>
+<p>&#x63A5;&#x4E0B;&#x6765;&#x662F;&#x5305;&#x542B; <code>.code</code> &#x8FD9;&#x4E00;&#x884C;, &#x8FD9;&#x91CC;&#x6307;&#x4EE3;&#x7684;&#x6307;&#x4EE4;&#x7531;&#x5148;&#x524D;&#x7684; <code>.section code</code> &#x6307;&#x4EE4;&#x5F15;&#x5165;, &#x5E76;&#x4E14;&#x6267;&#x884C;&#x7684; states &#x9700;&#x8981;&#x653E;&#x5230; code section (&#x8FD9;&#x4E5F;&#x6B63;&#x597D;&#x662F;&#x6211;&#x4EEC;&#x5728;&#x5904;&#x7406;&#x7684;&#x90E8;&#x5206;).</p>
+<p>&#x518D;&#x4E4B;&#x540E;&#x6211;&#x4EEC;&#x5B9A;&#x4E49;&#x4E86; label <code>-&gt;bf_main</code>. &#x5F53;&#x6211;&#x4EEC;&#x6267;&#x884C;&#x5B8C;&#x673A;&#x5668;&#x7801;&#x540E;, &#x5C31;&#x53EF;&#x4EE5;&#x83B7;&#x53D6;&#x8FD9;&#x4E2A; global lable &#x7684;&#x5730;&#x5740;, &#x5E76;&#x4E14;&#x8F6C;&#x6362;&#x4E3A;&#x51FD;&#x6570;&#x6307;&#x9488;.</p>
+<p>&#x7136;&#x540E;, &#x6211;&#x4EEC;&#x8C03;&#x7528;&#x524D;&#x9762;&#x5B9A;&#x4E49;&#x7684; <code>prologue</code> &#x5B8F;, &#x6267;&#x884C;&#x90A3;&#x4E9B;&#x6307;&#x4EE4;.</p>
+<p>&#x6700;&#x540E;&#x8FD9;&#x51E0;&#x884C;&#x662F; <code>mov</code> &#x548C; <code>lea</code> &#x6307;&#x4EE4;, &#x5BF9;&#x5E94;&#x5220;&#x6389;&#x7684;&#x90A3;&#x51E0;&#x884C;&#x89E3;&#x91CA;&#x5668;&#x7684;&#x4EE3;&#x7801;.</p>
+<p>&#x50CF;&#x521A;&#x624D;&#x8BF4;&#x7684;&#x90A3;&#x6837;, <code>state-&gt;tape</code> &#x53D8;&#x6210;&#x64CD;&#x4F5C;&#x6570; <code>mov</code> &#x6700;&#x7EC8;&#x6267;&#x884C;&#x7684;&#x662F; <code>[aState + offsetof(bf_state_t,tape)]</code>. &#x6CE8;&#x610F; <code>offsetof(bf_state_t,tape)</code> &#x548C; <code>TAPE_SIZE-1</code> (lea &#x64CD;&#x4F5C;&#x6570;&#x7684;&#x4E00;&#x90E8;&#x5206;) &#x662F;&#x6240;&#x8C13;&#x7684;&#x7F16;&#x7801;&#x65F6;&#x5E38;&#x91CF;: DynASM &#x5E76;&#x4E0D;&#x77E5;&#x9053;&#x8FD9;&#x662F;&#x4EC0;&#x4E48;, &#x6240;&#x4EE5;&#x5230; C &#x7F16;&#x8BD1;&#x5668;&#x4E2D;&#x624D;&#x4F1A;&#x8BA1;&#x7B97;. &#x8FD9;&#x4E24;&#x4E2A;&#x503C;&#x90FD;&#x662F; C &#x8BED;&#x8A00;&#x4E2D;&#x7684;&#x7F16;&#x8BD1;&#x65F6;&#x5E38;&#x91CF;, &#x7F16;&#x7801;&#x65F6;&#x5E38;&#x91CF;&#x4E0D;&#x5FC5;&#x662F;&#x7F16;&#x8BD1;&#x65F6;&#x5E38;&#x91CF; (&#x7A0D;&#x540E;&#x6709;&#x4F8B;&#x5B50;&#x89E3;&#x91CA;).</p>
+<h2 class="mume-header" id="tape-movement">Tape Movement</h2>
+
+<p>&#x73B0;&#x5728;&#x8FDB;&#x5165;&#x89E3;&#x91CA;&#x5668;&#x9636;&#x6BB5;, &#x9996;&#x8981;&#x4EFB;&#x52A1;&#x662F;&#x5C06;&#x89E3;&#x91CA; <code>&lt;</code> &#x90E8;&#x5206;&#x7684;&#x4EE3;&#x7801;&#x66FF;&#x6362;&#x6389;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- if(!nskip) {</span>
+<span class="token deleted">-   ptr -= n;</span>
+<span class="token deleted">-   while(ptr &lt;= tape_begin)</span>
+<span class="token deleted">-     ptr += TAPE_SIZE;</span>
+<span class="token deleted">- }</span>
+<span class="token inserted">+ | sub aPtr, n%TAPE_SIZE</span>
+<span class="token inserted">+ | cmp aPtr, aTapeBegin</span>
+<span class="token inserted">+ | ja &gt;1</span>
+<span class="token inserted">+ | add aPtr, TAPE_SIZE</span>
+<span class="token inserted">+ |1:</span>
+</pre><p>&#x6CE8;&#x610F;&#xFF0C;&#x7F16;&#x8BD1;&#x5668;&#x6CA1;&#x6709;&#x50CF;&#x89E3;&#x91CA;&#x5668;&#x90A3;&#x6837;&#x8DF3;&#x8FC7;&#x4EE3;&#x7801;&#x7684;&#x6982;&#x5FF5;, &#x6240;&#x4EE5;&#x628A;&#x4E0A;&#x9762;&#x7684; <code>if</code> &#x90E8;&#x5206;&#x5B8C;&#x5168;&#x5220;&#x9664;&#x4E86;. <code>ptr -= n;</code> &#x548C;&#x4E0B;&#x9762;&#x7684;&#x5FAA;&#x73AF;&#x90FD;&#x53D8;&#x6210;&#x4E86; <code>| sub aPtr, n%TAPE_SIZE</code>.<br>
+<code>n%TAPE_SIZE</code> &#x5219;&#x662F;&#x4E00;&#x4E2A; &#x7F16;&#x7801;&#x9636;&#x6BB5;&#x5E38;&#x91CF;, &#x4E0D;&#x662F;&#x4E00;&#x4E2A;C&#x7F16;&#x8BD1;&#x9636;&#x6BB5;&#x5E38;&#x91CF;. DynASM &#x4E5F;&#x4E0D;&#x7406;&#x89E3;&#x64CD;&#x4F5C;&#x6570;&#x7684;&#x610F;&#x4E49;. &#x4F46;&#x662F;&#x5728;&#x8FD9;&#x79CD;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x5F53; <code>bf_compile</code> &#x6700;&#x7EC8;&#x8FD0;&#x884C;&#x65F6;&#x4F1A;&#x8BA1;&#x7B97;&#x64CD;&#x4F5C;&#x6570;&#x7684;&#x6700;&#x7EC8;&#x503C;.</p>
+<p>&#x7F16;&#x8BD1;&#x65F6;&#x5F53;&#x5FAA;&#x73AF;&#x8FC7; <code>%TAPE_SIZE</code> &#x5B9A;&#x4E49;&#x7684;&#x5468;&#x671F;&#x540E;, &#x5728;&#x8FD0;&#x884C;&#x65F6;&#x53EF;&#x80FD;&#x4ECD;&#x7136;&#x9700;&#x8981;&#x6267;&#x884C;&#x4E00;&#x6B21;&#x8FED;&#x4EE3;, &#x8FD9;&#x662F;&#x56E0;&#x4E3A;&#x8FD8;&#x6709; <code>cmp, ja, add</code> &#x6307;&#x4EE4;. &#x6CE8;&#x610F;&#x8BED;&#x53E5; <code>&gt;1</code> &#x8DF3;&#x8F6C;&#x5230;&#x5B9A;&#x4E49; lable 1 &#x7684;&#x4F4D;&#x7F6E;, &#x5373; <code>add</code> &#x7684;&#x4E0B;&#x4E00;&#x884C;.</p>
+<p><code>&gt;</code>&#x64CD;&#x4F5C;&#x7B26;&#x4E5F;&#x4E00;&#x6837;, &#x53EA;&#x4E0D;&#x8FC7;&#x662F; <code>add, sub</code> &#x8FD9;&#x90E8;&#x5206;&#x5012;&#x8FC7;&#x6765;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- if(!nskip) {</span>
+<span class="token deleted">-   ptr += n;</span>
+<span class="token deleted">-   while(ptr &gt; tape_end)</span>
+<span class="token deleted">-     ptr -= TAPE_SIZE;</span>
+<span class="token deleted">- }</span>
+<span class="token inserted">+ | add aPtr, n%TAPE_SIZE</span>
+<span class="token inserted">+ | cmp aPtr, aTapeEnd</span>
+<span class="token inserted">+ | jbe &gt;1</span>
+<span class="token inserted">+ | sub aPtr, TAPE_SIZE</span>
+<span class="token inserted">+ |1:</span>
+</pre><h2 class="mume-header" id="arithmetic">Arithmetic</h2>
+
+<p>&#x63A5;&#x4E0B;&#x6765;&#x8981;&#x6539;&#x5199;&#x7684;&#x6307;&#x4EE4;&#x662F; <code>+</code>, &#x76F8;&#x5BF9;&#x7B80;&#x5355;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- if(!nskip)</span>
+<span class="token deleted">-   *ptr += n;</span>
+<span class="token inserted">+ | add byte [aPtr], n</span>
+
+</pre><p>&#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x53EA;&#x6709;&#x5185;&#x5B58;&#x64CD;&#x4F5C;&#x7B26; <code>[aPtr]</code> &#x524D;&#x9762;&#x7684;&#x5185;&#x5B58;&#x5927;&#x5C0F;&#x63CF;&#x8FF0;&#x7B26; <code>byte</code>. &#x56E0;&#x4E3A;&#x5185;&#x5B58;&#x64CD;&#x4F5C;&#x6570;&#x548C;&#x7ACB;&#x5373;&#x64CD;&#x4F5C;&#x6570;&#x90FD;&#x4E0D;&#x5177;&#x6709;&#x771F;&#x5B9E;&#x7684;&#x64CD;&#x4F5C;&#x6570;&#x5927;&#x5C0F;, &#x6240;&#x4EE5;&#x9700;&#x8981;&#x660E;&#x786E;&#x544A;&#x77E5; DynASM.<br>
+&#x8BF7;&#x6CE8;&#x610F;&#xFF0C;&#x6211;&#x4EEC;&#x5148;&#x524D;&#x4F7F;&#x7528;&#x7684;&#x5185;&#x5B58;&#x64CD;&#x4F5C;&#x6570;&#x4E0D;&#x9700;&#x8981;&#x5185;&#x5B58;&#x5927;&#x5C0F;&#x8BF4;&#x660E;&#x7B26;: <code>lea</code> &#x6307;&#x4EE4;&#x5E76;&#x4E0D;&#x9700;&#x8981;, &#x5185;&#x5B58;&#x64CD;&#x4F5C;&#x6570;&#x5E76;&#x4E0D;&#x662F;&#x5185;&#x5B58;&#x8BBF;&#x95EE;. &#x5E76;&#x4E14; <code>mov aPtr, state-&gt;tape</code> &#x4E5F;&#x4E0D;&#x9700;&#x8981;, &#x56E0;&#x4E3A;&#x53EF;&#x4EE5;&#x6839;&#x636E;&#x5BC4;&#x5B58;&#x5668;&#x64CD;&#x4F5C;&#x6570;&#x7684;&#x5927;&#x5C0F;&#x63A8;&#x65AD;&#x51FA;&#x5185;&#x5B58;&#x64CD;&#x4F5C;&#x6570;&#x7684;&#x5927;&#x5C0F;. &#x4ED6;&#x4EEC;&#x662F;&#x76F8;&#x7B49;&#x7684;.</p>
+<p><code>-</code> &#x6307;&#x4EE4;&#x4E5F;&#x4E00;&#x6837;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- if(!nskip)</span>
+<span class="token deleted">-   *ptr -= n;</span>
+<span class="token inserted">+ | sub byte [aPtr], n</span>
+</pre><h2 class="mume-header" id="io">I/O</h2>
+
+<p>&#x63A5;&#x4E0B;&#x6765;&#x662F; <code>,</code> (read char), <code>.</code> (write char), &#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x662F;&#x5B83;&#x4EEC;&#x9700;&#x8981;&#x8C03;&#x7528;&#x5176;&#x4ED6;&#x51FD;&#x6570;. &#x9996;&#x5148;&#x662F; <code>,</code>:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- if(!nskip)</span>
+<span class="token deleted">-   *ptr = state-&gt;get_ch(state);</span>
+<span class="token inserted">+ | prepcall1 aState</span>
+<span class="token inserted">+ | call aword state-&gt;get_ch</span>
+<span class="token inserted">+ | postcall 1</span>
+<span class="token inserted">+ | mov byte [aPtr], al</span>
+</pre><p>&#x6CE8;&#x610F;&#x8C03;&#x7528;&#x7684;&#x62BD;&#x8C61;&#x5B9A;&#x4E49; <code>prepcall1</code> &#x548C; <code>postcall</code> &#x6211;&#x4EEC;&#x4E4B;&#x524D;&#x5B9A;&#x4E49;&#x8FC7;&#x4E86;. &#x540C;&#x65F6;&#x4E5F;&#x8981;&#x6CE8;&#x610F; <code>state-&gt;get_ch</code> &#x662F; <code>[aState + offsetof(bf_state_t,get_ch)]</code> &#x7684;&#x901F;&#x8BB0;&#x8868;&#x8FF0;, &#x4E4B;&#x524D;&#x4ECB;&#x7ECD; <a href="http://corsix.github.io/dynasm-doc/reference.html#_type">.type</a> &#x7684;&#x65F6;&#x5019;&#x6211;&#x4EEC;&#x8BF4;&#x8FC7;&#x4E86;. &#x5E76;&#x4E14;&#x4F7F;&#x7528;&#x8FD9;&#x4E9B;&#x901F;&#x8BB0;&#x7B26;&#x53F7;&#x7684;&#x65F6;&#x5019;&#x4ECD;&#x7136;&#x9700;&#x8981;&#x5185;&#x5B58;&#x5927;&#x5C0F;&#x8BF4;&#x660E;&#x7B26;. &#x5185;&#x5B58;&#x64CD;&#x4F5C;&#x6570;&#x7684;&#x5927;&#x5C0F;&#x4E0D;&#x4F1A;&#x81EA;&#x52A8;&#x63A8;&#x65AD;&#x4E3A;&#x540C;&#x7B49;&#x5927;&#x5C0F;&#x7684; C &#x8BED;&#x8A00;&#x540C;&#x540D;&#x7ED3;&#x6784;&#x4F53;&#x6210;&#x5458;. <code>aword</code> (address-sized word) &#x8BF4;&#x660E;&#x7B26;&#x6307;&#x7684;&#x662F; 4 &#x5B57;&#x8282; (x86) &#x6216; 8 &#x5B57;&#x8282; (x64).</p>
+<p><code>.</code> &#x7684;&#x8F6C;&#x6362;&#x4E5F;&#x4E00;&#x6837;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- if(!nskip)</span>
+<span class="token deleted">-   state-&gt;put_ch(state, *ptr);</span>
+<span class="token inserted">+ | movzx r0, byte [aPtr]</span>
+<span class="token inserted">+ | prepcall2 aState, r0</span>
+<span class="token inserted">+ | call aword state-&gt;put_ch</span>
+<span class="token inserted">+ | postcall 2</span>
+</pre><p>&#x6CE8;&#x610F; <code>r0</code> &#x7528;&#x4F5C;&#x5BC4;&#x5B58;&#x5668;&#x64CD;&#x4F5C;&#x6570;: &#x6307;&#x7684;&#x662F; eax (x86) &#x6216; rax (x64).</p>
+<h2 class="mume-header" id="loops">Loops</h2>
+
+<p>&#x73B0;&#x5728;&#x8F6E;&#x5230;&#x4E86;&#x6700;&#x6709;&#x8DA3;&#x7684;&#x6307;&#x4EE4; <code>[, ]</code>. &#x5176;&#x4E2D; <code>[</code> &#x76F8;&#x5F53;&#x590D;&#x6742;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- loops[nloops++] = program;</span>
+<span class="token deleted">- if(!*ptr)</span>
+<span class="token deleted">-   ++nskip;</span>
+<span class="token inserted">+ if(program[0] == &apos;-&apos; &amp;&amp; program[1] == &apos;]&apos;) {</span>
+<span class="token inserted">+   program += 2;</span>
+<span class="token inserted">+   | xor eax, eax</span>
+<span class="token inserted">+   | mov byte [aPtr], al</span>
+<span class="token inserted">+ } else {</span>
+<span class="token inserted">+   if(nextpc == npc) {</span>
+<span class="token inserted">+     npc *= 2;</span>
+<span class="token inserted">+     dasm_growpc(&amp;d, npc);</span>
+<span class="token inserted">+   }</span>
+<span class="token inserted">+   | cmp byte [aPtr], 0</span>
+<span class="token inserted">+   | jz =&gt;nextpc+1</span>
+<span class="token inserted">+   |=&gt;nextpc:</span>
+<span class="token inserted">+   loops[nloops++] = nextpc;</span>
+<span class="token inserted">+   nextpc += 2;</span>
+<span class="token inserted">+ }</span>
+</pre><p>&#x9996;&#x5148;, &#x6211;&#x4EEC;&#x8BC6;&#x522B;&#x6307;&#x4EE4; <code>[, ]</code> &#x5E76;&#x4E3A;&#x5176;&#x751F;&#x6210;&#x4F18;&#x5316;&#x540E;&#x7684;&#x673A;&#x5668;&#x7801;. &#x4F46;&#x8981;&#x6392;&#x9664;&#x7279;&#x6B8A;&#x60C5;&#x51B5;, &#x4E00;&#x822C;&#x60C5;&#x51B5;&#x4E0B;&#x9700;&#x8981;&#x4E24;&#x4E2A;&#x52A8;&#x6001;&#x6807;&#x7B7E;:<br>
+&#x4E00;&#x4E2A;&#x9700;&#x8981;&#x4ECE; <code>[</code> &#x8DF3;&#x5230; <code>]</code> &#x7684;&#x540E;&#x9762; (&#x4E4B;&#x524D;&#x662F;&#x901A;&#x8FC7;&#x89E3;&#x91CA;&#x5668;&#x4E2D;&#x7684; <code>nskip</code> &#x5B9E;&#x73B0;&#x7684;).<br>
+&#x53E6;&#x4E00;&#x4E2A;&#x662F;&#x4ECE; <code>]</code> &#x8DF3;&#x5230; <code>[</code> &#x7684;&#x540E;&#x9762; (&#x4E4B;&#x524D;&#x662F;&#x901A;&#x8FC7; <code>loops</code> &#x7684;&#x6808;&#x5B9E;&#x73B0;&#x7684;).</p>
+<p>&#x5982;&#x679C;&#x6211;&#x4EEC;&#x5DF2;&#x7ECF;&#x7528;&#x4E86;&#x6211;&#x4EEC;&#x5206;&#x914D;&#x7684;&#x6570;&#x91CF;&#x7684;&#x52A8;&#x6001; lable, &#x8FD8;&#x53EF;&#x4EE5;&#x8C03;&#x7528; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_growpc">dasm_growpc</a> &#x7EE7;&#x7EED;&#x5206;&#x914D;.<br>
+&#x7136;&#x540E;&#x6211;&#x4EEC;&#x53D1;&#x51FA; <code>cmp</code> &#x6307;&#x4EE4;, &#x5B83;&#x7684;&#x4F5C;&#x7528;&#x6B63;&#x5982;&#x5176;&#x5B57;&#x9762;&#x610F;&#x4E49;. &#x5982;&#x679C; <code>[aPtr]</code> &#x4E2D;&#x7684; byte &#x662F; 0, &#x6211;&#x4EEC;&#x8DF3;&#x5230;&#x52A8;&#x6001; lable <code>=&gt;nextpc+1</code> (&#x6211;&#x4EEC;&#x5728;&#x7A0D;&#x540E;&#x7684; <code>]</code> &#x64CD;&#x4F5C;&#x7B26;&#x7684;&#x903B;&#x8F91;&#x4E2D;&#x5B9A;&#x4E49;).<br>
+&#x7136;&#x540E;, &#x6211;&#x4EEC;&#x5B9A;&#x4E49;&#x52A8;&#x6001; lable <code>=&gt;nextpc</code> (<code>]</code> &#x9700;&#x8981;&#x8DF3;&#x56DE;&#x7684;&#x5730;&#x65B9;). &#x6CE8;&#x610F; <code>nextpc+1</code> &#x548C; <code>nextpc</code> &#x90FD;&#x662F;&#x7F16;&#x7801;&#x65F6;&#x5E38;&#x91CF;.</p>
+<p>&#x7136;&#x540E;&#x662F; <code>]</code>:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- if(*ptr)</span>
+<span class="token deleted">-   program = loops[nloops-1];</span>
+<span class="token deleted">- else</span>
+<span class="token deleted">-   --nloops;</span>
+<span class="token deleted">- if(nskip)</span>
+<span class="token deleted">-   --nskip;</span>
+<span class="token inserted">+ --nloops;</span>
+<span class="token inserted">+ | cmp byte [aPtr], 0</span>
+<span class="token inserted">+ | jnz =&gt;loops[nloops]</span>
+<span class="token inserted">+ |=&gt;loops[nloops]+1:</span>
+</pre><p>&#x6CE8;&#x610F;&#x6761;&#x4EF6;&#x8DF3;&#x8F6C;&#x5230;&#x52A8;&#x6001; lable <code>=&gt;loops[nloops]</code> (&#x76F8;&#x5E94;&#x7684;&#x5728; <code>[</code> &#x7684;&#x5B9A;&#x4E49;&#x662F;&#x8DF3;&#x8F6C;&#x5230; <code>=&gt;nextpc</code>). &#x7136;&#x540E;&#x52A8;&#x6001; lable <code>=&gt;loops[nloops]+1</code> (&#x76F8;&#x5E94;&#x7684;&#x5728; <code>[</code> &#x4E2D;&#x7684;&#x5B9A;&#x4E49;&#x662F;&#x8DF3;&#x8F6C;&#x5230; <code>jz =&gt;nextpc+1</code>).</p>
+<h2 class="mume-header" id="epilogue">Epilogue</h2>
+
+<p>&#x6DB5;&#x76D6;&#x4E86;&#x6240;&#x6709;&#x6307;&#x4EE4;&#x4E4B;&#x540E;&#xFF0C;&#x5269;&#x4E0B;&#x7684;&#x5C31;&#x662F;&#x6536;&#x5C3E;&#x5E76;&#x4ECE; DynASM &#x4E2D;&#x63D0;&#x53D6;&#x51FD;&#x6570;&#x6307;&#x9488;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token deleted">- return;</span>
+<span class="token inserted">+ | epilogue</span>
+<span class="token inserted">+ link_and_encode(&amp;d);</span>
+<span class="token inserted">+ dasm_free(&amp;d);</span>
+<span class="token inserted">+ return (void(*)(bf_state_t*))labels[lbl_bf_main];</span>
+</pre><p>&#x7B2C;&#x4E00;&#x884C;&#x8C03;&#x7528;&#x4E86;&#x6211;&#x4EEC;&#x5B9A;&#x4E49;&#x7684; <code>epilogue</code> &#x5B8F;. &#x4E0B;&#x4E00;&#x884C;&#x8C03;&#x7528; <code>link_and_encode</code> (&#x4E00;&#x4F1A;&#x7ED9;&#x51FA;), &#x7136;&#x540E;&#x8C03;&#x7528; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_free">dasm_free</a>, &#x7528;&#x6765;&#x91CA;&#x653E; DynASM state. &#x6700;&#x540E;, &#x6211;&#x4EEC;&#x5C06;&#x4E4B;&#x524D;&#x5B9A;&#x4E49;&#x7684; <code>labels</code> &#x6570;&#x7EC4;&#x4F20;&#x9012;&#x5230; <a href="http://corsix.github.io/dynasm-doc/reference.html#dasm_setupglobal">dasm_setupglobal</a>, &#x6570;&#x7EC4;&#x7684;&#x7D22;&#x5F15;&#x662F; <code>lbl_bf_main</code> (&#x7531; <code>.globals lbl_</code> &#x5B9A;&#x4E49;, &#x5E76;&#x4E0E;&#x5168;&#x5C40;&#x6807;&#x7B7E; <code>-&gt; bf_main</code> &#x5BF9;&#x5E94;), &#x5E76;&#x5C06;&#x5176;&#x8F6C;&#x6362;&#x4E3A;&#x51FD;&#x6570;&#x6307;&#x9488;<br>
+.</p>
+<p><code>link_and_encode</code> &#x51FD;&#x6570;&#x7684;&#x5B9A;&#x4E49;&#x5982;&#x4E0B;:</p>
+<pre data-role="codeBlock" data-info="git" class="language-git"><span class="token inserted">+ #if _WIN32</span>
+<span class="token inserted">+ #include &lt;Windows.h&gt;</span>
+<span class="token inserted">+ #else</span>
+<span class="token inserted">+ #include &lt;sys/mman.h&gt;</span>
+<span class="token inserted">+ #if !defined(MAP_ANONYMOUS) &amp;&amp; defined(MAP_ANON)</span>
+<span class="token inserted">+ #define MAP_ANONYMOUS MAP_ANON</span>
+<span class="token inserted">+ #endif</span>
+<span class="token inserted">+ #endif</span>
+
+<span class="token inserted">+ static void* link_and_encode(dasm_State** d)</span>
+<span class="token inserted">+ {</span>
+<span class="token inserted">+   size_t sz;</span>
+<span class="token inserted">+   void* buf;</span>
+<span class="token inserted">+   dasm_link(d, &amp;sz);</span>
+<span class="token inserted">+ #ifdef _WIN32</span>
+<span class="token inserted">+   buf = VirtualAlloc(0, sz, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);</span>
+<span class="token inserted">+ #else</span>
+<span class="token inserted">+   buf = mmap(0, sz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);</span>
+<span class="token inserted">+ #endif</span>
+<span class="token inserted">+   dasm_encode(d, buf);</span>
+<span class="token inserted">+ #ifdef _WIN32</span>
+<span class="token inserted">+   {DWORD dwOld; VirtualProtect(buf, sz, PAGE_EXECUTE_READ, &amp;dwOld); }</span>
+<span class="token inserted">+ #else</span>
+<span class="token inserted">+   mprotect(buf, sz, PROT_READ | PROT_EXEC);</span>
+<span class="token inserted">+ #endif</span>
+<span class="token inserted">+   return buf;</span>
+<span class="token inserted">+ }</span>
+</pre><p>&#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x662F; <code>dasm_link</code> &#x548C; <code>dasm_encode</code> &#x8C03;&#x7528;. &#x5176;&#x4F59;&#x7684;&#x51FD;&#x6570;&#x8C03;&#x7528;&#x4F7F;&#x7528;&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF;&#x529F;&#x80FD;&#x6765;&#x5206;&#x914D;&#x4E00;&#x4E2A; &#x8BFB;-&#x5199; &#x5185;&#x5B58;&#x5757;, &#x7136;&#x540E;&#x5C06;&#x5176;&#x8F6C;&#x6362;&#x4E3A; &#x8BFB;-&#x6267;&#x884C;.<br>
+&#x6CE8;&#x610F;, &#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5206;&#x914D;&#x4E00;&#x4E2A; &#x8BFB;-&#x5199;-&#x6267;&#x884C; &#x5185;&#x5B58;&#x5757;, &#x4F46;&#x662F;&#x901A;&#x5E38;&#x540C;&#x65F6;&#x5177;&#x6709;&#x53EF;&#x5199;&#x548C;&#x53EF;&#x6267;&#x884C;&#x7684;&#x5185;&#x5B58;&#x4E0D;&#x662F;&#x597D;&#x7684;&#x7684;&#x5F62;&#x5F0F;.</p>
+<h1 class="mume-header" id="compiling">Compiling</h1>
+
+<p>&#x6839;&#x636E;&#x4E0A;&#x9762;&#x7684;&#x6559;&#x7A0B;, &#x73B0;&#x5728; <code>tutorial.c</code> &#x662F;&#x8FD9;&#x4E2A;&#x6837;&#x5B50;&#x7684;:</p>
+<pre data-role="codeBlock" data-info="c" class="language-c"><span class="token operator">||</span>#<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token function">defined</span><span class="token punctuation">(</span>_M_X64<span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token function">defined</span><span class="token punctuation">(</span>__amd64__<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">!=</span> X64<span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span><span class="token function">defined</span><span class="token punctuation">(</span>_WIN32<span class="token punctuation">)</span> <span class="token operator">!=</span> WIN<span class="token punctuation">)</span>
+<span class="token macro property">#<span class="token directive keyword">error</span> &quot;Wrong DynASM flags used: pass `-D X64` and/or `-D WIN` to dynasm.lua as appropriate&quot;</span>
+<span class="token macro property">#<span class="token directive keyword">endif</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;stdlib.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;luajit-2.0/dynasm/dasm_proto.h&quot;</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&quot;luajit-2.0/dynasm/dasm_x86.h&quot;</span></span>
+<span class="token macro property">#<span class="token directive keyword">if</span> _WIN32</span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;Windows.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">else</span></span>
+<span class="token macro property">#<span class="token directive keyword">include</span> <span class="token string">&lt;sys/mman.h&gt;</span></span>
+<span class="token macro property">#<span class="token directive keyword">if</span> !defined(MAP_ANONYMOUS) &amp;&amp; defined(MAP_ANON)</span>
+<span class="token macro property">#<span class="token directive keyword">define</span> MAP_ANONYMOUS MAP_ANON</span>
+<span class="token macro property">#<span class="token directive keyword">endif</span></span>
+<span class="token macro property">#<span class="token directive keyword">endif</span></span>
+
+<span class="token keyword">static</span> <span class="token keyword">void</span><span class="token operator">*</span> <span class="token function">link_and_encode</span><span class="token punctuation">(</span>dasm_State<span class="token operator">*</span><span class="token operator">*</span> d<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  size_t sz<span class="token punctuation">;</span>
+  <span class="token keyword">void</span><span class="token operator">*</span> buf<span class="token punctuation">;</span>
+  <span class="token function">dasm_link</span><span class="token punctuation">(</span>d<span class="token punctuation">,</span> <span class="token operator">&amp;</span>sz<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token macro property">#<span class="token directive keyword">ifdef</span> _WIN32</span>
+  buf <span class="token operator">=</span> <span class="token function">VirtualAlloc</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> sz<span class="token punctuation">,</span> MEM_RESERVE <span class="token operator">|</span> MEM_COMMIT<span class="token punctuation">,</span> PAGE_READWRITE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token macro property">#<span class="token directive keyword">else</span></span>
+  buf <span class="token operator">=</span> <span class="token function">mmap</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> sz<span class="token punctuation">,</span> PROT_READ <span class="token operator">|</span> PROT_WRITE<span class="token punctuation">,</span> MAP_PRIVATE <span class="token operator">|</span> MAP_ANONYMOUS<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token macro property">#<span class="token directive keyword">endif</span></span>
+  <span class="token function">dasm_encode</span><span class="token punctuation">(</span>d<span class="token punctuation">,</span> buf<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token macro property">#<span class="token directive keyword">ifdef</span> _WIN32</span>
+  <span class="token punctuation">{</span>DWORD dwOld<span class="token punctuation">;</span> <span class="token function">VirtualProtect</span><span class="token punctuation">(</span>buf<span class="token punctuation">,</span> sz<span class="token punctuation">,</span> PAGE_EXECUTE_READ<span class="token punctuation">,</span> <span class="token operator">&amp;</span>dwOld<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
+<span class="token macro property">#<span class="token directive keyword">else</span></span>
+  <span class="token function">mprotect</span><span class="token punctuation">(</span>buf<span class="token punctuation">,</span> sz<span class="token punctuation">,</span> PROT_READ <span class="token operator">|</span> PROT_EXEC<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token macro property">#<span class="token directive keyword">endif</span></span>
+  <span class="token keyword">return</span> buf<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token macro property">#<span class="token directive keyword">define</span> TAPE_SIZE 30000</span>
+<span class="token macro property">#<span class="token directive keyword">define</span> MAX_NESTING 100</span>
+
+<span class="token keyword">typedef</span> <span class="token keyword">struct</span> bf_state
+<span class="token punctuation">{</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token operator">*</span> tape<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span> <span class="token punctuation">(</span><span class="token operator">*</span>get_ch<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token keyword">struct</span> bf_state<span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">void</span> <span class="token punctuation">(</span><span class="token operator">*</span>put_ch<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token keyword">struct</span> bf_state<span class="token operator">*</span><span class="token punctuation">,</span> <span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> bf_state_t<span class="token punctuation">;</span>
+
+<span class="token macro property">#<span class="token directive keyword">define</span> bad_program(s) exit(fprintf(stderr, &quot;bad program near %.16s: %s\n&quot;, program, s))</span>
+
+<span class="token keyword">static</span> <span class="token keyword">void</span><span class="token punctuation">(</span><span class="token operator">*</span> <span class="token function">bf_compile</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> program<span class="token punctuation">)</span> <span class="token punctuation">)</span><span class="token punctuation">(</span>bf_state_t<span class="token operator">*</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">unsigned</span> loops<span class="token punctuation">[</span>MAX_NESTING<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> nloops <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">int</span> n<span class="token punctuation">;</span>
+  dasm_State<span class="token operator">*</span> d<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> npc <span class="token operator">=</span> <span class="token number">8</span><span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> nextpc <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span><span class="token keyword">if</span> X64
+  <span class="token operator">|</span><span class="token punctuation">.</span>arch x64
+  <span class="token operator">|</span><span class="token punctuation">.</span><span class="token keyword">else</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span>arch x86
+  <span class="token operator">|</span><span class="token punctuation">.</span>endif
+  <span class="token operator">|</span><span class="token punctuation">.</span>section code
+  <span class="token function">dasm_init</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> DASM_MAXSECTION<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span>globals lbl_
+  <span class="token keyword">void</span><span class="token operator">*</span> labels<span class="token punctuation">[</span>lbl__MAX<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token function">dasm_setupglobal</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> labels<span class="token punctuation">,</span> lbl__MAX<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span>actionlist bf_actions
+  <span class="token function">dasm_setup</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> bf_actions<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token function">dasm_growpc</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> npc<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span><span class="token keyword">if</span> X64
+    <span class="token operator">|</span><span class="token punctuation">.</span>define aPtr<span class="token punctuation">,</span> rbx
+    <span class="token operator">|</span><span class="token punctuation">.</span>define aState<span class="token punctuation">,</span> r12
+    <span class="token operator">|</span><span class="token punctuation">.</span><span class="token keyword">if</span> WIN
+      <span class="token operator">|</span><span class="token punctuation">.</span>define aTapeBegin<span class="token punctuation">,</span> rsi
+      <span class="token operator">|</span><span class="token punctuation">.</span>define aTapeEnd<span class="token punctuation">,</span> rdi
+      <span class="token operator">|</span><span class="token punctuation">.</span>define rArg1<span class="token punctuation">,</span> rcx
+      <span class="token operator">|</span><span class="token punctuation">.</span>define rArg2<span class="token punctuation">,</span> rdx
+    <span class="token operator">|</span><span class="token punctuation">.</span><span class="token keyword">else</span>
+      <span class="token operator">|</span><span class="token punctuation">.</span>define aTapeBegin<span class="token punctuation">,</span> r13
+      <span class="token operator">|</span><span class="token punctuation">.</span>define aTapeEnd<span class="token punctuation">,</span> r14
+      <span class="token operator">|</span><span class="token punctuation">.</span>define rArg1<span class="token punctuation">,</span> rdi
+      <span class="token operator">|</span><span class="token punctuation">.</span>define rArg2<span class="token punctuation">,</span> rsi
+    <span class="token operator">|</span><span class="token punctuation">.</span>endif
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro prepcall1<span class="token punctuation">,</span> arg1
+      <span class="token operator">|</span> mov rArg1<span class="token punctuation">,</span> arg1
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro prepcall2<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2
+      <span class="token operator">|</span> mov rArg1<span class="token punctuation">,</span> arg1
+      <span class="token operator">|</span> mov rArg2<span class="token punctuation">,</span> arg2
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+    <span class="token operator">|</span><span class="token punctuation">.</span>define postcall<span class="token punctuation">,</span> <span class="token punctuation">.</span>nop
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro prologue
+      <span class="token operator">|</span> push aPtr
+      <span class="token operator">|</span> push aState
+      <span class="token operator">|</span> push aTapeBegin
+      <span class="token operator">|</span> push aTapeEnd
+      <span class="token operator">|</span> push rax
+      <span class="token operator">|</span> mov aState<span class="token punctuation">,</span> rArg1
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro epilogue
+      <span class="token operator">|</span> pop rax
+      <span class="token operator">|</span> pop aTapeEnd
+      <span class="token operator">|</span> pop aTapeBegin
+      <span class="token operator">|</span> pop aState
+      <span class="token operator">|</span> pop aPtr
+      <span class="token operator">|</span> ret
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+  <span class="token operator">|</span><span class="token punctuation">.</span><span class="token keyword">else</span>
+    <span class="token operator">|</span><span class="token punctuation">.</span>define aPtr<span class="token punctuation">,</span> ebx
+    <span class="token operator">|</span><span class="token punctuation">.</span>define aState<span class="token punctuation">,</span> ebp
+    <span class="token operator">|</span><span class="token punctuation">.</span>define aTapeBegin<span class="token punctuation">,</span> esi
+    <span class="token operator">|</span><span class="token punctuation">.</span>define aTapeEnd<span class="token punctuation">,</span> edi
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro prepcall1<span class="token punctuation">,</span> arg1
+      <span class="token operator">|</span> push arg1
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro prepcall2<span class="token punctuation">,</span> arg1<span class="token punctuation">,</span> arg2
+      <span class="token operator">|</span> push arg2
+      <span class="token operator">|</span> push arg1
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro postcall<span class="token punctuation">,</span> n
+      <span class="token operator">|</span> add esp<span class="token punctuation">,</span> <span class="token number">4</span><span class="token operator">*</span>n
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro prologue
+      <span class="token operator">|</span> push aPtr
+      <span class="token operator">|</span> push aState
+      <span class="token operator">|</span> push aTapeBegin
+      <span class="token operator">|</span> push aTapeEnd
+      <span class="token operator">|</span> mov aState<span class="token punctuation">,</span> <span class="token punctuation">[</span>esp<span class="token operator">+</span><span class="token number">20</span><span class="token punctuation">]</span>
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+    <span class="token operator">|</span><span class="token punctuation">.</span>macro epilogue
+      <span class="token operator">|</span> pop aTapeEnd
+      <span class="token operator">|</span> pop aTapeBegin
+      <span class="token operator">|</span> pop aState
+      <span class="token operator">|</span> pop aPtr
+      <span class="token operator">|</span> ret <span class="token number">4</span>
+    <span class="token operator">|</span><span class="token punctuation">.</span>endmacro
+  <span class="token operator">|</span><span class="token punctuation">.</span>endif
+
+  <span class="token operator">|</span><span class="token punctuation">.</span>type state<span class="token punctuation">,</span> bf_state_t<span class="token punctuation">,</span> aState
+  
+  dasm_State<span class="token operator">*</span><span class="token operator">*</span> Dst <span class="token operator">=</span> <span class="token operator">&amp;</span>d<span class="token punctuation">;</span>
+  <span class="token operator">|</span><span class="token punctuation">.</span>code
+  <span class="token operator">|</span><span class="token operator">-&gt;</span>bf_main<span class="token operator">:</span>
+  <span class="token operator">|</span> prologue
+  <span class="token operator">|</span> mov aPtr<span class="token punctuation">,</span> state<span class="token operator">-&gt;</span>tape
+  <span class="token operator">|</span> lea aTapeBegin<span class="token punctuation">,</span> <span class="token punctuation">[</span>aPtr<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+  <span class="token operator">|</span> lea aTapeEnd<span class="token punctuation">,</span> <span class="token punctuation">[</span>aPtr<span class="token operator">+</span>TAPE_SIZE<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
+  <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token punctuation">;</span><span class="token punctuation">;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">switch</span><span class="token punctuation">(</span><span class="token operator">*</span>program<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;&lt;&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">for</span><span class="token punctuation">(</span>n <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token operator">*</span>program <span class="token operator">==</span> <span class="token string">&apos;&lt;&apos;</span><span class="token punctuation">;</span> <span class="token operator">++</span>n<span class="token punctuation">,</span> <span class="token operator">++</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token operator">|</span> sub aPtr<span class="token punctuation">,</span> n<span class="token operator">%</span>TAPE_SIZE
+      <span class="token operator">|</span> cmp aPtr<span class="token punctuation">,</span> aTapeBegin
+      <span class="token operator">|</span> ja <span class="token operator">&gt;</span><span class="token number">1</span>
+      <span class="token operator">|</span> add aPtr<span class="token punctuation">,</span> TAPE_SIZE
+      <span class="token operator">|</span><span class="token number">1</span><span class="token operator">:</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;&gt;&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">for</span><span class="token punctuation">(</span>n <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token operator">*</span>program <span class="token operator">==</span> <span class="token string">&apos;&gt;&apos;</span><span class="token punctuation">;</span> <span class="token operator">++</span>n<span class="token punctuation">,</span> <span class="token operator">++</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token operator">|</span> add aPtr<span class="token punctuation">,</span> n<span class="token operator">%</span>TAPE_SIZE
+      <span class="token operator">|</span> cmp aPtr<span class="token punctuation">,</span> aTapeEnd
+      <span class="token operator">|</span> jbe <span class="token operator">&gt;</span><span class="token number">1</span>
+      <span class="token operator">|</span> sub aPtr<span class="token punctuation">,</span> TAPE_SIZE
+      <span class="token operator">|</span><span class="token number">1</span><span class="token operator">:</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;+&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">for</span><span class="token punctuation">(</span>n <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token operator">*</span>program <span class="token operator">==</span> <span class="token string">&apos;+&apos;</span><span class="token punctuation">;</span> <span class="token operator">++</span>n<span class="token punctuation">,</span> <span class="token operator">++</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token operator">|</span> add byte <span class="token punctuation">[</span>aPtr<span class="token punctuation">]</span><span class="token punctuation">,</span> n
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;-&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">for</span><span class="token punctuation">(</span>n <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token operator">*</span>program <span class="token operator">==</span> <span class="token string">&apos;-&apos;</span><span class="token punctuation">;</span> <span class="token operator">++</span>n<span class="token punctuation">,</span> <span class="token operator">++</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token operator">|</span> sub byte <span class="token punctuation">[</span>aPtr<span class="token punctuation">]</span><span class="token punctuation">,</span> n
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;,&apos;</span><span class="token operator">:</span>
+      <span class="token operator">|</span> prepcall1 aState
+      <span class="token operator">|</span> call aword state<span class="token operator">-&gt;</span>get_ch
+      <span class="token operator">|</span> postcall <span class="token number">1</span>
+      <span class="token operator">|</span> mov byte <span class="token punctuation">[</span>aPtr<span class="token punctuation">]</span><span class="token punctuation">,</span> al
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;.&apos;</span><span class="token operator">:</span>
+      <span class="token operator">|</span> movzx r0<span class="token punctuation">,</span> byte <span class="token punctuation">[</span>aPtr<span class="token punctuation">]</span>
+      <span class="token operator">|</span> prepcall2 aState<span class="token punctuation">,</span> r0
+      <span class="token operator">|</span> call aword state<span class="token operator">-&gt;</span>put_ch
+      <span class="token operator">|</span> postcall <span class="token number">2</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;[&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>nloops <span class="token operator">==</span> MAX_NESTING<span class="token punctuation">)</span>
+        <span class="token function">bad_program</span><span class="token punctuation">(</span><span class="token string">&quot;Nesting too deep&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>program<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token string">&apos;-&apos;</span> <span class="token operator">&amp;&amp;</span> program<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token string">&apos;]&apos;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        program <span class="token operator">+=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+        <span class="token operator">|</span> xor eax<span class="token punctuation">,</span> eax
+        <span class="token operator">|</span> mov byte <span class="token punctuation">[</span>aPtr<span class="token punctuation">]</span><span class="token punctuation">,</span> al
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>nextpc <span class="token operator">==</span> npc<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          npc <span class="token operator">*=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+          <span class="token function">dasm_growpc</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">,</span> npc<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token operator">|</span> cmp byte <span class="token punctuation">[</span>aPtr<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token number">0</span>
+        <span class="token operator">|</span> jz <span class="token operator">=</span><span class="token operator">&gt;</span>nextpc<span class="token operator">+</span><span class="token number">1</span>
+        <span class="token operator">|=</span><span class="token operator">&gt;</span>nextpc<span class="token operator">:</span>
+        loops<span class="token punctuation">[</span>nloops<span class="token operator">++</span><span class="token punctuation">]</span> <span class="token operator">=</span> nextpc<span class="token punctuation">;</span>
+        nextpc <span class="token operator">+=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token string">&apos;]&apos;</span><span class="token operator">:</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>nloops <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span>
+        <span class="token function">bad_program</span><span class="token punctuation">(</span><span class="token string">&quot;] without matching [&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token operator">--</span>nloops<span class="token punctuation">;</span>
+      <span class="token operator">|</span> cmp byte <span class="token punctuation">[</span>aPtr<span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token number">0</span>
+      <span class="token operator">|</span> jnz <span class="token operator">=</span><span class="token operator">&gt;</span>loops<span class="token punctuation">[</span>nloops<span class="token punctuation">]</span>
+      <span class="token operator">|=</span><span class="token operator">&gt;</span>loops<span class="token punctuation">[</span>nloops<span class="token punctuation">]</span><span class="token operator">+</span><span class="token number">1</span><span class="token operator">:</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token keyword">case</span> <span class="token number">0</span><span class="token operator">:</span>
+      <span class="token keyword">if</span><span class="token punctuation">(</span>nloops <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span>
+        program <span class="token operator">=</span> <span class="token string">&quot;&lt;EOF&gt;&quot;</span><span class="token punctuation">,</span> <span class="token function">bad_program</span><span class="token punctuation">(</span><span class="token string">&quot;[ without matching ]&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token operator">|</span> epilogue
+      <span class="token function">link_and_encode</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token function">dasm_free</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>d<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">(</span>bf_state_t<span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">)</span>labels<span class="token punctuation">[</span>lbl_bf_main<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">bf_putchar</span><span class="token punctuation">(</span>bf_state_t<span class="token operator">*</span> s<span class="token punctuation">,</span> <span class="token keyword">unsigned</span> <span class="token keyword">char</span> c<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token function">putchar</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">static</span> <span class="token keyword">unsigned</span> <span class="token keyword">char</span> <span class="token function">bf_getchar</span><span class="token punctuation">(</span>bf_state_t<span class="token operator">*</span> s<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">(</span><span class="token keyword">unsigned</span> <span class="token keyword">char</span><span class="token punctuation">)</span><span class="token function">getchar</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">bf_run</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span><span class="token operator">*</span> program<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  bf_state_t state<span class="token punctuation">;</span>
+  <span class="token keyword">unsigned</span> <span class="token keyword">char</span> tape<span class="token punctuation">[</span>TAPE_SIZE<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token number">0</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+  state<span class="token punctuation">.</span>tape <span class="token operator">=</span> tape<span class="token punctuation">;</span>
+  state<span class="token punctuation">.</span>get_ch <span class="token operator">=</span> bf_getchar<span class="token punctuation">;</span>
+  state<span class="token punctuation">.</span>put_ch <span class="token operator">=</span> bf_putchar<span class="token punctuation">;</span>
+  <span class="token function">bf_compile</span><span class="token punctuation">(</span>program<span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>state<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span><span class="token operator">*</span><span class="token operator">*</span> argv<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>argc <span class="token operator">==</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">long</span> sz<span class="token punctuation">;</span>
+    <span class="token keyword">char</span><span class="token operator">*</span> program<span class="token punctuation">;</span>
+    FILE<span class="token operator">*</span> f <span class="token operator">=</span> <span class="token function">fopen</span><span class="token punctuation">(</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token string">&quot;r&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span>f<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">&quot;Cannot open %s\n&quot;</span><span class="token punctuation">,</span> argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">return</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token function">fseek</span><span class="token punctuation">(</span>f<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token constant">SEEK_END</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    sz <span class="token operator">=</span> <span class="token function">ftell</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    program <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">char</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span>sz <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">fseek</span><span class="token punctuation">(</span>f<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token constant">SEEK_SET</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    program<span class="token punctuation">[</span><span class="token function">fread</span><span class="token punctuation">(</span>program<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> sz<span class="token punctuation">,</span> f<span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token function">fclose</span><span class="token punctuation">(</span>f<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">bf_run</span><span class="token punctuation">(</span>program<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token function">fprintf</span><span class="token punctuation">(</span><span class="token constant">stderr</span><span class="token punctuation">,</span> <span class="token string">&quot;Usage: %s INFILE.bf\n&quot;</span><span class="token punctuation">,</span> argv<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+</pre><p>&#x5982;&#x679C;&#x6CA1;&#x8DDF;&#x4E0A;, &#x8FD8;&#x53EF;&#x4EE5;&#x4ECE;&#x8FD9;&#x91CC;&#x83B7;&#x53D6;&#x4EE3;&#x7801;:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">$ <span class="token function">git</span> clone https://github.com/corsix/dynasm-doc.git
+$ <span class="token function">cd</span> dynasm-doc
+$ <span class="token function">git</span> submodule update --init
+$ <span class="token function">cp</span> bf_dynasm.c tutorial.c
+</pre><p>&#x4E3A;&#x4E86;&#x7F16;&#x8BD1; <code>tutorial.c</code>, &#x6211;&#x4EEC;&#x9996;&#x5148;&#x9700;&#x8981;&#x901A;&#x8FC7; DynASM &#x9884;&#x5904;&#x7406;&#x7A0B;&#x5E8F;&#x8FD0;&#x884C;&#x5B83;. &#x9884;&#x5904;&#x7406;&#x5668;&#x662F;&#x7528; Lua &#x7F16;&#x5199;&#x7684;, &#x56E0;&#x6B64;&#x6211;&#x4EEC;&#x9996;&#x5148;&#x7F16;&#x8BD1;&#x4E00;&#x4E2A; minimal Lua &#x89E3;&#x91CA;&#x5668; (&#x5982;&#x679C;&#x6709;luajit&#x4E5F;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x7528;luajit&#x8FD0;&#x884C;dynasm.lua, &#x5C31;&#x53EF;&#x4EE5;&#x7701;&#x7565;&#x8FD9;&#x4E00;&#x6B65;):</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">$ gcc -o minilua luajit-2.0/src/host/minilua.c
+</pre><p>&#x7136;&#x540E;&#x8FD0;&#x884C; DynASM &#x9884;&#x5904;&#x7406;&#x5668;:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">$ ./minilua luajit-2.0/dynasm/dynasm.lua -o tutorial.posix64.c -D X64 tutorial.c
+</pre><p>&#x5B8C;&#x6210;&#x9884;&#x5904;&#x7406;&#x540E;, &#x8C03;&#x7528; C &#x7F16;&#x8BD1;&#x5668;:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">$ gcc -o tutorial tutorial.posix64.c
+</pre><p>&#x7136;&#x540E;, &#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x8FD0;&#x884C;&#x751F;&#x6210;&#x7684;&#x53EF;&#x6267;&#x884C;&#x6587;&#x4EF6;, &#x8BE5;&#x53EF;&#x6267;&#x884C;&#x6587;&#x4EF6;&#x5C06;&#x5F88;&#x5FEB;&#x8FD0;&#x884C; Mandelbrot set:</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">$ ./tutorial mandelbrot.bf
+</pre><p>(&#x6211;&#x7684;&#x8FD0;&#x884C;&#x7ED3;&#x679C;, 2.129s, &#x6E90;&#x7A0B;&#x5E8F;&#x662F; 35.466s, &#x8017;&#x65F6;&#x662F;&#x539F;&#x6765;&#x7684; 6%, &#x6027;&#x80FD;&#x63D0;&#x5347;&#x4E86;17&#x500D;)</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@m01 dynasm-doc]# time ./tutorial mandelbrot.bf
+AAAAAAAAAAAAAAAABBBBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDEGFFEEEEDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAAAAABBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDEEEFGIIGFFEEEDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEFFFI KHGGGHGEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAABBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEFFGHIMTKLZOGFEEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAABBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEEFGGHHIKPPKIHGFFEEEDDDDDDDDDCCCCCCCCCCBBBBBBBBBBBBBBBBBB
+AAAAAAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEEFFGHIJKS  X KHHGFEEEEEDDDDDDDDDCCCCCCCCCCBBBBBBBBBBBBBBBB
+AAAAAAAAABBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEEFFGQPUVOTY   ZQL[MHFEEEEEEEDDDDDDDCCCCCCCCCCCBBBBBBBBBBBBBB
+AAAAAAAABBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEFFFFFGGHJLZ         UKHGFFEEEEEEEEDDDDDCCCCCCCCCCCCBBBBBBBBBBBB
+AAAAAAABBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEFFFFFFGGGGHIKP           KHHGGFFFFEEEEEEDDDDDCCCCCCCCCCCBBBBBBBBBBB
+AAAAAAABBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEEFGGHIIHHHHHIIIJKMR        VMKJIHHHGFFFFFFGSGEDDDDCCCCCCCCCCCCBBBBBBBBB
+AAAAAABBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDEEEEEEFFGHK   MKJIJO  N R  X      YUSR PLV LHHHGGHIOJGFEDDDCCCCCCCCCCCCBBBBBBBB
+AAAAABBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDEEEEEEEEEFFFFGH O    TN S                       NKJKR LLQMNHEEDDDCCCCCCCCCCCCBBBBBBB
+AAAAABBCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDEEEEEEEEEEEEFFFFFGHHIN                                 Q     UMWGEEEDDDCCCCCCCCCCCCBBBBBB
+AAAABBCCCCCCCCCCCCCCCCCCCCCCCCCDDDDEEEEEEEEEEEEEEEFFFFFFGHIJKLOT                                     [JGFFEEEDDCCCCCCCCCCCCCBBBBB
+AAAABCCCCCCCCCCCCCCCCCCCCCCDDDDEEEEEEEEEEEEEEEEFFFFFFGGHYV RQU                                     QMJHGGFEEEDDDCCCCCCCCCCCCCBBBB
+AAABCCCCCCCCCCCCCCCCCDDDDDDDEEFJIHFFFFFFFFFFFFFFGGGGGGHIJN                                            JHHGFEEDDDDCCCCCCCCCCCCCBBB
+AAABCCCCCCCCCCCDDDDDDDDDDEEEEFFHLKHHGGGGHHMJHGGGGGGHHHIKRR                                           UQ L HFEDDDDCCCCCCCCCCCCCCBB
+AABCCCCCCCCDDDDDDDDDDDEEEEEEFFFHKQMRKNJIJLVS JJKIIIIIIJLR                                               YNHFEDDDDDCCCCCCCCCCCCCBB
+AABCCCCCDDDDDDDDDDDDEEEEEEEFFGGHIJKOU  O O   PR LLJJJKL                                                OIHFFEDDDDDCCCCCCCCCCCCCCB
+AACCCDDDDDDDDDDDDDEEEEEEEEEFGGGHIJMR              RMLMN                                                 NTFEEDDDDDDCCCCCCCCCCCCCB
+AACCDDDDDDDDDDDDEEEEEEEEEFGGGHHKONSZ                QPR                                                NJGFEEDDDDDDCCCCCCCCCCCCCC
+ABCDDDDDDDDDDDEEEEEFFFFFGIPJIIJKMQ                   VX                                                 HFFEEDDDDDDCCCCCCCCCCCCCC
+ACDDDDDDDDDDEFFFFFFFGGGGHIKZOOPPS                                                                      HGFEEEDDDDDDCCCCCCCCCCCCCC
+ADEEEEFFFGHIGGGGGGHHHHIJJLNY                                                                        TJHGFFEEEDDDDDDDCCCCCCCCCCCCC
+A                                                                                                 PLJHGGFFEEEDDDDDDDCCCCCCCCCCCCC
+ADEEEEFFFGHIGGGGGGHHHHIJJLNY                                                                        TJHGFFEEEDDDDDDDCCCCCCCCCCCCC
+ACDDDDDDDDDDEFFFFFFFGGGGHIKZOOPPS                                                                      HGFEEEDDDDDDCCCCCCCCCCCCCC
+ABCDDDDDDDDDDDEEEEEFFFFFGIPJIIJKMQ                   VX                                                 HFFEEDDDDDDCCCCCCCCCCCCCC
+AACCDDDDDDDDDDDDEEEEEEEEEFGGGHHKONSZ                QPR                                                NJGFEEDDDDDDCCCCCCCCCCCCCC
+AACCCDDDDDDDDDDDDDEEEEEEEEEFGGGHIJMR              RMLMN                                                 NTFEEDDDDDDCCCCCCCCCCCCCB
+AABCCCCCDDDDDDDDDDDDEEEEEEEFFGGHIJKOU  O O   PR LLJJJKL                                                OIHFFEDDDDDCCCCCCCCCCCCCCB
+AABCCCCCCCCDDDDDDDDDDDEEEEEEFFFHKQMRKNJIJLVS JJKIIIIIIJLR                                               YNHFEDDDDDCCCCCCCCCCCCCBB
+AAABCCCCCCCCCCCDDDDDDDDDDEEEEFFHLKHHGGGGHHMJHGGGGGGHHHIKRR                                           UQ L HFEDDDDCCCCCCCCCCCCCCBB
+AAABCCCCCCCCCCCCCCCCCDDDDDDDEEFJIHFFFFFFFFFFFFFFGGGGGGHIJN                                            JHHGFEEDDDDCCCCCCCCCCCCCBBB
+AAAABCCCCCCCCCCCCCCCCCCCCCCDDDDEEEEEEEEEEEEEEEEFFFFFFGGHYV RQU                                     QMJHGGFEEEDDDCCCCCCCCCCCCCBBBB
+AAAABBCCCCCCCCCCCCCCCCCCCCCCCCCDDDDEEEEEEEEEEEEEEEFFFFFFGHIJKLOT                                     [JGFFEEEDDCCCCCCCCCCCCCBBBBB
+AAAAABBCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDEEEEEEEEEEEEFFFFFGHHIN                                 Q     UMWGEEEDDDCCCCCCCCCCCCBBBBBB
+AAAAABBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDEEEEEEEEEFFFFGH O    TN S                       NKJKR LLQMNHEEDDDCCCCCCCCCCCCBBBBBBB
+AAAAAABBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDEEEEEEFFGHK   MKJIJO  N R  X      YUSR PLV LHHHGGHIOJGFEDDDCCCCCCCCCCCCBBBBBBBB
+AAAAAAABBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEEFGGHIIHHHHHIIIJKMR        VMKJIHHHGFFFFFFGSGEDDDDCCCCCCCCCCCCBBBBBBBBB
+AAAAAAABBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEFFFFFFGGGGHIKP           KHHGGFFFFEEEEEEDDDDDCCCCCCCCCCCBBBBBBBBBBB
+AAAAAAAABBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEFFFFFGGHJLZ         UKHGFFEEEEEEEEDDDDDCCCCCCCCCCCCBBBBBBBBBBBB
+AAAAAAAAABBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEEFFGQPUVOTY   ZQL[MHFEEEEEEEDDDDDDDCCCCCCCCCCCBBBBBBBBBBBBBB
+AAAAAAAAAABBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDEEEEEEFFGHIJKS  X KHHGFEEEEEDDDDDDDDDCCCCCCCCCCBBBBBBBBBBBBBBBB
+AAAAAAAAAAABBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEEFGGHHIKPPKIHGFFEEEDDDDDDDDDCCCCCCCCCCBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAABBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDEEEEEFFGHIMTKLZOGFEEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAAABBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDEEEEFFFI KHGGGHGEDDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBB
+AAAAAAAAAAAAAAABBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDEEEFGIIGFFEEEDDDDDDDDCCCCCCCCCBBBBBBBBBBBBBBBBBBBBBBBBBB
+
+real	0m2.129s
+user	0m2.126s
+sys	0m0.003s
+
+</code></pre>
+      </div>
+      <div class="md-sidebar-toc"><ul>
+<li><a href="#introduction-%E7%AE%80%E4%BB%8B">Introduction &#x7B80;&#x4ECB;</a></li>
+<li><a href="#groundwork-%E5%9F%BA%E7%A1%80%E5%B7%A5%E4%BD%9C">Groundwork &#x57FA;&#x7840;&#x5DE5;&#x4F5C;</a>
+<ul>
+<li><a href="#includes">Includes</a></li>
+<li><a href="#types">Types</a></li>
+</ul>
+</li>
+<li><a href="#initialisation">Initialisation</a>
+<ul>
+<li><a href="#variables">Variables</a></li>
+<li><a href="#arch">.arch</a></li>
+<li><a href="#dasm_init">dasm_init</a></li>
+<li><a href="#dasm_setupglobal">dasm_setupglobal</a></li>
+<li><a href="#dasm_setup">dasm_setup</a></li>
+<li><a href="#dasm_growpc">dasm_growpc</a></li>
+<li><a href="#%E5%B0%8F%E7%BB%93">&#x5C0F;&#x7ED3;</a></li>
+</ul>
+</li>
+<li><a href="#abstractions">Abstractions</a></li>
+<li><a href="#emitting-code">Emitting Code</a>
+<ul>
+<li><a href="#prologue">Prologue</a></li>
+<li><a href="#tape-movement">Tape Movement</a></li>
+<li><a href="#arithmetic">Arithmetic</a></li>
+<li><a href="#io">I/O</a></li>
+<li><a href="#loops">Loops</a></li>
+<li><a href="#epilogue">Epilogue</a></li>
+</ul>
+</li>
+<li><a href="#compiling">Compiling</a></li>
+</ul>
+</div>
+      <a id="sidebar-toc-btn">&#x2261;</a>
+    
+    
+    
+    
+    
+    
+    
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  
+    </body></html>

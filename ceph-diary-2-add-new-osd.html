@@ -1,0 +1,1083 @@
+<!DOCTYPE html><html><head>
+      <title>ceph-diary-2-add-new-osd</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+
+      <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #000000;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+    background: #C1DEF1;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+    background: #C1DEF1;
+}
+
+
+/* Code blocks */
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    background-color: #f9f9f9;
+}
+
+
+/* Inline code */
+
+:not(pre)>code[class*="language-"] {
+    padding: .2em;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #EEE;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #0066FF;
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.string {
+    color: #036A07;
+}
+
+.token.punctuation {
+    color: #000000;
+}
+
+.token.operator {
+    color: #0066FF;
+    font-weight: 900;
+    /* no highlight */
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: #0000CD;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*="language-css"] {
+    color: #0000ff;
+    font-weight: 900;
+}
+
+.token.function {
+    color: #000000;
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: #9a050f;
+}
+
+.token.selector,
+.language-autohotkey .token.keyword {
+    color: #00009f;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.language-json .token.property {
+    color: #2B91AF;
+}
+
+.token.tag,
+.token.selector {
+    color: #800000;
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: #19921c;
+}
+
+.token.directive.tag .tag {
+    background: #ffff00;
+    color: #000000;
+}
+
+
+/* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+
+.line-numbers .line-numbers-rows {
+    border-right-color: #a5a5a5;
+}
+
+.line-numbers-rows>span:before {
+    color: #2B91AF;
+}
+
+
+/* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+
+.line-highlight {
+    background: rgba(193, 222, 241, 0.2);
+    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+}
+
+
+/* highlight */
+
+pre[data-line] {
+    position: relative;
+    padding: 1em 0 1em 3em;
+}
+
+pre[data-line] .line-highlight-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+}
+
+pre[data-line] .line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: hsla(24, 20%, 50%, .08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+pre[data-line] .line-highlight:before,
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-start);
+    position: absolute;
+    top: .4em;
+    left: .6em;
+    min-width: 1em;
+    padding: 0 .5em;
+    background-color: hsla(24, 20%, 50%, .4);
+    color: hsl(24, 20%, 95%);
+    font: bold 65%/1.5 sans-serif;
+    text-align: center;
+    vertical-align: .3em;
+    text-shadow: none;
+    box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-end);
+    top: auto;
+    bottom: .4em;
+}html body {
+    font-family: "Consolas", Arial, freesans, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    color: #2F2F2F;
+    background-color: #fff;
+    overflow: initial;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+html body h1 {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3em;
+}
+
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+    color: #2b2b2b;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+html body strong {
+    color: #000
+}
+
+html body del {
+    color: #5c5c5c
+}
+
+html body a:not([href]) {
+    color: inherit;
+    text-decoration: none
+}
+
+html body a {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body a:hover {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body img {
+    max-width: 100%
+}
+
+html body>p {
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    word-wrap: break-word;
+}
+
+html body>ul,
+html body>ol {
+    margin-bottom: 0px
+}
+
+html body ul,
+html body ol {
+    padding-left: 2em
+}
+
+html body ul.no-list,
+html body ol.no-list {
+    padding: 0;
+    list-style-type: none
+}
+
+html body ul ul,
+html body ul ol,
+html body ol ol,
+html body ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body li {
+    margin-bottom: 0
+}
+
+html body li.task-list-item {
+    list-style: none
+}
+
+html body li>p {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body .task-list-item-checkbox {
+    margin: 0 .2em .25em -1.8em;
+    vertical-align: middle
+}
+
+html body .task-list-item-checkbox:hover {
+    cursor: pointer
+}
+
+html body blockquote {
+    margin: 16px 0;
+    font-size: inherit;
+    padding: 0 15px;
+    color: #5c5c5c;
+    border-left: 4px solid #d6d6d6
+}
+
+html body blockquote>:first-child {
+    margin-top: 0
+}
+
+html body blockquote>:last-child {
+    margin-bottom: 0
+}
+
+html body hr {
+    height: 4px;
+    margin: 32px 0;
+    background-color: #d6d6d6;
+    border: 0 none
+}
+
+html body table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all
+}
+
+html body table th {
+    font-weight: bold;
+    color: #000
+}
+
+html body table td,
+html body table th {
+    border: 1px solid #d6d6d6;
+    padding: 6px 13px
+}
+
+html body dl {
+    padding: 0
+}
+
+html body dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold
+}
+
+html body dl dd {
+    padding: 0 16px;
+    margin-bottom: 0px
+}
+
+html body code {
+    font-family: Consolas, monospace;
+    font-size: 12px !important;
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+html body code::before,
+html body code::after {
+    letter-spacing: -0.2em;
+    content: "\00a0"
+}
+
+html body pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: .85em !important;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0
+}
+
+html body .highlight {
+    margin-bottom: 0px
+}
+
+html body .highlight pre,
+html body pre {
+    padding: 1em;
+    overflow: auto;
+    font-size: .85em !important;
+    line-height: 1.45;
+    border: #d6d6d6;
+    border-radius: 3px
+}
+
+html body .highlight pre {
+    margin-bottom: 0;
+    word-break: normal
+}
+
+html body pre code,
+html body pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0
+}
+
+html body pre code:before,
+html body pre tt:before,
+html body pre code:after,
+html body pre tt:after {
+    content: normal
+}
+
+html body p,
+html body blockquote,
+html body ul,
+html body ol,
+html body dl,
+html body pre {
+    /* nothing */
+}
+
+html body kbd {
+    color: #000;
+    border: 1px solid #d6d6d6;
+    border-bottom: 2px solid #c7c7c7;
+    padding: 2px 4px;
+    background-color: #f0f0f0;
+    border-radius: 3px
+}
+
+@media print {
+    html body {
+        background-color: #fff
+    }
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+        color: #000;
+        page-break-after: avoid
+    }
+    html body blockquote {
+        color: #5c5c5c
+    }
+    html body pre {
+        page-break-inside: avoid
+    }
+    html body table {
+        display: table
+    }
+    html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+    }
+    html body pre,
+    html body code {
+        word-wrap: break-word;
+        white-space: pre
+    }
+}
+
+.markdown-preview {
+    float: left;
+    margin: 10px auto 10px 10px;
+    color: #2F2F2F;
+    border: 1px dashed #DDDDDD;
+    padding: 10px;
+    width: 80em;
+}
+
+p {
+    margin: 1em 0 1em 0;
+}
+
+
+/* code block theme */.markdown-preview {
+    height: 100%;
+    box-sizing: border-box
+}
+
+.markdown-preview .pagebreak,
+.markdown-preview .newpage {
+    page-break-before: always
+}
+
+.markdown-preview pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber
+}
+
+.markdown-preview pre.line-numbers>code {
+    position: relative
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 1em;
+    font-size: 100%;
+    left: 0;
+    width: 3em;
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: .8em;
+    text-align: right
+}
+
+.markdown-preview .mathjax-exps .MathJax_Display {
+    text-align: center !important
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .status {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .output-div {
+    margin-bottom: 16px
+}
+
+.scrollbar-style::-webkit-scrollbar {
+    width: 8px
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+    position: relative;
+    top: 0
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    font-size: 28px;
+    cursor: pointer;
+    color: inherit;
+    z-index: 99;
+    width: 32px;
+    text-align: center;
+    opacity: .4
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+    opacity: 1
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    padding: 32px 0 48px 0;
+    font-size: 12px;
+    border-left: 1px dashed #DDDDDD;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: inherit
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+    width: 8px
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+    text-decoration: none
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    padding: 0 1.6em;
+    margin-top: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+    margin-bottom: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    list-style-type: none
+}
+
+@media screen and (max-width:1274px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 0em
+    }
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+    display: none
+}
+
+@media screen and (max-width:914px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        width: 100%
+    }
+}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h2><a href="http://ceph-diary-2-add-new-osd.md">ceph-diary-2-add-new-osd.md</a></h2>
+<ul>
+<li>@name       CEPH &#x65E5;&#x8BB0; 2 - &#x5982;&#x4F55;&#x6DFB;&#x52A0;OSD</li>
+<li>@author     karminski &lt;<a href="mailto:code.karminski@outlook.com">code.karminski@outlook.com</a>&gt;</li>
+<li>@version    20190713:1</li>
+</ul>
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#name">Name</a></li>
+</ul>
+<h2>Name</h2>
+<ul>
+<li>CEPH &#x65E5;&#x8BB0; 2 - &#x5982;&#x4F55;&#x6DFB;&#x52A0;OSD</li>
+</ul>
+<h2>Environment</h2>
+<p>&#x672C;&#x6587;&#x57FA;&#x4E8E; ceph version 13.2.6 (7b695f835b03642f85998b2ae7b6dd093d9fbce4) mimic (stable)</p>
+<h2>Content</h2>
+<p>&#x73B0;&#x6709; CEPH &#x96C6;&#x7FA4;:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage02-ib ~]# ceph osd status
++----+----------------------------+-------+-------+--------+---------+--------+---------+-----------+
+| id |            host            |  used | avail | wr ops | wr data | rd ops | rd data |   state   |
++----+----------------------------+-------+-------+--------+---------+--------+---------+-----------+
+| 0  | storage02-ib.lobj.eth6.org | 1696G | 3892G |    0   |     0   |    0   |     0   | exists,up |
+| 1  | storage02-ib.lobj.eth6.org | 1631G | 3957G |    0   |     0   |    0   |     0   | exists,up |
+| 2  | storage02-ib.lobj.eth6.org | 1736G | 3852G |    0   |     0   |    0   |     0   | exists,up |
+| 3  | storage02-ib.lobj.eth6.org | 1867G | 3721G |    0   |     0   |    0   |     0   | exists,up |
+| 4  | storage02-ib.lobj.eth6.org | 1927G | 3661G |    0   |     0   |    0   |     0   | exists,up |
+| 5  | storage03-ib.lobj.eth6.org | 1491G | 4097G |    0   |     0   |    0   |     0   | exists,up |
+| 6  | storage03-ib.lobj.eth6.org | 1523G | 4065G |    0   |     0   |    0   |     0   | exists,up |
+| 7  | storage03-ib.lobj.eth6.org | 1423G | 4165G |    0   |     0   |    1   |     0   | exists,up |
+| 10 | storage03-ib.lobj.eth6.org | 1450G | 4138G |    0   |     0   |    0   |     0   | exists,up |
++----+----------------------------+-------+-------+--------+---------+--------+---------+-----------+
+</code></pre><p>&#x60C5;&#x51B5;&#x5982;&#x4E0A;, &#x73B0;&#x5728;&#x8981;&#x5728; <a href="http://storage03-ib.lobj.eth6.org">storage03-ib.lobj.eth6.org</a> &#x8282;&#x70B9;&#x4E0A;&#x65B0;&#x589E;&#x4E00;&#x5757;&#x76D8;, &#x5373;, &#x65B0;&#x589E;&#x4E00;&#x4E2A;OSD.</p>
+<p>&#x9996;&#x5148;&#x76D8;&#x5DF2;&#x7ECF;&#x63D2;&#x5230;&#x4E86;&#x673A;&#x5668;&#x4E0A;, &#x8FD0;&#x884C; fdisk -l &#x67E5;&#x770B;&#x65B0;&#x589E;&#x786C;&#x76D8;:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage03-ib ceph-9]# fdisk -l
+
+Disk /dev/sdb: 128.0 GB, 128035676160 bytes, 250069680 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x000b0447
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1   *        2048     2099199     1048576   83  Linux
+/dev/sdb2         2099200   211814399   104857600   83  Linux
+
+Disk /dev/sda: 256.1 GB, 256060514304 bytes, 500118192 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+
+Disk /dev/sdd: 6001.2 GB, 6001175126016 bytes, 11721045168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+
+Disk /dev/sde: 6001.2 GB, 6001175126016 bytes, 11721045168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+
+Disk /dev/sdf: 6001.2 GB, 6001175126016 bytes, 11721045168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+
+Disk /dev/sdg: 6001.2 GB, 6001175126016 bytes, 11721045168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+
+Disk /dev/sdc: 6001.2 GB, 6001175126016 bytes, 11721045168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+
+Disk /dev/mapper/ceph--db085012--287e--4e5a--80a0--1c92f8966bc2-osd--block--eefef80a--4553--4832--8a83--1f70231f4b89: 6001.2 GB, 6001172414464 bytes, 11721039872 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+
+Disk /dev/mapper/ceph--8761018c--32af--4732--869f--33c88aeec7bd-osd--block--3635f9d5--2f63--4d60--a1ed--696dc3b5e673: 6001.2 GB, 6001172414464 bytes, 11721039872 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+
+Disk /dev/mapper/ceph--c8971056--0ac6--4229--a7a2--9764390d0b99-osd--block--1d78ea09--2aa7--4422--b6d0--95a41c337f30: 6001.2 GB, 6001172414464 bytes, 11721039872 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+
+Disk /dev/mapper/ceph--29dd0bd9--2377--4b89--8a29--11fcfdf0faa6-osd--block--8faa1c0e--fa55--478e--9f4c--15fd9e93943a: 6001.2 GB, 6001172414464 bytes, 11721039872 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+
+</code></pre><p>&#x65B0;&#x589E;&#x786C;&#x76D8;&#x4E3A; /dev/sde.</p>
+<p>&#x5982;&#x679C;&#x76D8;&#x592A;&#x591A;, &#x63D2;&#x4E0A;&#x53BB;&#x4E0D;&#x8BB0;&#x5F97;&#x662F;&#x54EA;&#x4E2A;&#x76D8;&#x4E86;, &#x5C24;&#x5176;&#x662F;&#x50CF;&#x6211;&#x8FD9;&#x4E2A;&#x8BBE;&#x5907;&#x540D;&#x79F0;&#x5728;&#x4E2D;&#x95F4;&#x7684;, &#x4E0D;&#x662F;&#x5F88;&#x597D;&#x627E;&#x5230;, &#x53EF;&#x4EE5;&#x5229;&#x7528; pvs &#x547D;&#x4EE4;&#x67E5;&#x770B;&#x76D8;&#x7684; VG name, &#x65B0;&#x63D2;&#x8FDB;&#x53BB;&#x7684;&#x76D8;&#x5982;&#x679C;&#x6CA1;&#x6709; lvm &#x5377;, &#x90A3;&#x4E48;&#x5C31;&#x662F;&#x6CA1;&#x6709; lvm &#x4FE1;&#x606F;&#x7684;.</p>
+<p>&#x4F8B;&#x5982;, &#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x7684;&#x76D8;&#x7684;&#x4FE1;&#x606F;:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage03-ib ceph-9]# pvs /dev/sdc
+  PV         VG                                        Fmt  Attr PSize  PFree
+  /dev/sdc   ceph-29dd0bd9-2377-4b89-8a29-11fcfdf0faa6 lvm2 a--  &lt;5.46t    0 
+</code></pre><p>&#x8FD9;&#x662F;&#x65B0;&#x76D8;:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage03-ib ceph-9]# pvs /dev/sde
+  Failed to find physical volume &quot;/dev/sde&quot;.
+</code></pre><p>&#x63A5;&#x4E0B;&#x6765;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x767B;&#x5F55;&#x5230; ceph-deploy &#x673A;&#x5668;&#x4E0A;&#x901A;&#x8FC7; ceph-deploy &#x7A0B;&#x5E8F;&#x6DFB;&#x52A0; OSD (&#x767B;&#x9646;&#x540E;&#x8BB0;&#x5F97;&#x5207;&#x6362;&#x6210; ceph-deploy &#x7684;&#x4E13;&#x7528;&#x7528;&#x6237;).</p>
+<p>&#x901A;&#x8FC7; ceph-deploy osd create --data {target-device} {target-host} &#x547D;&#x4EE4;&#x5373;&#x53EF;&#x65B0;&#x589E; OSD.</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage01-ib ceph01.lobj.eth6.org]# su ceph-deploy-user
+[ceph-deploy-user@storage01-ib ceph01.lobj.eth6.org]$ ceph-deploy osd create --data /dev/sde storage03-ib.lobj.eth6.org
+[ceph_deploy.conf][DEBUG ] found configuration file at: /home/ceph-deploy-user/.cephdeploy.conf
+[ceph_deploy.cli][INFO  ] Invoked (2.0.1): /usr/bin/ceph-deploy osd create --data /dev/sde storage03-ib.lobj.eth6.org
+[ceph_deploy.cli][INFO  ] ceph-deploy options:
+[ceph_deploy.cli][INFO  ]  verbose                       : False
+[ceph_deploy.cli][INFO  ]  bluestore                     : None
+[ceph_deploy.cli][INFO  ]  cd_conf                       : &lt;ceph_deploy.conf.cephdeploy.Conf instance at 0x7facea9a0bd8&gt;
+[ceph_deploy.cli][INFO  ]  cluster                       : ceph
+[ceph_deploy.cli][INFO  ]  fs_type                       : xfs
+[ceph_deploy.cli][INFO  ]  block_wal                     : None
+[ceph_deploy.cli][INFO  ]  default_release               : False
+[ceph_deploy.cli][INFO  ]  username                      : None
+[ceph_deploy.cli][INFO  ]  journal                       : None
+[ceph_deploy.cli][INFO  ]  subcommand                    : create
+[ceph_deploy.cli][INFO  ]  host                          : storage03-ib.lobj.eth6.org
+[ceph_deploy.cli][INFO  ]  filestore                     : None
+[ceph_deploy.cli][INFO  ]  func                          : &lt;function osd at 0x7faceabe0a28&gt;
+[ceph_deploy.cli][INFO  ]  ceph_conf                     : None
+[ceph_deploy.cli][INFO  ]  zap_disk                      : False
+[ceph_deploy.cli][INFO  ]  data                          : /dev/sde
+[ceph_deploy.cli][INFO  ]  block_db                      : None
+[ceph_deploy.cli][INFO  ]  dmcrypt                       : False
+[ceph_deploy.cli][INFO  ]  overwrite_conf                : False
+[ceph_deploy.cli][INFO  ]  dmcrypt_key_dir               : /etc/ceph/dmcrypt-keys
+[ceph_deploy.cli][INFO  ]  quiet                         : False
+[ceph_deploy.cli][INFO  ]  debug                         : False
+[ceph_deploy.osd][DEBUG ] Creating OSD on cluster ceph with data device /dev/sde
+[storage03-ib.lobj.eth6.org][DEBUG ] connection detected need for sudo
+[storage03-ib.lobj.eth6.org][DEBUG ] connected to host: storage03-ib.lobj.eth6.org 
+[storage03-ib.lobj.eth6.org][DEBUG ] detect platform information from remote host
+[storage03-ib.lobj.eth6.org][DEBUG ] detect machine type
+[storage03-ib.lobj.eth6.org][DEBUG ] find the location of an executable
+[ceph_deploy.osd][INFO  ] Distro info: CentOS Linux 7.6.1810 Core
+[ceph_deploy.osd][DEBUG ] Deploying osd to storage03-ib.lobj.eth6.org
+[storage03-ib.lobj.eth6.org][DEBUG ] write cluster configuration to /etc/ceph/{cluster}.conf
+[storage03-ib.lobj.eth6.org][DEBUG ] find the location of an executable
+[storage03-ib.lobj.eth6.org][INFO  ] Running command: sudo /usr/sbin/ceph-volume --cluster ceph lvm create --bluestore --data /dev/sde
+[storage03-ib.lobj.eth6.org][WARNIN] usage: ceph-volume lvm create [-h] --data DATA [--filestore]
+[storage03-ib.lobj.eth6.org][WARNIN]                               [--journal JOURNAL] [--bluestore]
+[storage03-ib.lobj.eth6.org][WARNIN]                               [--block.db BLOCK_DB] [--block.wal BLOCK_WAL]
+[storage03-ib.lobj.eth6.org][WARNIN]                               [--osd-id OSD_ID] [--osd-fsid OSD_FSID]
+[storage03-ib.lobj.eth6.org][WARNIN]                               [--cluster-fsid CLUSTER_FSID]
+[storage03-ib.lobj.eth6.org][WARNIN]                               [--crush-device-class CRUSH_DEVICE_CLASS]
+[storage03-ib.lobj.eth6.org][WARNIN]                               [--dmcrypt] [--no-systemd]
+[storage03-ib.lobj.eth6.org][WARNIN] ceph-volume lvm create: error: GPT headers found, they must be removed on: /dev/sde
+[storage03-ib.lobj.eth6.org][ERROR ] RuntimeError: command returned non-zero exit status: 2
+[ceph_deploy.osd][ERROR ] Failed to execute command: /usr/sbin/ceph-volume --cluster ceph lvm create --bluestore --data /dev/sde
+[ceph_deploy][ERROR ] GenericError: Failed to create 1 OSDs
+
+</code></pre><p>&#x53EF;&#x4EE5;&#x770B;&#x5230;, &#x65B0;&#x589E;&#x7684;&#x786C;&#x76D8;&#x4E2D;&#x53D1;&#x73B0;&#x4E86; GPT &#x5206;&#x533A;&#x8868;, &#x6240;&#x4EE5;&#x6DFB;&#x52A0;&#x5931;&#x8D25;&#x4E86;, &#x6211;&#x4EEC;&#x8981;&#x624B;&#x52A8;&#x6E05;&#x7406;&#x6389;&#x786C;&#x76D8;&#x7684;&#x5206;&#x533A;&#x8868; (&#x5F53;&#x7136;&#x5982;&#x679C;&#x786C;&#x76D8;&#x662F;&#x5168;&#x65B0;&#x7684;, &#x8FD9;&#x91CC;&#x5E94;&#x8BE5;&#x5C31;&#x6210;&#x529F;&#x4E86;).</p>
+<p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x76F4;&#x63A5;&#x66B4;&#x529B;&#x5E72;&#x6389;&#x5206;&#x533A;&#x8868;, &#x4E0D;&#x7528;&#x8D39;&#x4E8B;&#x7684;&#x64CD;&#x4F5C; PV &#x548C; VG &#x4E86;.<br>
+&#x6CE8;&#x610F;, &#x4E00;&#x5B9A;&#x8981;&#x518D;&#x4E09;&#x68C0;&#x67E5;&#x76EE;&#x6807;&#x786C;&#x76D8;&#x662F;&#x5426;&#x662F;&#x671F;&#x671B;&#x7684;&#x786C;&#x76D8;, &#x5982;&#x679C;&#x64CD;&#x4F5C;&#x9519;&#x4E86;&#x786C;&#x76D8;, &#x5206;&#x533A;&#x8868;&#x76F4;&#x63A5;&#x5C31;&#x6CA1;&#x4E86;.</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage03-ib ceph-9]# dd if=/dev/zero of=/dev/sde bs=512K count=1
+1+0 records in
+1+0 records out
+524288 bytes (524 kB) copied, 0.00109677 s, 478 MB/s
+</code></pre><p>&#x5229;&#x7528; dd &#x547D;&#x4EE4;&#x628A;&#x786C;&#x76D8;&#x7684;&#x524D; 512K &#x586B;&#x5145;&#x4E3A; 0, &#x76F4;&#x63A5;&#x5E72;&#x6389;&#x5206;&#x533A;&#x4FE1;&#x606F;.<br>
+&#x6CE8;&#x610F;&#x5982;&#x679C;&#x8FD9;&#x5757;&#x76D8;&#x4E4B;&#x524D;&#x5DF2;&#x7ECF;&#x6302;&#x8F7D;&#x4E86;, &#x90A3;&#x9700;&#x8981;&#x91CD;&#x542F;&#x624D;&#x80FD;&#x751F;&#x6548;.</p>
+<p>&#x7136;&#x540E;&#x91CD;&#x65B0;&#x6DFB;&#x52A0; OSD:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[ceph-deploy-user@storage01-ib ceph01.lobj.eth6.org]$ ceph-deploy osd create --data /dev/sde storage03-ib.lobj.eth6.org
+[ceph_deploy.conf][DEBUG ] found configuration file at: /home/ceph-deploy-user/.cephdeploy.conf
+[ceph_deploy.cli][INFO  ] Invoked (2.0.1): /usr/bin/ceph-deploy osd create --data /dev/sde storage03-ib.lobj.eth6.org
+[ceph_deploy.cli][INFO  ] ceph-deploy options:
+[ceph_deploy.cli][INFO  ]  verbose                       : False
+[ceph_deploy.cli][INFO  ]  bluestore                     : None
+[ceph_deploy.cli][INFO  ]  cd_conf                       : &lt;ceph_deploy.conf.cephdeploy.Conf instance at 0x7f09deba1bd8&gt;
+[ceph_deploy.cli][INFO  ]  cluster                       : ceph
+[ceph_deploy.cli][INFO  ]  fs_type                       : xfs
+[ceph_deploy.cli][INFO  ]  block_wal                     : None
+[ceph_deploy.cli][INFO  ]  default_release               : False
+[ceph_deploy.cli][INFO  ]  username                      : None
+[ceph_deploy.cli][INFO  ]  journal                       : None
+[ceph_deploy.cli][INFO  ]  subcommand                    : create
+[ceph_deploy.cli][INFO  ]  host                          : storage03-ib.lobj.eth6.org
+[ceph_deploy.cli][INFO  ]  filestore                     : None
+[ceph_deploy.cli][INFO  ]  func                          : &lt;function osd at 0x7f09dede1a28&gt;
+[ceph_deploy.cli][INFO  ]  ceph_conf                     : None
+[ceph_deploy.cli][INFO  ]  zap_disk                      : False
+[ceph_deploy.cli][INFO  ]  data                          : /dev/sde
+[ceph_deploy.cli][INFO  ]  block_db                      : None
+[ceph_deploy.cli][INFO  ]  dmcrypt                       : False
+[ceph_deploy.cli][INFO  ]  overwrite_conf                : False
+[ceph_deploy.cli][INFO  ]  dmcrypt_key_dir               : /etc/ceph/dmcrypt-keys
+[ceph_deploy.cli][INFO  ]  quiet                         : False
+[ceph_deploy.cli][INFO  ]  debug                         : False
+[ceph_deploy.osd][DEBUG ] Creating OSD on cluster ceph with data device /dev/sde
+[storage03-ib.lobj.eth6.org][DEBUG ] connection detected need for sudo
+[storage03-ib.lobj.eth6.org][DEBUG ] connected to host: storage03-ib.lobj.eth6.org 
+[storage03-ib.lobj.eth6.org][DEBUG ] detect platform information from remote host
+[storage03-ib.lobj.eth6.org][DEBUG ] detect machine type
+[storage03-ib.lobj.eth6.org][DEBUG ] find the location of an executable
+[ceph_deploy.osd][INFO  ] Distro info: CentOS Linux 7.6.1810 Core
+[ceph_deploy.osd][DEBUG ] Deploying osd to storage03-ib.lobj.eth6.org
+[storage03-ib.lobj.eth6.org][DEBUG ] write cluster configuration to /etc/ceph/{cluster}.conf
+[storage03-ib.lobj.eth6.org][DEBUG ] find the location of an executable
+[storage03-ib.lobj.eth6.org][INFO  ] Running command: sudo /usr/sbin/ceph-volume --cluster ceph lvm create --bluestore --data /dev/sde
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ceph-authtool --gen-print-key
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ceph --cluster ceph --name client.bootstrap-osd --keyring /var/lib/ceph/bootstrap-osd/ceph.keyring -i - osd new e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /usr/sbin/vgcreate --force --yes ceph-d524c6c7-15f3-4fcc-b494-7253907e3af2 /dev/sde
+[storage03-ib.lobj.eth6.org][DEBUG ]  stdout: Physical volume &quot;/dev/sde&quot; successfully created.
+[storage03-ib.lobj.eth6.org][DEBUG ]  stdout: Volume group &quot;ceph-d524c6c7-15f3-4fcc-b494-7253907e3af2&quot; successfully created
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /usr/sbin/lvcreate --yes -l 100%FREE -n osd-block-e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893 ceph-d524c6c7-15f3-4fcc-b494-7253907e3af2
+[storage03-ib.lobj.eth6.org][DEBUG ]  stdout: Logical volume &quot;osd-block-e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893&quot; created.
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ceph-authtool --gen-print-key
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/mount -t tmpfs tmpfs /var/lib/ceph/osd/ceph-8
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /usr/sbin/restorecon /var/lib/ceph/osd/ceph-8
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/chown -h ceph:ceph /dev/ceph-d524c6c7-15f3-4fcc-b494-7253907e3af2/osd-block-e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/chown -R ceph:ceph /dev/dm-4
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ln -s /dev/ceph-d524c6c7-15f3-4fcc-b494-7253907e3af2/osd-block-e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893 /var/lib/ceph/osd/ceph-8/block
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ceph --cluster ceph --name client.bootstrap-osd --keyring /var/lib/ceph/bootstrap-osd/ceph.keyring mon getmap -o /var/lib/ceph/osd/ceph-8/activate.monmap
+[storage03-ib.lobj.eth6.org][DEBUG ]  stderr: got monmap epoch 3
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ceph-authtool /var/lib/ceph/osd/ceph-8/keyring --create-keyring --name osd.8 --add-key AQBAkyldqQHgDxAAvwEeZNU9iOV+M0FEBq0Odw==
+[storage03-ib.lobj.eth6.org][DEBUG ]  stdout: creating /var/lib/ceph/osd/ceph-8/keyring
+[storage03-ib.lobj.eth6.org][DEBUG ] added entity osd.8 auth auth(auid = 18446744073709551615 key=AQBAkyldqQHgDxAAvwEeZNU9iOV+M0FEBq0Odw== with 0 caps)
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-8/keyring
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-8/
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ceph-osd --cluster ceph --osd-objectstore bluestore --mkfs -i 8 --monmap /var/lib/ceph/osd/ceph-8/activate.monmap --keyfile - --osd-data /var/lib/ceph/osd/ceph-8/ --osd-uuid e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893 --setuser ceph --setgroup ceph
+[storage03-ib.lobj.eth6.org][DEBUG ] --&gt; ceph-volume lvm prepare successful for: /dev/sde
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-8
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ceph-bluestore-tool --cluster=ceph prime-osd-dir --dev /dev/ceph-d524c6c7-15f3-4fcc-b494-7253907e3af2/osd-block-e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893 --path /var/lib/ceph/osd/ceph-8 --no-mon-config
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/ln -snf /dev/ceph-d524c6c7-15f3-4fcc-b494-7253907e3af2/osd-block-e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893 /var/lib/ceph/osd/ceph-8/block
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/chown -h ceph:ceph /var/lib/ceph/osd/ceph-8/block
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/chown -R ceph:ceph /dev/dm-4
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/chown -R ceph:ceph /var/lib/ceph/osd/ceph-8
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/systemctl enable ceph-volume@lvm-8-e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893
+[storage03-ib.lobj.eth6.org][DEBUG ]  stderr: Created symlink from /etc/systemd/system/multi-user.target.wants/ceph-volume@lvm-8-e1b6d9ba-f19d-4470-82e9-c3f1fa3e5893.service to /usr/lib/systemd/system/ceph-volume@.service.
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/systemctl enable --runtime ceph-osd@8
+[storage03-ib.lobj.eth6.org][DEBUG ]  stderr: Created symlink from /run/systemd/system/ceph-osd.target.wants/ceph-osd@8.service to /usr/lib/systemd/system/ceph-osd@.service.
+[storage03-ib.lobj.eth6.org][DEBUG ] Running command: /bin/systemctl start ceph-osd@8
+[storage03-ib.lobj.eth6.org][DEBUG ] --&gt; ceph-volume lvm activate successful for osd ID: 8
+[storage03-ib.lobj.eth6.org][DEBUG ] --&gt; ceph-volume lvm create successful for: /dev/sde
+[storage03-ib.lobj.eth6.org][INFO  ] checking OSD status...
+[storage03-ib.lobj.eth6.org][DEBUG ] find the location of an executable
+[storage03-ib.lobj.eth6.org][INFO  ] Running command: sudo /bin/ceph --cluster=ceph osd stat --format=json
+[ceph_deploy.osd][DEBUG ] Host storage03-ib.lobj.eth6.org is now ready for osd use.
+[ceph-deploy-user@storage01-ib ceph01.lobj.eth6.org]$ 
+
+</code></pre><p>&#x6DFB;&#x52A0;&#x6210;&#x529F;, &#x6211;&#x4EEC;&#x8FD0;&#x884C; ceph osd status &#x67E5;&#x770B;&#x65B0;&#x589E;&#x7684; osd:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage02-ib ~]# ceph osd status
++----+----------------------------+-------+-------+--------+---------+--------+---------+-----------+
+| id |            host            |  used | avail | wr ops | wr data | rd ops | rd data |   state   |
++----+----------------------------+-------+-------+--------+---------+--------+---------+-----------+
+| 0  | storage02-ib.lobj.eth6.org | 1689G | 3899G |    0   |     0   |    0   |     0   | exists,up |
+| 1  | storage02-ib.lobj.eth6.org | 1631G | 3957G |    0   |     0   |    0   |     0   | exists,up |
+| 2  | storage02-ib.lobj.eth6.org | 1784G | 3804G |    0   |     0   |    0   |     0   | exists,up |
+| 3  | storage02-ib.lobj.eth6.org | 1862G | 3726G |    0   |     0   |    0   |     0   | exists,up |
+| 4  | storage02-ib.lobj.eth6.org | 1892G | 3696G |    0   |     0   |    0   |     0   | exists,up |
+| 5  | storage03-ib.lobj.eth6.org | 1515G | 4073G |    0   |     0   |    0   |     0   | exists,up |
+| 6  | storage03-ib.lobj.eth6.org | 1546G | 4042G |    0   |     0   |    0   |     0   | exists,up |
+| 7  | storage03-ib.lobj.eth6.org | 1438G | 4150G |    0   |     0   |    1   |     0   | exists,up |
+| 8  | storage03-ib.lobj.eth6.org | 1102M | 5587G |    0   |     0   |    0   |     0   | exists,up |
+| 10 | storage03-ib.lobj.eth6.org | 1481G | 4107G |    0   |     0   |    0   |     0   | exists,up |
++----+----------------------------+-------+-------+--------+---------+--------+---------+-----------+
+[root@storage02-ib ~]# 
+
+</code></pre><p>&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x591A;&#x4E86;&#x4E2A; OSD 8, &#x5728;&#x8FD0;&#x884C; ceph -s &#x770B;&#x4E0B;:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>[root@storage02-ib ~]# ceph -s
+  cluster:
+    id:     0f7be0a4-2a05-4658-8829-f3d2f62579d2
+    health: HEALTH_WARN
+            234857/4527742 objects misplaced (5.187%)
+            Degraded data redundancy: 785524/4527742 objects degraded (17.349%), 94 pgs degraded, 94 pgs undersized
+ 
+  services:
+    mon: 3 daemons, quorum storage01-ib,storage02-ib,storage03-ib
+    mgr: storage01-ib(active), standbys: storage02-ib, storage03-ib
+    osd: 10 osds: 10 up, 10 in; 115 remapped pgs
+    rgw: 2 daemons active
+ 
+  data:
+    pools:   5 pools, 288 pgs
+    objects: 2.26 M objects, 8.6 TiB
+    usage:   14 TiB used, 40 TiB / 55 TiB avail
+    pgs:     785524/4527742 objects degraded (17.349%)
+             234857/4527742 objects misplaced (5.187%)
+             173 active+clean
+             91  active+undersized+degraded+remapped+backfill_wait
+             18  active+remapped+backfill_wait
+             3   active+remapped+backfilling
+             3   active+undersized+degraded+remapped+backfilling
+ 
+  io:
+    recovery: 108 MiB/s, 27 objects/s
+ 
+[root@storage02-ib ~]# 
+
+</code></pre><p>&#x53EF;&#x4EE5;&#x770B;&#x5230; 234857/4527742 objects misplaced (5.187%), &#x56E0;&#x4E3A;&#x65B0;&#x589E;&#x4E86;&#x786C;&#x76D8;, &#x6545;&#x6570;&#x636E;&#x9700;&#x8981;&#x91CD;&#x65B0;&#x5E73;&#x8861;.<br>
+&#x81F3;&#x6B64;&#x65B0;&#x7684; OSD &#x6DFB;&#x52A0;&#x5B8C;&#x6BD5;.</p>
+<h2>Reference</h2>
+<ul>
+<li><a href="http://docs.ceph.com/docs/master/start/quick-ceph-deploy/#adding-an-osd">quick-ceph-deploy</a></li>
+</ul>
+
+      </div>
+      <div class="md-sidebar-toc"></div>
+      <a id="sidebar-toc-btn">&#x2261;</a>
+    
+    
+    
+    
+    
+    
+    
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  
+    </body></html>

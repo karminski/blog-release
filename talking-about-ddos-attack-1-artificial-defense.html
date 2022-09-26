@@ -1,0 +1,895 @@
+<!DOCTYPE html><html><head>
+      <title>talking-about-ddos-attack-1-artificial-defense</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+
+      <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #000000;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+    background: #C1DEF1;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+    background: #C1DEF1;
+}
+
+
+/* Code blocks */
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    background-color: #f9f9f9;
+}
+
+
+/* Inline code */
+
+:not(pre)>code[class*="language-"] {
+    padding: .2em;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #EEE;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #0066FF;
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.string {
+    color: #036A07;
+}
+
+.token.punctuation {
+    color: #000000;
+}
+
+.token.operator {
+    color: #0066FF;
+    font-weight: 900;
+    /* no highlight */
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: #0000CD;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*="language-css"] {
+    color: #0000ff;
+    font-weight: 900;
+}
+
+.token.function {
+    color: #000000;
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: #9a050f;
+}
+
+.token.selector,
+.language-autohotkey .token.keyword {
+    color: #00009f;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.language-json .token.property {
+    color: #2B91AF;
+}
+
+.token.tag,
+.token.selector {
+    color: #800000;
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: #19921c;
+}
+
+.token.directive.tag .tag {
+    background: #ffff00;
+    color: #000000;
+}
+
+
+/* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+
+.line-numbers .line-numbers-rows {
+    border-right-color: #a5a5a5;
+}
+
+.line-numbers-rows>span:before {
+    color: #2B91AF;
+}
+
+
+/* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+
+.line-highlight {
+    background: rgba(193, 222, 241, 0.2);
+    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+}
+
+
+/* highlight */
+
+pre[data-line] {
+    position: relative;
+    padding: 1em 0 1em 3em;
+}
+
+pre[data-line] .line-highlight-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+}
+
+pre[data-line] .line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: hsla(24, 20%, 50%, .08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+pre[data-line] .line-highlight:before,
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-start);
+    position: absolute;
+    top: .4em;
+    left: .6em;
+    min-width: 1em;
+    padding: 0 .5em;
+    background-color: hsla(24, 20%, 50%, .4);
+    color: hsl(24, 20%, 95%);
+    font: bold 65%/1.5 sans-serif;
+    text-align: center;
+    vertical-align: .3em;
+    text-shadow: none;
+    box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-end);
+    top: auto;
+    bottom: .4em;
+}html body {
+    font-family: "Consolas", Arial, freesans, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    color: #2F2F2F;
+    background-color: #fff;
+    overflow: initial;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+html body h1 {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3em;
+}
+
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+    color: #2b2b2b;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+html body strong {
+    color: #000
+}
+
+html body del {
+    color: #5c5c5c
+}
+
+html body a:not([href]) {
+    color: inherit;
+    text-decoration: none
+}
+
+html body a {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body a:hover {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body img {
+    max-width: 100%
+}
+
+html body>p {
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    word-wrap: break-word;
+}
+
+html body>ul,
+html body>ol {
+    margin-bottom: 0px
+}
+
+html body ul,
+html body ol {
+    padding-left: 2em
+}
+
+html body ul.no-list,
+html body ol.no-list {
+    padding: 0;
+    list-style-type: none
+}
+
+html body ul ul,
+html body ul ol,
+html body ol ol,
+html body ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body li {
+    margin-bottom: 0
+}
+
+html body li.task-list-item {
+    list-style: none
+}
+
+html body li>p {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body .task-list-item-checkbox {
+    margin: 0 .2em .25em -1.8em;
+    vertical-align: middle
+}
+
+html body .task-list-item-checkbox:hover {
+    cursor: pointer
+}
+
+html body blockquote {
+    margin: 16px 0;
+    font-size: inherit;
+    padding: 0 15px;
+    color: #5c5c5c;
+    border-left: 4px solid #d6d6d6
+}
+
+html body blockquote>:first-child {
+    margin-top: 0
+}
+
+html body blockquote>:last-child {
+    margin-bottom: 0
+}
+
+html body hr {
+    height: 4px;
+    margin: 32px 0;
+    background-color: #d6d6d6;
+    border: 0 none
+}
+
+html body table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all
+}
+
+html body table th {
+    font-weight: bold;
+    color: #000
+}
+
+html body table td,
+html body table th {
+    border: 1px solid #d6d6d6;
+    padding: 6px 13px
+}
+
+html body dl {
+    padding: 0
+}
+
+html body dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold
+}
+
+html body dl dd {
+    padding: 0 16px;
+    margin-bottom: 0px
+}
+
+html body code {
+    font-family: Consolas, monospace;
+    font-size: 12px !important;
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+html body code::before,
+html body code::after {
+    letter-spacing: -0.2em;
+    content: "\00a0"
+}
+
+html body pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: .85em !important;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0
+}
+
+html body .highlight {
+    margin-bottom: 0px
+}
+
+html body .highlight pre,
+html body pre {
+    padding: 1em;
+    overflow: auto;
+    font-size: .85em !important;
+    line-height: 1.45;
+    border: #d6d6d6;
+    border-radius: 3px
+}
+
+html body .highlight pre {
+    margin-bottom: 0;
+    word-break: normal
+}
+
+html body pre code,
+html body pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0
+}
+
+html body pre code:before,
+html body pre tt:before,
+html body pre code:after,
+html body pre tt:after {
+    content: normal
+}
+
+html body p,
+html body blockquote,
+html body ul,
+html body ol,
+html body dl,
+html body pre {
+    /* nothing */
+}
+
+html body kbd {
+    color: #000;
+    border: 1px solid #d6d6d6;
+    border-bottom: 2px solid #c7c7c7;
+    padding: 2px 4px;
+    background-color: #f0f0f0;
+    border-radius: 3px
+}
+
+@media print {
+    html body {
+        background-color: #fff
+    }
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+        color: #000;
+        page-break-after: avoid
+    }
+    html body blockquote {
+        color: #5c5c5c
+    }
+    html body pre {
+        page-break-inside: avoid
+    }
+    html body table {
+        display: table
+    }
+    html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+    }
+    html body pre,
+    html body code {
+        word-wrap: break-word;
+        white-space: pre
+    }
+}
+
+.markdown-preview {
+    float: left;
+    margin: 10px auto 10px 10px;
+    color: #2F2F2F;
+    border: 1px dashed #DDDDDD;
+    padding: 10px;
+    width: 80em;
+}
+
+p {
+    margin: 1em 0 1em 0;
+}
+
+
+/* code block theme */.markdown-preview {
+    height: 100%;
+    box-sizing: border-box
+}
+
+.markdown-preview .pagebreak,
+.markdown-preview .newpage {
+    page-break-before: always
+}
+
+.markdown-preview pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber
+}
+
+.markdown-preview pre.line-numbers>code {
+    position: relative
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 1em;
+    font-size: 100%;
+    left: 0;
+    width: 3em;
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: .8em;
+    text-align: right
+}
+
+.markdown-preview .mathjax-exps .MathJax_Display {
+    text-align: center !important
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .status {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .output-div {
+    margin-bottom: 16px
+}
+
+.scrollbar-style::-webkit-scrollbar {
+    width: 8px
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+    position: relative;
+    top: 0
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    font-size: 28px;
+    cursor: pointer;
+    color: inherit;
+    z-index: 99;
+    width: 32px;
+    text-align: center;
+    opacity: .4
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+    opacity: 1
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    padding: 32px 0 48px 0;
+    font-size: 12px;
+    border-left: 1px dashed #DDDDDD;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: inherit
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+    width: 8px
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+    text-decoration: none
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    padding: 0 1.6em;
+    margin-top: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+    margin-bottom: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    list-style-type: none
+}
+
+@media screen and (max-width:1274px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 0em
+    }
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+    display: none
+}
+
+@media screen and (max-width:914px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        width: 100%
+    }
+}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h2><a href="http://Talking-About-DDoS-Attack-1-Artificial-Defense.md">Talking-About-DDoS-Attack-1-Artificial-Defense.md</a></h2>
+<ul>
+<li>@name       &#x6D45;&#x8C08;DDoS&#x653B;&#x51FB; 1 - &#x591A;IP&#x9632;&#x5FA1;&#x7684;&#x65B0;&#x601D;&#x8DEF;</li>
+<li>@author     karminski &lt;<a href="mailto:code.karminski@outlook.com">code.karminski@outlook.com</a>&gt;</li>
+<li>@version    20190729:2</li>
+</ul>
+<h2>Table of Contents</h2>
+<ul>
+<li><a href="#name">Name</a></li>
+</ul>
+<h2>Name</h2>
+<p>&#x6D45;&#x8C08;DDoS&#x653B;&#x51FB; 1 - &#x591A;IP&#x9632;&#x5FA1;&#x7684;&#x65B0;&#x601D;&#x8DEF;</p>
+<h2>Description</h2>
+<p>&#x672C;&#x6587;&#x770B;&#x70B9;:</p>
+<ul>
+<li>&#x5982;&#x4F55;&#x4F4E;&#x6210;&#x672C;&#x9632;&#x5FA1;DDoS&#x653B;&#x51FB;.</li>
+<li>&#x906D;&#x5230;DDoS&#x653B;&#x51FB;&#x540E;&#x5982;&#x4F55;&#x5FEB;&#x901F;&#x6062;&#x590D;.</li>
+</ul>
+<p>&#x968F;&#x7740;&#x7269;&#x8054;&#x7F51;&#x7684;&#x53D1;&#x5C55;, DDoS &#x653B;&#x51FB;&#x53D8;&#x5F97;&#x8D8A;&#x6765;&#x8D8A;&#x666E;&#x904D;. &#x7AD9;&#x957F;&#x4EEC;&#x6216;&#x591A;&#x6216;&#x5C11;&#x90FD;&#x542C;&#x8BF4;&#x8FC7;&#x6216;&#x5B9E;&#x9645;&#x88AB; DDoS &#x653B;&#x51FB;&#x8FC7;. &#x672C;&#x6587;&#x901A;&#x8FC7;&#x6211;&#x8FD9;&#x51E0;&#x5E74;&#x5E94;&#x5BF9; DDoS &#x7684;&#x7ECF;&#x9A8C;, &#x6765;&#x7ED9;&#x5927;&#x5BB6;&#x63CF;&#x8FF0;&#x4E00;&#x4E2A;&#x5F00;&#x9500;&#x6BD4;&#x8F83;&#x5C0F;&#x7684; DDoS &#x9632;&#x5FA1;&#x601D;&#x8DEF;, &#x5E0C;&#x671B;&#x80FD;&#x591F;&#x629B;&#x7816;&#x5F15;&#x7389;.</p>
+<h2>Content</h2>
+<h3 class="mume-header" id="type-of-ddos">Type of DDoS</h3>
+
+<p>&#x5E38;&#x89C1;&#x7684; DDoS &#x653B;&#x51FB;&#x4ECE;&#x6D41;&#x91CF;&#x771F;&#x5B9E;&#x6027; (&#x6D41;&#x91CF;&#x662F;&#x5426;&#x771F;&#x6B63;&#x4F5C;&#x7528;&#x5230;&#x4E86;&#x4E1A;&#x52A1;&#x4E0A;) &#x4E0A;&#x6765;&#x8BB2;, &#x663E;&#x800C;&#x6613;&#x89C1;&#x53EA;&#x6709;&#x4E24;&#x79CD;:</p>
+<ul>
+<li>&#x771F;&#x5B9E;&#x6D41;&#x91CF; DDoS</li>
+<li>&#x5047;&#x6D41;&#x91CF; DDoS</li>
+</ul>
+<p>&#x6211;&#x4EEC;&#x5148;&#x770B;&#x771F;&#x5B9E;&#x6D41;&#x91CF; DDoS. &#x771F;&#x5B9E;&#x6D41;&#x91CF; DDoS &#x5176;&#x5B9E;&#x662F;&#x5F88;&#x96BE;&#x9632;&#x5FA1;&#x7684;, &#x5C24;&#x5176;&#x662F;&#x5BF9;&#x7AD9;&#x70B9;&#x8D44;&#x6E90;&#x771F;&#x5B9E;&#x8BF7;&#x6C42;&#x7684;&#x653B;&#x51FB;, &#x5C06;&#x4F1A;&#x5BF9;&#x8FD0;&#x7EF4;&#x5E26;&#x6765;&#x6781;&#x5927;&#x538B;&#x529B;.<br>
+&#x6BD4;&#x5982;&#x5229;&#x7528;&#x7F51;&#x7EDC;&#x4E0A;&#x516C;&#x5F00;&#x7684; web &#x53CD;&#x5411;&#x4EE3;&#x7406;&#x7AD9;&#x70B9;&#x53D1;&#x8D77;&#x7684;&#x653B;&#x51FB;, &#x8FD9;&#x79CD;&#x653B;&#x51FB;&#x4E0E;&#x6B63;&#x5E38;&#x7528;&#x6237;&#x8BBF;&#x95EE;&#x9AD8;&#x5EA6;&#x76F8;&#x4F3C;, &#x5F88;&#x96BE;&#x89E3;&#x51B3;.<br>
+&#x53C8;&#x6216;&#x8005;&#x6CE8;&#x5165;&#x4E86;&#x5927;&#x6D41;&#x91CF;&#x7F51;&#x7AD9;, &#x5C06;&#x5927;&#x6D41;&#x91CF;&#x7F51;&#x7AD9;&#x7684;&#x8BF7;&#x6C42;&#x8DE8;&#x57DF;&#x8BF7;&#x6C42;&#x5230;&#x4E86;&#x53D7;&#x5BB3;&#x8005;&#x7684;&#x7AD9;&#x70B9;.<br>
+&#x4F46;&#x8FD9;&#x79CD;&#x653B;&#x51FB;&#x6210;&#x672C;&#x9AD8;, &#x800C;&#x4E14;&#x6536;&#x76CA;&#x4E0D;&#x9AD8;, &#x6240;&#x4EE5;&#x5BF9;&#x4E8E;&#x4E2D;&#x5C0F;&#x578B;&#x7AD9;&#x70B9;&#x662F;&#x5F88;&#x5C11;&#x89C1;&#x7684;.</p>
+<p>&#x63A5;&#x4E0B;&#x6765;&#x662F;&#x5047;&#x6D41;&#x91CF; DDoS.<br>
+&#x4ECE;&#x653B;&#x51FB;&#x6210;&#x672C;, &#x6D41;&#x91CF;&#x653E;&#x5927;&#x500D;&#x6570;&#x7B49;&#x56E0;&#x7D20;&#x7EFC;&#x5408;&#x6765;&#x770B;, &#x57FA;&#x4E8E;&#x975E; TCP &#x534F;&#x8BAE;&#x7684;&#x53CD;&#x5C04;&#x578B; DDoS &#x653B;&#x51FB;&#x4ECD;&#x7136;&#x662F;&#x73B0;&#x5728;&#x9488;&#x5BF9;&#x4E2D;&#x5C0F;&#x7AD9;&#x70B9;&#x5C0F;&#x89C4;&#x6A21; DDoS &#x653B;&#x51FB;&#x7684;&#x6700;&#x4F73;&#x9009;&#x62E9;.<br>
+&#x56E0;&#x6B64;, &#x7AD9;&#x70B9;&#x6240;&#x53D7;&#x653B;&#x51FB;&#x5927;&#x6982;&#x7387;&#x4E5F;&#x662F;&#x53CD;&#x5C04;&#x578B;&#x7684;&#x5047;&#x6D41;&#x91CF; DDoS &#x653B;&#x51FB;.</p>
+<p>&#x60F3;&#x8981;&#x5B8C;&#x6210;&#x8FD9;&#x6837;&#x7684;&#x653B;&#x51FB;, &#x9700;&#x8981;&#x4EE5;&#x4E0B;&#x6761;&#x4EF6;:</p>
+<ul>
+<li>&#x53EF;&#x4EE5;&#x4FEE;&#x6539; Packet Header &#x6765;&#x5C06;&#x6D41;&#x91CF;&#x5BFC;&#x5411;&#x53D7;&#x5BB3;&#x8005;.</li>
+<li>&#x53EF;&#x5229;&#x7528;&#x7684;&#x53CD;&#x5C04;&#x8282;&#x70B9;&#x5B58;&#x5728;&#x53CD;&#x5C04;.</li>
+</ul>
+<p>&#x6211;&#x4EEC;&#x6765;&#x4F9D;&#x6B21;&#x8BB2;&#x89E3;:<br>
+&#x53EF;&#x4FEE;&#x6539; Packet Header &#x6307;, &#x7531;&#x4E8E; UDP &#x7B49;&#x534F;&#x8BAE;&#x662F;&#x975E;&#x9762;&#x5411;&#x8FDE;&#x63A5;&#x7684;, &#x56E0;&#x6B64;&#x4F2A;&#x9020; Source IPv4 Address &#x662F;&#x5F88;&#x5BB9;&#x6613;&#x7684;, &#x8FD9;&#x6837;&#x5C31;&#x53EF;&#x4EE5;&#x628A; Source IPv4 Address &#x8BBE;&#x7F6E;&#x4E3A;&#x53D7;&#x5BB3;&#x8005;&#x7684; IPv4 &#x5730;&#x5740;.<br>
+&#x53CD;&#x5C04;&#x8282;&#x70B9;&#x6307;, &#x5229;&#x7528;&#x4E0A;&#x9762;&#x7684;&#x53EF;&#x7BE1;&#x6539;&#x7684;&#x534F;&#x8BAE;&#x8BBF;&#x95EE;&#x4E00;&#x4E9B;&#x7279;&#x5B9A;&#x66B4;&#x9732;&#x5728;&#x7F51;&#x7EDC;&#x4E0A;&#x7684;&#x670D;&#x52A1;&#x65F6;, &#x8FD9;&#x4E9B;&#x670D;&#x52A1;&#x8FD4;&#x56DE;&#x7684;&#x6570;&#x636E;&#x6BD4;&#x8BF7;&#x6C42;&#x6240;&#x9700;&#x7684;&#x6570;&#x636E;&#x5927;, &#x5E76;&#x4E14;&#x5927;&#x5F88;&#x591A;&#x500D;. &#x8D8A;&#x5927;&#x653B;&#x51FB;&#x6548;&#x679C;&#x8D8A;&#x597D;.</p>
+<p>&#x4F8B;&#x5982; Memcached &#x534F;&#x8BAE;&#x6F0F;&#x6D1E;, &#x5047;&#x8BBE;&#x6709;&#x4E00;&#x4E9B; Memcached &#x670D;&#x52A1;&#x5668;&#x6CA1;&#x6709;&#x52A0;&#x4EFB;&#x4F55;&#x4FDD;&#x62A4;&#x63AA;&#x65BD;&#x5C31;&#x653E;&#x5728;&#x4E86;&#x516C;&#x7F51;&#x4E0A;, &#x6211;&#x4EEC;&#x751A;&#x81F3;&#x53EF;&#x4EE5;&#x81EA;&#x7531;&#x64CD;&#x4F5C;&#x8FD9;&#x4E9B; Memcached &#x670D;&#x52A1;&#x5668;. &#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x53EA;&#x9700;&#x5728; Memcached &#x91CC;&#x9762; SET &#x4E00;&#x4E2A;&#x5DE8;&#x5927;&#x7684;&#x6570;&#x636E;, &#x7136;&#x540E;&#x53D1;&#x8D77;&#x4E00;&#x4E2A;&#x5BF9; Memcache &#x7684;&#x8BF7;&#x6C42;, &#x8BE5;&#x8BF7;&#x6C42;&#x7684; Source IPv4 Address &#x586B;&#x5199;&#x4E3A;&#x653B;&#x51FB;&#x76EE;&#x6807;&#x7684; IPv4 &#x5730;&#x5740;. &#x8FD9;&#x6837;&#x5C31;&#x5B8C;&#x6210;&#x4E86;&#x653B;&#x51FB;.<br>
+&#x8FD9;&#x6837;&#x7684;&#x653B;&#x51FB;&#x8DB3;&#x8DB3;&#x53EF;&#x4EE5;&#x628A;&#x6D41;&#x91CF;&#x653E;&#x5927; 10,000 - 51,200 &#x500D;, &#x6BD5;&#x7ADF;&#x8BF7;&#x6C42;&#x7684; Payload &#x5C31;&#x662F;&#x4E00;&#x4E2A; GET {key} &#x7684;&#x4E8C;&#x8FDB;&#x5236;&#x6570;&#x636E;. &#x4F46;&#x8FD4;&#x56DE;&#x7684;&#x5374;&#x662F;&#x6211;&#x4EEC;&#x4E4B;&#x524D; SET &#x5230;&#x91CC;&#x9762;&#x7684;&#x4E00;&#x5927;&#x5768;&#x6570;&#x636E;. &#x5047;&#x8BBE;&#x6211;&#x4EEC;&#x63A7;&#x5236;&#x7684;&#x50F5;&#x5C38;&#x7F51;&#x7EDC;&#x53EF;&#x4EE5;&#x53D1;&#x8D77; 50Mbps &#x7684;&#x8BF7;&#x6C42;, &#x90A3;&#x4E48;&#x7ECF;&#x8FC7; Memcached &#x534F;&#x8BAE;&#x6F0F;&#x6D1E;&#x7684;&#x653E;&#x5927;, &#x6211;&#x4EEC;&#x5F97;&#x5230;&#x7684;&#x653B;&#x51FB;&#x5E26;&#x5BBD;&#x5C31;&#x662F; 50Mb * 51,200 = 2.44Tb. &#x8FD9;&#x662F;&#x591A;&#x4E48;&#x53EF;&#x6015;&#x7684;&#x7ED3;&#x679C;. &#x8981;&#x77E5;&#x9053;&#x5386;&#x53F2;&#x4E0A;&#x6700;&#x5927;&#x7684; DDoS &#x5E26;&#x5BBD;&#x4E5F;&#x624D; 1.35Tb.</p>
+<p>&#x8FD9;&#x6837;&#x7684;&#x653B;&#x51FB;&#x7684;&#x6210;&#x672C;&#x662F;&#x76F8;&#x5F53;&#x4F4E;&#x7684;. &#x73B0;&#x5982;&#x4ECA;&#x5BB6;&#x7528;&#x5BBD;&#x5E26;&#x7684;&#x4E0A;&#x884C;&#x90FD;&#x6709;&#x5F88;&#x591A;&#x751A;&#x81F3;&#x80FD;&#x8FBE;&#x5230; 30Mb &#x7684;&#x5E26;&#x5BBD;, &#x800C;&#x5BB6;&#x7528;&#x7269;&#x8054;&#x7F51;&#x8BBE;&#x5907;&#x4E5F;&#x8D8A;&#x6765;&#x8D8A;&#x591A;. &#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x60F3;&#x8C61;&#x5230;, &#x4E00;&#x65E6;&#x5BB6;&#x91CC;&#x6709;&#x5B58;&#x5728;&#x6F0F;&#x6D1E;&#x7684;&#x8BBE;&#x5907;, &#x90A3;&#x4E48;&#x8FD9;&#x4E9B;&#x6F0F;&#x6D1E;&#x5F88;&#x6709;&#x53EF;&#x80FD;&#x88AB;&#x5229;&#x7528;. &#x6700;&#x5178;&#x578B;&#x7684;&#x5C31;&#x662F;&#x4E00;&#x4E9B;&#x5BB6;&#x7528;&#x8DEF;&#x7531;&#x5668;&#x7684; SSDP &#x6F0F;&#x6D1E;, &#x8DEF;&#x7531;&#x5668;&#x6070;&#x597D;&#x53C8;&#x662F;&#x63D2;&#x5728;&#x5BBD;&#x5E26;&#x7684;&#x5165;&#x53E3;&#x4E0A;&#x7684;. &#x5982;&#x679C;&#x80FD;&#x88AB;&#x8BBF;&#x95EE;&#x5230;, &#x8FD9;&#x5C06;&#x662F;&#x5F88;&#x53EF;&#x6015;&#x7684;&#x540E;&#x679C;.</p>
+<h3 class="mume-header" id="%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%95%86%E7%9A%84%E9%98%B2%E6%8A%A4%E6%9C%8D%E5%8A%A1">&#x4E91;&#x670D;&#x52A1;&#x5546;&#x7684;&#x9632;&#x62A4;&#x670D;&#x52A1;</h3>
+
+<p>&#x666E;&#x901A;&#x5BF9;&#x4E8E;&#x53CD;&#x5C04;&#x5F0F; DDoS &#x653B;&#x51FB;&#x6700;&#x597D;&#x7684;&#x9632;&#x5FA1;&#x65B9;&#x5F0F;&#x5F53;&#x7136;&#x8FD8;&#x662F;&#x4EA4;&#x7ED9;&#x4E91;&#x670D;&#x52A1;&#x5546;&#x53BB;&#x505A;. &#x4F46;&#x4E91;&#x670D;&#x52A1;&#x5546;&#x63D0;&#x4F9B;&#x7684;&#x9AD8;&#x9632; IP &#x6216; DDoS &#x9632;&#x62A4;&#x670D;&#x52A1;&#x4E5F;&#x6709;&#x4EE5;&#x4E0B;&#x7F3A;&#x70B9;:</p>
+<ul>
+<li>&#x552E;&#x4EF7;&#x9AD8;</li>
+</ul>
+<p>&#x4E0B;&#x9762;&#x662F;&#x56FD;&#x5185;&#x67D0;&#x4E91;&#x670D;&#x52A1;&#x5546;&#x7684;&#x6700;&#x4F4E;&#x6863;&#x9AD8;&#x9632; IP &#x670D;&#x52A1;&#x7684;&#x552E;&#x4EF7;:</p>
+<p>&#x7EBF;&#x8DEF;&#x8D44;&#x6E90;: &#x516B;&#x7EBF;BGP<br>
+&#x5730;&#x57DF;: &#x4E2D;&#x56FD;&#x5927;&#x9646;<br>
+&#x4FDD;&#x5E95;&#x9632;&#x62A4;&#x5E26;&#x5BBD;: 30Gb<br>
+&#x5F39;&#x6027;&#x9632;&#x62A4;&#x5E26;&#x5BBD;: 30Gb<br>
+&#x4E1A;&#x52A1;&#x5E26;&#x5BBD;: 100 M<br>
+&#x529F;&#x80FD;&#x5957;&#x9910;: &#x6807;&#x51C6;&#x529F;&#x80FD;<br>
+&#x9632;&#x62A4;&#x57DF;&#x540D;&#x6570;: 50<br>
+&#x4E1A;&#x52A1;QPS: 3000<br>
+&#x7AEF;&#x53E3;&#x6570;: 50<br>
+&#x8D2D;&#x4E70;&#x6570;&#x91CF;: 1<br>
+&#x8D2D;&#x4E70;&#x65F6;&#x957F;: 1&#x4E2A;&#x6708;<br>
+&#x914D;&#x7F6E;&#x8D39;&#x7528;: 20,800.00 CNY</p>
+<p>30Gb, &#x6BCF;&#x6708; 2 &#x4E07;&#x5757;. &#x53EF;&#x4EE5;&#x8D1F;&#x8D23;&#x4EFB;&#x7684;&#x8BF4;, &#x8FD9;&#x4E2A;&#x9632;&#x62A4;&#x5E26;&#x5BBD;&#x4EBA;&#x5BB6;&#x60F3;&#x6253;&#x57AE;&#x4F60;&#x7B80;&#x76F4;&#x662F;&#x6B3A;&#x8D1F;&#x5E7C;&#x513F;&#x56ED;&#x5C0F;&#x670B;&#x53CB;. &#x4F46;&#x8FD9;&#x4E2A;&#x4EF7;&#x683C;&#x53EF;&#x4E0D;&#x662F;&#x4E00;&#x822C;&#x4E2D;&#x5C0F;&#x578B;&#x7AD9;&#x70B9;&#x80FD;&#x63A5;&#x53D7;&#x7684;.</p>
+<ul>
+<li>&#x5EF6;&#x65F6;&#x4E0D;&#x7406;&#x60F3;</li>
+</ul>
+<p>&#x63A5;&#x5165;&#x9AD8;&#x9632;&#x540E;, &#x7528;&#x6237;&#x6D41;&#x91CF;&#x4F1A;&#x5148;&#x5230;&#x9AD8;&#x9632;, &#x7136;&#x540E;&#x56DE;&#x6E90;&#x5230;&#x4F60;&#x7684;&#x4E1A;&#x52A1;.<br>
+&#x4F46;&#x662F;, IDC &#x7684;&#x9AD8;&#x9632;&#x8BBE;&#x5907;&#x9700;&#x8981;&#x5DE8;&#x5927;&#x7684;&#x5E26;&#x5BBD;&#x63A5;&#x5165;, &#x56E0;&#x6B64;&#x9AD8;&#x9632;&#x8BBE;&#x5907;&#x4E3A;&#x4E86;&#x8282;&#x7701;&#x5E26;&#x5BBD;&#x7B49;&#x8D39;&#x7528;, &#x6240;&#x5728;&#x7684; IDC &#x5F88;&#x6709;&#x53EF;&#x80FD;&#x4E0D;&#x5728;&#x4E00;&#x7EBF;&#x57CE;&#x5E02;. &#x8FD9;&#x5C31;&#x5E26;&#x6765;&#x4E86;&#x7B2C;&#x4E8C;&#x4E2A;&#x95EE;&#x9898;, &#x5EF6;&#x65F6;&#x4F1A;&#x589E;&#x52A0;&#x8BB8;&#x591A;. &#x8FD9;&#x5BF9;&#x7528;&#x6237;&#x4F53;&#x9A8C;&#x662F;&#x4F24;&#x5BB3;&#x6027;&#x7684;.</p>
+<ul>
+<li>&#x56DE;&#x6E90; IP &#x4E0D;&#x614E;&#x6CC4;&#x9732;</li>
+</ul>
+<p>&#x8FD9;&#x4E2A;&#x4E25;&#x683C;&#x6765;&#x8BB2;&#x4E0D;&#x662F;&#x9AD8;&#x9632;&#x670D;&#x52A1;&#x5546;&#x7684;&#x95EE;&#x9898;, &#x800C;&#x662F;&#x81EA;&#x8EAB;&#x7684;&#x95EE;&#x9898;. &#x7531;&#x4E8E;&#x56DE;&#x6E90; IP &#x4E0D;&#x614E;&#x6CC4;&#x9732;, &#x5BFC;&#x81F4; DDoS &#x8FD8;&#x662F;&#x76F4;&#x63A5;&#x6253;&#x5728;&#x4E86;&#x81EA;&#x5DF1;&#x7684;&#x4E1A;&#x52A1;&#x5BF9;&#x5E94;&#x7684; IP &#x4E0A;.</p>
+<h3 class="mume-header" id="%E4%B8%80%E7%A7%8D%E6%96%B0%E6%80%9D%E8%B7%AF">&#x4E00;&#x79CD;&#x65B0;&#x601D;&#x8DEF;</h3>
+
+<p>&#x90A3;&#x4E48;, &#x6211;&#x4EEC;&#x672C;&#x6B21;&#x5C31;&#x8BA8;&#x8BBA;&#x5982;&#x4F55;&#x53BB;&#x901A;&#x8FC7;&#x4E00;&#x4E9B;&#x5176;&#x4ED6;&#x7684;&#x601D;&#x8DEF;&#x53BB;&#x9632;&#x5FA1;&#x7C7B;&#x4F3C;&#x8FD9;&#x6837;&#x7684;&#x653B;&#x51FB;.</p>
+<p>&#x6211;&#x4EEC;&#x5148;&#x5206;&#x6790;&#x653B;&#x51FB;&#x8005;&#x7684;&#x6574;&#x4E2A;&#x64CD;&#x4F5C;&#x6D41;&#x7A0B;.<br>
+&#x9996;&#x5148;, &#x653B;&#x51FB;&#x8005;&#x9700;&#x8981;&#x786E;&#x5B9A;&#x653B;&#x51FB;&#x76EE;&#x6807;, &#x56E0;&#x4E3A;&#x653B;&#x51FB;&#x6570;&#x636E;&#x5305;&#x7684;&#x534F;&#x8BAE;&#x662F; 4 &#x5C42;&#x534F;&#x8BAE;, &#x6240;&#x4EE5;&#x653B;&#x51FB;&#x8005;&#x9700;&#x8981;&#x7684;&#x4FE1;&#x606F;&#x53EA;&#x6709;&#x4E00;&#x4E2A;, IP &#x5730;&#x5740;.<br>
+&#x53EF;&#x80FD;&#x4ED6;&#x63A5;&#x5230;&#x7684;&#x5C31;&#x662F;&#x4E2A;IP&#x5730;&#x5740;, &#x4E5F;&#x6709;&#x53EF;&#x80FD;&#x4ED6;&#x63A5;&#x5230;&#x7684;&#x662F;&#x4E2A;&#x57DF;&#x540D;, &#x6216;&#x8005;URL. &#x8FD9;&#x65F6;&#x5019;&#x4ED6;&#x5C31;&#x8981;&#x901A;&#x8FC7; DNS &#x628A;&#x57DF;&#x540D;&#x8F6C;&#x6362;&#x5230; IP &#x5730;&#x5740;.<br>
+&#x7136;&#x540E;&#x5B83;&#x628A; IP &#x5730;&#x5740;, &#x6216;&#x4E00;&#x5806; IP &#x5730;&#x5740; (&#x6BD4;&#x5982;&#x4F60;&#x7684;&#x57DF;&#x540D;&#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x5230;&#x4E86;&#x591A;&#x4E2A;IP). &#x586B;&#x5199;&#x5230;&#x4ED6;&#x7684;&#x653B;&#x51FB;&#x7A0B;&#x5E8F;&#x4E2D;. &#x7136;&#x540E;&#x5269;&#x4E0B;&#x5C31;&#x662F;&#x8FD0;&#x884C;&#x7A0B;&#x5E8F;, &#x5F00;&#x59CB;&#x653B;&#x51FB;&#x4E86;.</p>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x60F3;&#x5230;, &#x653B;&#x51FB;&#x8005;&#x63A7;&#x5236;&#x7684;&#x53D1;&#x8D77;&#x5E26;&#x5BBD;&#x80AF;&#x5B9A;&#x4E0D;&#x662F;&#x65E0;&#x9650;&#x7684;, &#x53EF;&#x4EE5;&#x7528;&#x7684;&#x53CD;&#x5C04;&#x8D44;&#x6E90;&#x4E5F;&#x4E0D;&#x662F;&#x65E0;&#x9650;&#x7684;, &#x56E0;&#x6B64;, &#x5982;&#x679C;&#x540C;&#x65F6;&#x653B;&#x51FB;&#x7684;&#x76EE;&#x6807;&#x8D8A;&#x591A;, &#x6BCF;&#x4E2A;&#x76EE;&#x6807;&#x5206;&#x644A;&#x7684;&#x653B;&#x51FB;&#x5E26;&#x5BBD;&#x5C31;&#x8D8A;&#x5C0F;.<br>
+&#x597D;&#x7684;, &#x8FD9;&#x5C31;&#x662F;&#x6211;&#x4EEC;&#x9632;&#x5FA1;&#x7684;&#x7B2C;&#x4E00;&#x4E2A;&#x6838;&#x5FC3;&#x601D;&#x8DEF;: &#x901A;&#x8FC7;&#x591A; IP &#x6765;&#x51CF;&#x5C11;&#x6BCF; IP &#x7684;&#x88AB;&#x653B;&#x51FB;&#x5E26;&#x5BBD;.</p>
+<p>&#x53E6;&#x5916;, &#x5728;&#x6211;&#x5BF9;&#x653B;&#x51FB;&#x8FC7;&#x7A0B;&#x7684;&#x89C2;&#x5BDF;&#x4E2D;, &#x53D1;&#x73B0;&#x6709;&#x7684;&#x653B;&#x51FB;&#x5BF9; IP &#x7684;&#x53D8;&#x5316;&#x662F;&#x4E0D;&#x654F;&#x611F;&#x7684;.<br>
+&#x6BD4;&#x5982;, &#x4F60;&#x906D;&#x5230;&#x653B;&#x51FB;&#x7684; IP &#x88AB; IDC &#x4E0B;&#x7EBF;&#x4E86;, &#x8FD9;&#x65F6;&#x5019;&#x4F60;&#x6362;&#x4E86;&#x4E2A;&#x65B0; IP, &#x653B;&#x51FB;&#x6709;&#x65F6;&#x5E76;&#x4E0D;&#x4F1A;&#x7ACB;&#x523B;&#x6765;&#x653B;&#x51FB;&#x4F60;&#x7684;&#x65B0; IP.<br>
+&#x8FD9;&#x79CD;&#x8981;&#x4E48;&#x662F;&#x4F60;&#x5176;&#x5B9E;&#x662F;&#x65E0;&#x8F9C;&#x7684;, &#x5BF9;&#x9762;&#x653B;&#x51FB;&#x7684;&#x662F;&#x4E00;&#x4E2A; IP &#x8303;&#x56F4;, &#x4F60;&#x53EA;&#x662F;&#x6070;&#x597D;&#x88AB;&#x6CE2;&#x53CA;&#x4E86;. &#x8FD9;&#x79CD;&#x60C5;&#x51B5;&#x5E38;&#x89C1;&#x4E8E;&#x8DDF;&#x522B;&#x4EBA;&#x590D;&#x7528;&#x670D;&#x52A1;&#x5668;&#x7684;&#x60C5;&#x51B5;.<br>
+&#x53E6;&#x5916;&#x7684;&#x53EF;&#x80FD;&#x5C31;&#x662F;&#x653B;&#x51FB;&#x8005;&#x6CA1;&#x6709;&#x53CA;&#x65F6;&#x8DDF;&#x8FDB;&#x53D8;&#x5316;&#x6216;&#x8005;&#x653E;&#x5F03;&#x4E86;&#x653B;&#x51FB;.</p>
+<p>&#x90A3;&#x4E48;, &#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4EE5;&#x4E0A;&#x7684;&#x601D;&#x8DEF;, &#x53BB;&#x6784;&#x5EFA;&#x6211;&#x4EEC;&#x7684;&#x9632;&#x5FA1;&#x4F53;&#x7CFB;.</p>
+<p>&#x9996;&#x5148;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x4E70;&#x4E00;&#x4E2A;&#x670D;&#x52A1;, &#x53EB;&#x505A; CNAME &#x8D1F;&#x8F7D;&#x5747;&#x8861;.<br>
+&#x5E94;&#x7528;&#x4E86; CNAME &#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x540E;, &#x7528;&#x6237;&#x8BBF;&#x95EE;&#x4F60;&#x7684;&#x57DF;&#x540D;, &#x9996;&#x5148;&#x4F1A;&#x8BF7;&#x6C42; DNS, &#x5F97;&#x5230;&#x76EE;&#x6807;&#x57DF;&#x540D;&#x5BF9;&#x5E94;&#x7684; CNAME &#x57DF;&#x540D;, &#x7136;&#x540E;&#x901A;&#x8FC7; CNAME &#x57DF;&#x540D;&#x53BB;&#x83B7;&#x53D6;&#x771F;&#x5B9E;&#x7684;&#x76EE;&#x6807; IP.<br>
+CNAME &#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x7684;&#x4F18;&#x52BF;&#x662F;, DNS &#x5207;&#x6362; CNAME &#x8BB0;&#x5F55;&#x6BD4;&#x5207;&#x6362; A &#x8BB0;&#x5F55;&#x751F;&#x6548;&#x66F4;&#x5FEB;, &#x5BA2;&#x6237;&#x7AEF;&#x7F13;&#x5B58;&#x6BD4;&#x8F83;&#x5BB9;&#x6613;&#x5F97;&#x5230;&#x66F4;&#x65B0; (&#x5F53;&#x7136;&#x8FD9;&#x8981;&#x770B; DNS &#x670D;&#x52A1;&#x5546;&#x548C;&#x5BA2;&#x6237;&#x7AEF;&#x7684;&#x5177;&#x4F53;&#x8BBE;&#x7F6E;&#x548C;&#x5B9E;&#x73B0;).<br>
+&#x751F;&#x6548;&#x5FEB;&#x7F13;&#x5B58;&#x5BB9;&#x6613;&#x66F4;&#x65B0;&#x5C31;&#x610F;&#x5473;&#x7740;, &#x53D1;&#x751F;&#x653B;&#x51FB;&#x65F6;, &#x901A;&#x8FC7;&#x5207;&#x6362; IP &#x6765;&#x8BA9;&#x6B63;&#x5E38;&#x7528;&#x6237;&#x7EE7;&#x7EED;&#x8BBF;&#x95EE;&#x8FD9;&#x4E2A;&#x8FC7;&#x7A0B;&#x4F1A;&#x4EE3;&#x4EF7;&#x66F4;&#x5C0F;.</p>
+<p>&#x90A3;&#x4E48;&#x4E0D;&#x59A8;&#x6211;&#x4EEC;&#x6765;&#x8BA1;&#x7B97;&#x4E00;&#x4E0B;. &#x5047;&#x8BBE;&#x6211; CNAME &#x8D1F;&#x8F7D;&#x5747;&#x8861;&#x540E;&#x9762;&#x5BF9;&#x5E94;&#x4E86; 50 &#x4E2A; IP. &#x90A3;&#x4E48;&#x4E00;&#x6CE2;300Gb&#x7684;&#x653B;&#x51FB;, &#x5982;&#x679C;&#x88AB;&#x5747;&#x644A;, &#x6BCF; IP &#x53D7;&#x5230;&#x653B;&#x51FB;&#x7684;&#x5E73;&#x5747;&#x5E26;&#x5BBD;&#x662F; 300Gb / 50 = 6Gb. &#x8FD9;&#x4E2A;&#x653B;&#x51FB;&#x5E26;&#x5BBD;&#x5F88;&#x6709;&#x53EF;&#x80FD;&#x4F1A;&#x5305;&#x542B;&#x5728;&#x8D2D;&#x4E70; IP &#x65F6;&#x8D60;&#x9001;&#x7684;&#x9632;&#x5FA1;&#x5E26;&#x5BBD;&#x4E4B;&#x5185;&#x4E86;.</p>
+<p><img src="./assets/images/Large-Number-of-IP-Addresses-for-DDoS-Attack.png" alt="Large-Number-of-IP-Addresses-for-DDoS-Attack"></p>
+<p>&#x90A3;&#x4E48;, 50 &#x4E2A; IP &#x7684;&#x6210;&#x672C;&#x662F;&#x600E;&#x6837;&#x7684;&#x5462;? &#x6BCF; IP &#x7684;&#x79DF;&#x7528;&#x5747;&#x4EF7; (&#x6309;&#x6D41;&#x91CF;&#x4ED8;&#x8D39;,&#x6D41;&#x91CF;&#x8D39;&#x7528;&#x53E6;&#x8BA1;) &#x5927;&#x6982;&#x662F; 0.020 CNY/h, 50 &#x4E2A; IP &#x4E00;&#x4E2A;&#x6708;&#x5C31;&#x662F; 0.02 x 24 x 30 x 50 = 720CNY. &#x662F;&#x4E0D;&#x662F;&#x5F88;&#x4FBF;&#x5B9C;?<br>
+&#x751A;&#x81F3;&#x6211;&#x4EEC;&#x8FD8;&#x80FD;&#x518D;&#x5C6F;&#x5B83; 50 &#x4E2A; IP, &#x88AB;&#x6253;&#x4E86;&#x7684;&#x65F6;&#x5019;&#x5C31;&#x6328;&#x4E2A;&#x6362;, &#x8DDF;&#x4ED6;&#x73A9;, &#x770B;&#x8C01;&#x5148;&#x6CA1;&#x8010;&#x5FC3;.</p>
+<h3 class="mume-header" id="%E8%BF%9B%E9%98%B6%E9%98%B2%E5%BE%A1">&#x8FDB;&#x9636;&#x9632;&#x5FA1;</h3>
+
+<p>&#x6709;&#x4E86;&#x591A; IP &#x540E;, &#x6211;&#x4EEC;&#x751A;&#x81F3;&#x53EF;&#x4EE5;&#x518D;&#x5F04;&#x4E00;&#x4E9B;&#x66F4;&#x590D;&#x6742;&#x7684;&#x9632;&#x5FA1;&#x7B56;&#x7565;.</p>
+<p>&#x6211;&#x4EEC;&#x521A;&#x624D;&#x5047;&#x5B9A;&#x7684;&#x90FD;&#x662F;&#x6BCF; IP &#x7684;&#x6D41;&#x91CF;&#x662F;&#x5747;&#x5206;&#x7684;. &#x4F46;&#x5B9E;&#x9645;&#x4E0A;&#x7AD9;&#x70B9;&#x7528;&#x6237;&#x5728;&#x5730;&#x7406;&#x4F4D;&#x7F6E;&#x4E0A;&#x4E0D;&#x662F;&#x5747;&#x5300;&#x5206;&#x5E03;&#x7684;. &#x56E0;&#x6B64;&#x6709;&#x4E9B; IP &#x5FC5;&#x7136;&#x6B63;&#x5E38;&#x6D41;&#x91CF;&#x4F1A;&#x5927;&#x4E00;&#x4E9B;. &#x90A3;&#x4E48;&#x9488;&#x5BF9;&#x8FD9;&#x4E9B;IP, &#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x4E70;&#x4E00;&#x4E9B;&#x4FBF;&#x5B9C;&#x7684;&#x9632;&#x62A4;&#x670D;&#x52A1;. &#x901A;&#x8FC7;&#x53D8;&#x76F8;&#x964D;&#x7EA7;&#x7684;&#x65B9;&#x5F0F;, &#x8BA9;&#x5927;&#x90E8;&#x5206;&#x7528;&#x6237;&#x906D;&#x5230;&#x653B;&#x51FB;&#x65F6;, &#x4ECD;&#x7136;&#x53EF;&#x4EE5;&#x7EE7;&#x7EED;&#x8BBF;&#x95EE;. &#x7531;&#x4E8E;&#x653B;&#x51FB;&#x8005;&#x8DDF;&#x6211;&#x4EEC;&#x4FE1;&#x606F;&#x4E0D;&#x5BF9;&#x7B49;, &#x56E0;&#x6B64;&#x4ED6;&#x5982;&#x679C;&#x60F3;&#x77E5;&#x9053;&#x54EA;&#x4E9B; IP &#x662F;&#x5927;&#x6D41;&#x91CF; IP &#x800C;&#x8F6C;&#x53BB;&#x653B;&#x51FB;&#x7684;&#x8BDD;, &#x8FD8;&#x662F;&#x5F88;&#x96BE;&#x7684;. &#x8FD9;&#x6837;&#x4E5F;&#x7B97;&#x53D8;&#x76F8;&#x8282;&#x7701;&#x4E86;&#x9632;&#x5FA1;&#x90E8;&#x5206;&#x7684;&#x8D39;&#x7528;.</p>
+<p><img src="./assets/images/Some-IP-With-DDoS-Defence.png" alt="Some-IP-With-DDoS-Defence"></p>
+<p>&#x5982;&#x679C;&#x6211;&#x4EEC;&#x80FD;&#x63A5;&#x5165;&#x4E91;&#x670D;&#x52A1;&#x5546;&#x7684; OpenAPI, &#x751A;&#x81F3;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x7A0B;&#x5E8F;&#x53BB;&#x52A8;&#x6001;&#x7684;&#x66F4;&#x6362;IP, &#x8FDB;&#x4E00;&#x6B65;&#x964D;&#x4F4E;&#x8FD0;&#x7EF4;&#x538B;&#x529B;.</p>
+<h3 class="mume-header" id="%E6%80%BB%E7%BB%93">&#x603B;&#x7ED3;</h3>
+
+<p>&#x4EE5;&#x4E0A;&#x6240;&#x8BB2;&#x7684;&#x9632;&#x5FA1;&#x65B9;&#x5F0F;, &#x5BF9;&#x4E8E;&#x65E0;&#x72B6;&#x6001;&#x4E1A;&#x52A1;&#x662F;&#x6700;&#x6709;&#x6548;&#x7684;, &#x4F8B;&#x5982;&#x7F51;&#x7AD9;.<br>
+&#x4F46;&#x5BF9;&#x4E8E;&#x6709;&#x72B6;&#x6001;&#x4E1A;&#x52A1;, &#x4F8B;&#x5982;&#x6E38;&#x620F;&#x670D;&#x52A1;&#x5668;, &#x662F;&#x5F88;&#x96BE;&#x7684;. &#x6E38;&#x620F;&#x670D;&#x52A1;&#x5668;&#x65E0;&#x8BBA;&#x662F;&#x4EC0;&#x4E48;&#x534F;&#x8BAE;, &#x5F88;&#x96BE;&#x53BB;&#x5207;&#x6362;IP. &#x56E0;&#x4E3A;&#x4E00;&#x4F46;&#x5207;&#x6362;, IP &#x5BF9;&#x5E94;&#x7684;&#x6240;&#x6709;&#x5BA2;&#x6237;&#x7AEF;&#x5C31;&#x8981;&#x91CD;&#x65B0;&#x8FDE;&#x63A5;&#x670D;&#x52A1;&#x5668;, &#x8FD9;&#x5BF9;&#x4E00;&#x4E9B;&#x5B9E;&#x65F6;&#x6027;&#x5F88;&#x9AD8;&#x7684;&#x6E38;&#x620F;&#x662F;&#x96BE;&#x4EE5;&#x5FCD;&#x53D7;&#x7684;. &#x4F46;&#x5BF9;&#x4E8E;&#x672C;&#x8EAB;&#x5C31;&#x7528; HTTP &#x7684;&#x4E00;&#x4E9B;&#x5B9E;&#x65F6;&#x6027;&#x8F83;&#x4F4E;&#x7684;&#x6E38;&#x620F;, &#x4F8B;&#x5982;&#x68CB;&#x724C;&#x7C7B;&#x6E38;&#x620F;, &#x662F;&#x53EF;&#x4EE5;&#x8003;&#x8651;&#x7684;.</p>
+<p>&#x591A;&#x5C6F;&#x70B9; IP &#x6CA1;&#x574F;&#x5904;, &#x6BD5;&#x7ADF;&#x4E00;&#x4E2A; IP &#x653E;&#x7740;&#x4E00;&#x4E2A;&#x6708;&#x4E5F;&#x624D; 14 &#x5757;.</p>
+<p>&#x4E0A;&#x8FF0;&#x65B9;&#x6848;&#x5728;&#x6211;&#x63A5;&#x8FD1; 3 &#x5E74;&#x7684;&#x5B9E;&#x9645;&#x5E94;&#x7528;&#x671F;&#x95F4;, &#x8D77;&#x5230;&#x4E86;&#x4E0D;&#x5C0F;&#x7684;&#x4F5C;&#x7528;, &#x5BF9;&#x4E8E; 100Gb &#x4EE5;&#x4E0B;&#x7684;&#x653B;&#x51FB;, &#x57FA;&#x672C;&#x5728;&#x53D1;&#x73B0;&#x88AB;&#x653B;&#x51FB; 15 &#x5206;&#x949F;&#x4E4B;&#x5185;, &#x5C31;&#x53EF;&#x4EE5;&#x8BA9;&#x5927;&#x90E8;&#x5206;&#x7528;&#x6237;&#x7EE7;&#x7EED;&#x6B63;&#x5E38;&#x8BBF;&#x95EE;&#x4E86;. &#x4F46;&#x5BF9;&#x4E8E; 500Gb &#x4EE5;&#x4E0A;&#x7684;&#x653B;&#x51FB;, &#x66F4;&#x591A;&#x7684;&#x6BD4;&#x7684;&#x662F;&#x8010;&#x5FC3;, &#x5C24;&#x5176;&#x662F;&#x5728;&#x4E70;&#x4E0D;&#x8D77;&#x9AD8;&#x9632;&#x7684;&#x60C5;&#x51B5;&#x4E0B;, &#x53EA;&#x80FD;&#x4EBA;&#x5DE5;&#x9632;&#x5FA1;, &#x5C3D;&#x91CF;&#x51CF;&#x5C0F;&#x635F;&#x5931;&#x4E86;.</p>
+<p>&#x672C;&#x6587;&#x4EC5;&#x662F;&#x4E2A;&#x4EBA;&#x7ECF;&#x9A8C;, &#x6B22;&#x8FCE;&#x5404;&#x4F4D;&#x5927;&#x4F6C;&#x4E0D;&#x541D;&#x65A7;&#x6B63;.</p>
+<h3 class="mume-header" id="reference">Reference</h3>
+
+<ul>
+<li><a href="https://www.cloudflare.com/learning/ddos/memcached-ddos-attack/">memcached-ddos-attack</a></li>
+</ul>
+
+      </div>
+      <div class="md-sidebar-toc"><ul>
+<li><a href="#type-of-ddos">Type of DDoS</a></li>
+<li><a href="#%E4%BA%91%E6%9C%8D%E5%8A%A1%E5%95%86%E7%9A%84%E9%98%B2%E6%8A%A4%E6%9C%8D%E5%8A%A1">&#x4E91;&#x670D;&#x52A1;&#x5546;&#x7684;&#x9632;&#x62A4;&#x670D;&#x52A1;</a></li>
+<li><a href="#%E4%B8%80%E7%A7%8D%E6%96%B0%E6%80%9D%E8%B7%AF">&#x4E00;&#x79CD;&#x65B0;&#x601D;&#x8DEF;</a></li>
+<li><a href="#%E8%BF%9B%E9%98%B6%E9%98%B2%E5%BE%A1">&#x8FDB;&#x9636;&#x9632;&#x5FA1;</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93">&#x603B;&#x7ED3;</a></li>
+<li><a href="#reference">Reference</a></li>
+</ul>
+</div>
+      <a id="sidebar-toc-btn">&#x2261;</a>
+    
+    
+    
+    
+    
+    
+    
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  
+    </body></html>

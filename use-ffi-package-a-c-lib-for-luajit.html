@@ -1,0 +1,1061 @@
+<!DOCTYPE html><html><head>
+      <title>use-ffi-package-a-c-lib-for-luajit</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+
+      <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #000000;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+    background: #C1DEF1;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+    background: #C1DEF1;
+}
+
+
+/* Code blocks */
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    background-color: #f9f9f9;
+}
+
+
+/* Inline code */
+
+:not(pre)>code[class*="language-"] {
+    padding: .2em;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #EEE;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #0066FF;
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.string {
+    color: #036A07;
+}
+
+.token.punctuation {
+    color: #000000;
+}
+
+.token.operator {
+    color: #0066FF;
+    font-weight: 900;
+    /* no highlight */
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: #0000CD;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*="language-css"] {
+    color: #0000ff;
+    font-weight: 900;
+}
+
+.token.function {
+    color: #000000;
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: #9a050f;
+}
+
+.token.selector,
+.language-autohotkey .token.keyword {
+    color: #00009f;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.language-json .token.property {
+    color: #2B91AF;
+}
+
+.token.tag,
+.token.selector {
+    color: #800000;
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: #19921c;
+}
+
+.token.directive.tag .tag {
+    background: #ffff00;
+    color: #000000;
+}
+
+
+/* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+
+.line-numbers .line-numbers-rows {
+    border-right-color: #a5a5a5;
+}
+
+.line-numbers-rows>span:before {
+    color: #2B91AF;
+}
+
+
+/* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+
+.line-highlight {
+    background: rgba(193, 222, 241, 0.2);
+    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+}
+
+
+/* highlight */
+
+pre[data-line] {
+    position: relative;
+    padding: 1em 0 1em 3em;
+}
+
+pre[data-line] .line-highlight-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+}
+
+pre[data-line] .line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: hsla(24, 20%, 50%, .08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+pre[data-line] .line-highlight:before,
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-start);
+    position: absolute;
+    top: .4em;
+    left: .6em;
+    min-width: 1em;
+    padding: 0 .5em;
+    background-color: hsla(24, 20%, 50%, .4);
+    color: hsl(24, 20%, 95%);
+    font: bold 65%/1.5 sans-serif;
+    text-align: center;
+    vertical-align: .3em;
+    text-shadow: none;
+    box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-end);
+    top: auto;
+    bottom: .4em;
+}html body {
+    font-family: "Consolas", Arial, freesans, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    color: #2F2F2F;
+    background-color: #fff;
+    overflow: initial;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+html body h1 {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3em;
+}
+
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+    color: #2b2b2b;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+html body strong {
+    color: #000
+}
+
+html body del {
+    color: #5c5c5c
+}
+
+html body a:not([href]) {
+    color: inherit;
+    text-decoration: none
+}
+
+html body a {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body a:hover {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body img {
+    max-width: 100%
+}
+
+html body>p {
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    word-wrap: break-word;
+}
+
+html body>ul,
+html body>ol {
+    margin-bottom: 0px
+}
+
+html body ul,
+html body ol {
+    padding-left: 2em
+}
+
+html body ul.no-list,
+html body ol.no-list {
+    padding: 0;
+    list-style-type: none
+}
+
+html body ul ul,
+html body ul ol,
+html body ol ol,
+html body ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body li {
+    margin-bottom: 0
+}
+
+html body li.task-list-item {
+    list-style: none
+}
+
+html body li>p {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body .task-list-item-checkbox {
+    margin: 0 .2em .25em -1.8em;
+    vertical-align: middle
+}
+
+html body .task-list-item-checkbox:hover {
+    cursor: pointer
+}
+
+html body blockquote {
+    margin: 16px 0;
+    font-size: inherit;
+    padding: 0 15px;
+    color: #5c5c5c;
+    border-left: 4px solid #d6d6d6
+}
+
+html body blockquote>:first-child {
+    margin-top: 0
+}
+
+html body blockquote>:last-child {
+    margin-bottom: 0
+}
+
+html body hr {
+    height: 4px;
+    margin: 32px 0;
+    background-color: #d6d6d6;
+    border: 0 none
+}
+
+html body table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all
+}
+
+html body table th {
+    font-weight: bold;
+    color: #000
+}
+
+html body table td,
+html body table th {
+    border: 1px solid #d6d6d6;
+    padding: 6px 13px
+}
+
+html body dl {
+    padding: 0
+}
+
+html body dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold
+}
+
+html body dl dd {
+    padding: 0 16px;
+    margin-bottom: 0px
+}
+
+html body code {
+    font-family: Consolas, monospace;
+    font-size: 12px !important;
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+html body code::before,
+html body code::after {
+    letter-spacing: -0.2em;
+    content: "\00a0"
+}
+
+html body pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: .85em !important;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0
+}
+
+html body .highlight {
+    margin-bottom: 0px
+}
+
+html body .highlight pre,
+html body pre {
+    padding: 1em;
+    overflow: auto;
+    font-size: .85em !important;
+    line-height: 1.45;
+    border: #d6d6d6;
+    border-radius: 3px
+}
+
+html body .highlight pre {
+    margin-bottom: 0;
+    word-break: normal
+}
+
+html body pre code,
+html body pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0
+}
+
+html body pre code:before,
+html body pre tt:before,
+html body pre code:after,
+html body pre tt:after {
+    content: normal
+}
+
+html body p,
+html body blockquote,
+html body ul,
+html body ol,
+html body dl,
+html body pre {
+    /* nothing */
+}
+
+html body kbd {
+    color: #000;
+    border: 1px solid #d6d6d6;
+    border-bottom: 2px solid #c7c7c7;
+    padding: 2px 4px;
+    background-color: #f0f0f0;
+    border-radius: 3px
+}
+
+@media print {
+    html body {
+        background-color: #fff
+    }
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+        color: #000;
+        page-break-after: avoid
+    }
+    html body blockquote {
+        color: #5c5c5c
+    }
+    html body pre {
+        page-break-inside: avoid
+    }
+    html body table {
+        display: table
+    }
+    html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+    }
+    html body pre,
+    html body code {
+        word-wrap: break-word;
+        white-space: pre
+    }
+}
+
+.markdown-preview {
+    float: left;
+    margin: 10px auto 10px 10px;
+    color: #2F2F2F;
+    border: 1px dashed #DDDDDD;
+    padding: 10px;
+    width: 80em;
+}
+
+p {
+    margin: 1em 0 1em 0;
+}
+
+
+/* code block theme */.markdown-preview {
+    height: 100%;
+    box-sizing: border-box
+}
+
+.markdown-preview .pagebreak,
+.markdown-preview .newpage {
+    page-break-before: always
+}
+
+.markdown-preview pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber
+}
+
+.markdown-preview pre.line-numbers>code {
+    position: relative
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 1em;
+    font-size: 100%;
+    left: 0;
+    width: 3em;
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: .8em;
+    text-align: right
+}
+
+.markdown-preview .mathjax-exps .MathJax_Display {
+    text-align: center !important
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .status {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .output-div {
+    margin-bottom: 16px
+}
+
+.scrollbar-style::-webkit-scrollbar {
+    width: 8px
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+    position: relative;
+    top: 0
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    font-size: 28px;
+    cursor: pointer;
+    color: inherit;
+    z-index: 99;
+    width: 32px;
+    text-align: center;
+    opacity: .4
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+    opacity: 1
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    padding: 32px 0 48px 0;
+    font-size: 12px;
+    border-left: 1px dashed #DDDDDD;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: inherit
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+    width: 8px
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+    text-decoration: none
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    padding: 0 1.6em;
+    margin-top: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+    margin-bottom: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    list-style-type: none
+}
+
+@media screen and (max-width:1274px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 0em
+    }
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+    display: none
+}
+
+@media screen and (max-width:914px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        width: 100%
+    }
+}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h2>Package-C-Library-for-Luajit-the-FFI-Method</h2>
+<ul>
+<li>@name       &#x5229;&#x7528; FFI &#x5728; Luajit &#x91CC;&#x9762;&#x8F7B;&#x677E;&#x4F7F;&#x7528; C &#x8BED;&#x8A00;&#x5E93;&#x7684;&#x7B80;&#x5355;&#x6559;&#x7A0B;</li>
+<li>@author     karminski &lt;<a href="mailto:code.karminski@outlook.com">code.karminski@outlook.com</a>&gt;</li>
+<li>@version    20201228:1</li>
+</ul>
+<p>&#x770B;&#x5230;&#x6709;&#x540C;&#x5B66;&#x8BF4; Lua &#x5E93;&#x5C11;, &#x9700;&#x8981;&#x81EA;&#x5DF1;&#x9020;&#x8F6E;&#x5B50;. &#x5176;&#x5B9E;&#x4E0D;&#x662F;&#x8FD9;&#x6837;&#x7684;, &#x4ECA;&#x5929;&#x7ED9;&#x5927;&#x5BB6;&#x770B;&#x4E00;&#x4E2A;&#x9B54;&#x6CD5;, &#x8FD9;&#x4E2A;&#x9B54;&#x6CD5;&#x53EF;&#x4EE5;&#x8BA9;&#x4F60;&#x975E;&#x5E38;&#x65B9;&#x4FBF;&#x7684;&#x5728; luajit &#x91CC;&#x9762;&#x4F7F;&#x7528;&#x9AD8;&#x6027;&#x80FD;&#x7684; C/CPP &#x5E93;, &#x4ECE;&#x800C;&#x907F;&#x514D;&#x81EA;&#x5DF1;&#x9020;&#x8F6E;&#x5B50;&#x7684;&#x75DB;&#x82E6;.</p>
+<p>&#x8FD9;&#x4E2A;&#x9B54;&#x6CD5;&#x662F; FFI (<a href="https://en.wikipedia.org/wiki/Foreign_function_interface">Foreign function interface</a>), &#x6211;&#x5E76;&#x4E0D;&#x6253;&#x7B97;&#x4ED4;&#x7EC6;&#x8BB2; FFI &#x539F;&#x7406;, &#x6240;&#x4EE5;&#x7B80;&#x5355;&#x6765;&#x8BF4;, FFI &#x5B9E;&#x73B0;&#x4E86;&#x8DE8;&#x8BED;&#x8A00;&#x7684;&#x4E8C;&#x8FDB;&#x5236;&#x63A5;&#x53E3;. &#x5B83;&#x7684;&#x4F18;&#x70B9;&#x662F;&#x9AD8;&#x6548;&#x65B9;&#x4FBF;. &#x76F4;&#x63A5;&#x8C03;&#x7528; ABI, &#x7F3A;&#x70B9;&#x4E5F;&#x5F88;&#x660E;&#x663E;, &#x51FA;&#x4E86;&#x95EE;&#x9898;&#x76F4;&#x63A5;&#x4F1A;&#x6302;&#x6389;, &#x56E0;&#x6B64;&#x6570;&#x636E;&#x8DE8;&#x4E34;&#x754C;&#x533A;&#x524D;&#x4ED4;&#x7EC6;&#x68C0;&#x67E5;&#x5C31;&#x53EF;&#x4EE5;&#x4E86;.</p>
+<p>&#x6211;&#x4EEC;&#x4ECA;&#x5929;&#x76F4;&#x63A5;&#x627E;&#x4E2A; C &#x8BED;&#x8A00;&#x5E93;, &#x7136;&#x540E;&#x5229;&#x7528; FFI &#x5728; luajit &#x91CC;&#x9762;&#x8C03;&#x7528;&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x5E93;&#x4F5C;&#x4E3A;&#x4E2A;&#x5927;&#x5BB6;&#x7684;&#x6F14;&#x793A;.</p>
+<h1 class="mume-header" id="%E4%BB%80%E4%B9%88-%E8%BF%99%E9%87%8C%E7%AB%9F%E7%84%B6%E8%BA%BA%E7%9D%80%E4%B8%80%E4%B8%AA%E9%AB%98%E6%80%A7%E8%83%BD-base64-%E5%BA%93">&#x4EC0;&#x4E48;? &#x8FD9;&#x91CC;&#x7ADF;&#x7136;&#x8EBA;&#x7740;&#x4E00;&#x4E2A;&#x9AD8;&#x6027;&#x80FD; base64 &#x5E93;?</h1>
+
+<p>&#x6211;&#x4EEC;&#x4EE5;&#x8FD9;&#x4E2A; repo &#x4E3A;&#x4F8B;: <a href="https://github.com/aklomp/base64">https://github.com/aklomp/base64</a>. &#x8FD9;&#x662F;&#x4E00;&#x4E2A; C &#x7F16;&#x5199;&#x7684; Base64 &#x7F16;&#x7801;/&#x89E3;&#x7801;&#x5E93;, &#x800C;&#x4E14;&#x652F;&#x6301;SIMD.</p>
+<p>&#x53EF;&#x4EE5;&#x7B80;&#x5355;&#x8FD0;&#x884C;&#x4E0B;&#x8FD9;&#x4E2A;&#x5E93;&#x7684; benchmark:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>karminski@router02:/data/works/base64$ make clean &amp;&amp; SSSE3_CFLAGS=-mssse3 AVX2_CFLAGS=-mavx2 make &amp;&amp; make -C test
+...
+Testing with buffer size 100 KB, fastest of 10 * 100
+AVX2	encode	12718.47 MB/sec
+AVX2	decode	14542.81 MB/sec
+plain	encode	3657.40 MB/sec
+plain	decode	3433.23 MB/sec
+SSSE3	encode	7269.55 MB/sec
+SSSE3	decode	8173.10 MB/sec
+...
+</code></pre><p>&#x6211;&#x7684; CPU &#x662F; Intel(R) Xeon(R) CPU E3-1246 v3 @ 3.50GHz, &#x53EF;&#x4EE5;&#x770B;&#x5230;CPU&#x5982;&#x679C;&#x652F;&#x6301; AVX2 &#x7684;&#x8BDD;, &#x53EF;&#x4EE5;&#x8FBE;&#x5230; 12GB/s &#x4EE5;&#x4E0A;, &#x8FD9;&#x4E2A;&#x6027;&#x80FD;&#x975E;&#x5E38;&#x5F3A;&#x608D;, &#x751A;&#x81F3;&#x8FDE;&#x666E;&#x901A;&#x7684;SSD&#x90FD;&#x8DDF;&#x4E0D;&#x4E0A;&#x4E86;.</p>
+<p>&#x6211;&#x4EEC;&#x9700;&#x8981;&#x7684;&#x7B2C;&#x4E00;&#x6B65;&#x662F;&#x628A;&#x8FD9;&#x4E2A; repo &#x7F16;&#x8BD1;&#x4E3A;&#x52A8;&#x6001;&#x5E93;. &#x4F46;&#x662F;&#x8FD9;&#x4E2A; repo &#x5E76;&#x6CA1;&#x6709;&#x63D0;&#x4F9B;&#x52A8;&#x6001;&#x5E93;&#x7684;&#x7F16;&#x8BD1;&#x9009;&#x9879;, &#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x9B54;&#x6539;&#x4E0B;&#x8FD9;&#x4E2A;&#x9879;&#x76EE;&#x7684; Makefile.</p>
+<pre data-role="codeBlock" data-info="Makefile" class="language-makefile">CFLAGS <span class="token operator">+=</span> -std<span class="token operator">=</span>c99 -O3 -Wall -Wextra -pedantic
+
+<span class="token comment"># Set OBJCOPY if not defined by environment:</span>
+OBJCOPY <span class="token operator">?=</span> objcopy
+
+OBJS <span class="token operator">=</span> \
+  lib/arch/avx2/codec.o \
+  lib/arch/generic/codec.o \
+  lib/arch/neon32/codec.o \
+  lib/arch/neon64/codec.o \
+  lib/arch/ssse3/codec.o \
+  lib/arch/sse41/codec.o \
+  lib/arch/sse42/codec.o \
+  lib/arch/avx/codec.o \
+  lib/lib.o \
+  lib/codec_choose.o \
+  lib/tables/tables.o
+
+SOOBJS <span class="token operator">=</span> \
+  lib/arch/avx2/codec.so \
+  lib/arch/generic/codec.so \
+  lib/arch/neon32/codec.so \
+  lib/arch/neon64/codec.so \
+  lib/arch/ssse3/codec.so \
+  lib/arch/sse41/codec.so \
+  lib/arch/sse42/codec.so \
+  lib/arch/avx/codec.so \
+  lib/lib.so \
+  lib/codec_choose.so \
+  lib/tables/tables.so
+
+HAVE_AVX2   <span class="token operator">=</span> 0
+HAVE_NEON32 <span class="token operator">=</span> 0
+HAVE_NEON64 <span class="token operator">=</span> 0
+HAVE_SSSE3  <span class="token operator">=</span> 0
+HAVE_SSE41  <span class="token operator">=</span> 0
+HAVE_SSE42  <span class="token operator">=</span> 0
+HAVE_AVX    <span class="token operator">=</span> 0
+
+<span class="token comment"># The user should supply compiler flags for the codecs they want to build.</span>
+<span class="token comment"># Check which codecs we&apos;re going to include:</span>
+<span class="token keyword">ifdef</span> AVX2_CFLAGS
+  HAVE_AVX2 <span class="token operator">=</span> 1
+<span class="token keyword">endif</span>
+<span class="token keyword">ifdef</span> NEON32_CFLAGS
+  HAVE_NEON32 <span class="token operator">=</span> 1
+<span class="token keyword">endif</span>
+<span class="token keyword">ifdef</span> NEON64_CFLAGS
+  HAVE_NEON64 <span class="token operator">=</span> 1
+<span class="token keyword">endif</span>
+<span class="token keyword">ifdef</span> SSSE3_CFLAGS
+  HAVE_SSSE3 <span class="token operator">=</span> 1
+<span class="token keyword">endif</span>
+<span class="token keyword">ifdef</span> SSE41_CFLAGS
+  HAVE_SSE41 <span class="token operator">=</span> 1
+<span class="token keyword">endif</span>
+<span class="token keyword">ifdef</span> SSE42_CFLAGS
+  HAVE_SSE42 <span class="token operator">=</span> 1
+<span class="token keyword">endif</span>
+<span class="token keyword">ifdef</span> AVX_CFLAGS
+  HAVE_AVX <span class="token operator">=</span> 1
+<span class="token keyword">endif</span>
+<span class="token keyword">ifdef</span> OPENMP
+  CFLAGS <span class="token operator">+=</span> -fopenmp
+<span class="token keyword">endif</span>
+
+
+<span class="token builtin">.PHONY</span><span class="token punctuation">:</span> all analyze clean
+
+<span class="token symbol">all</span><span class="token punctuation">:</span> bin/base64 lib/libbase64.o lib/libbase64.so
+
+<span class="token symbol">bin/base64</span><span class="token punctuation">:</span> bin/base64.o lib/libbase64.o lib/libbase64.so
+	<span class="token variable">$</span><span class="token punctuation">(</span>CC<span class="token punctuation">)</span> <span class="token variable">$</span><span class="token punctuation">(</span>CFLAGS<span class="token punctuation">)</span> -o <span class="token variable">$@</span> <span class="token variable">$^</span>
+
+<span class="token symbol">lib/libbase64.o</span><span class="token punctuation">:</span> <span class="token variable">$</span><span class="token punctuation">(</span>OBJS<span class="token punctuation">)</span>
+	<span class="token variable">$</span><span class="token punctuation">(</span>LD<span class="token punctuation">)</span> -r -o <span class="token variable">$@</span> <span class="token variable">$^</span>
+	<span class="token variable">$</span><span class="token punctuation">(</span>OBJCOPY<span class="token punctuation">)</span> --keep-global-symbols<span class="token operator">=</span>lib/exports.txt <span class="token variable">$@</span>
+
+<span class="token symbol">lib/libbase64.so</span><span class="token punctuation">:</span> <span class="token variable">$</span><span class="token punctuation">(</span>SOOBJS<span class="token punctuation">)</span>
+	<span class="token variable">$</span><span class="token punctuation">(</span>LD<span class="token punctuation">)</span> -shared -fPIC -o <span class="token variable">$@</span> <span class="token variable">$^</span>
+	<span class="token variable">$</span><span class="token punctuation">(</span>OBJCOPY<span class="token punctuation">)</span> --keep-global-symbols<span class="token operator">=</span>lib/exports.txt <span class="token variable">$@</span>
+
+<span class="token symbol">lib/config.h</span><span class="token punctuation">:</span>
+	<span class="token operator">@</span>echo <span class="token string">&quot;#define HAVE_AVX2   $(HAVE_AVX2)&quot;</span>    &gt; <span class="token variable">$@</span>
+	<span class="token operator">@</span>echo <span class="token string">&quot;#define HAVE_NEON32 $(HAVE_NEON32)&quot;</span> &gt;&gt; <span class="token variable">$@</span>
+	<span class="token operator">@</span>echo <span class="token string">&quot;#define HAVE_NEON64 $(HAVE_NEON64)&quot;</span> &gt;&gt; <span class="token variable">$@</span>
+	<span class="token operator">@</span>echo <span class="token string">&quot;#define HAVE_SSSE3  $(HAVE_SSSE3)&quot;</span>  &gt;&gt; <span class="token variable">$@</span>
+	<span class="token operator">@</span>echo <span class="token string">&quot;#define HAVE_SSE41  $(HAVE_SSE41)&quot;</span>  &gt;&gt; <span class="token variable">$@</span>
+	<span class="token operator">@</span>echo <span class="token string">&quot;#define HAVE_SSE42  $(HAVE_SSE42)&quot;</span>  &gt;&gt; <span class="token variable">$@</span>
+	<span class="token operator">@</span>echo <span class="token string">&quot;#define HAVE_AVX    $(HAVE_AVX)&quot;</span>    &gt;&gt; <span class="token variable">$@</span>
+
+<span class="token symbol"><span class="token variable">$</span>(OBJS)</span><span class="token punctuation">:</span> lib/config.h
+
+<span class="token symbol"><span class="token variable">$</span>(SOOBJS)</span><span class="token punctuation">:</span> lib/config.h
+
+<span class="token comment"># o</span>
+<span class="token symbol">lib/arch/avx2/codec.o</span><span class="token punctuation">:</span>   CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>AVX2_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/neon32/codec.o</span><span class="token punctuation">:</span> CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>NEON32_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/neon64/codec.o</span><span class="token punctuation">:</span> CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>NEON64_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/ssse3/codec.o</span><span class="token punctuation">:</span>  CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>SSSE3_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/sse41/codec.o</span><span class="token punctuation">:</span>  CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>SSE41_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/sse42/codec.o</span><span class="token punctuation">:</span>  CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>SSE42_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/avx/codec.o</span><span class="token punctuation">:</span>    CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>AVX_CFLAGS<span class="token punctuation">)</span>
+<span class="token comment"># so</span>
+<span class="token symbol">lib/arch/avx2/codec.so</span><span class="token punctuation">:</span>   CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>AVX2_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/neon32/codec.so</span><span class="token punctuation">:</span> CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>NEON32_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/neon64/codec.so</span><span class="token punctuation">:</span> CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>NEON64_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/ssse3/codec.so</span><span class="token punctuation">:</span>  CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>SSSE3_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/sse41/codec.so</span><span class="token punctuation">:</span>  CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>SSE41_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/sse42/codec.so</span><span class="token punctuation">:</span>  CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>SSE42_CFLAGS<span class="token punctuation">)</span>
+<span class="token symbol">lib/arch/avx/codec.so</span><span class="token punctuation">:</span>    CFLAGS <span class="token operator">+=</span> <span class="token variable">$</span><span class="token punctuation">(</span>AVX_CFLAGS<span class="token punctuation">)</span>
+
+<span class="token symbol">%.o</span><span class="token punctuation">:</span> %.c
+	<span class="token variable">$</span><span class="token punctuation">(</span>CC<span class="token punctuation">)</span> <span class="token variable">$</span><span class="token punctuation">(</span>CFLAGS<span class="token punctuation">)</span> -o <span class="token variable">$@</span> -c <span class="token variable">$&lt;</span>
+
+<span class="token symbol">%.so</span><span class="token punctuation">:</span> %.c
+	<span class="token variable">$</span><span class="token punctuation">(</span>CC<span class="token punctuation">)</span> <span class="token variable">$</span><span class="token punctuation">(</span>CFLAGS<span class="token punctuation">)</span> -shared -fPIC -o <span class="token variable">$@</span> -c <span class="token variable">$&lt;</span>
+
+<span class="token symbol">analyze</span><span class="token punctuation">:</span> clean
+	scan-build --use-analyzer<span class="token operator">=</span>`which clang` --status-bugs make
+
+<span class="token symbol">clean</span><span class="token punctuation">:</span>
+	rm -f bin/base64 bin/base64.o lib/libbase64.o lib/libbase64.so lib/config.h <span class="token variable">$</span><span class="token punctuation">(</span>OBJS<span class="token punctuation">)</span>
+</pre><p>&#x770B;&#x4E0D;&#x61C2;&#x6CA1;&#x5173;&#x7CFB;, Makefile &#x662F;&#x5982;&#x6B64;&#x7684;&#x590D;&#x6742;, &#x6211;&#x4E5F;&#x770B;&#x4E0D;&#x61C2;, &#x4EC5;&#x4EC5;&#x662F;&#x51ED;&#x7740;&#x611F;&#x89C9;&#x4FEE;&#x6539;&#x7684;, &#x7136;&#x540E;&#x4ED6;&#x5C31;&#x6070;&#x597D;&#x80FD;&#x8FD0;&#x884C;&#x4E86;...  &#x6CE8;&#x610F; Makefile &#x7684;&#x7F29;&#x8FDB;&#x4E00;&#x5B9A;&#x8981;&#x7528; &quot;\t&quot;, &#x5426;&#x5219;&#x4E0D;&#x7B26;&#x5408;&#x8BED;&#x6CD5;&#x4F1A;&#x62A5;&#x9519;.</p>
+<p>&#x7136;&#x540E;&#x6211;&#x4EEC;&#x8FDB;&#x884C;&#x7F16;&#x8BD1;:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>AVX2_CFLAGS=-mavx2 SSSE3_CFLAGS=-mssse3 SSE41_CFLAGS=-msse4.1 SSE42_CFLAGS=-msse4.2 AVX_CFLAGS=-mavx make lib/libbase64.so 
+</code></pre><p>&#x8FD9;&#x6837;&#x6211;&#x4EEC;&#x5C31;&#x5F97;&#x5230;&#x4E86; <a href="http://libbase64.so">libbase64.so</a> &#x52A8;&#x6001;&#x5E93; (&#x5728; lib &#x91CC;&#x9762;). &#x8FD9;&#x91CC;&#x8FD8;&#x987A;&#x4FBF;&#x5F00;&#x542F;&#x4E86;&#x5404;&#x79CD; SIMD &#x9009;&#x9879;. &#x5982;&#x679C;&#x4E0D;&#x9700;&#x8981;&#x7684;&#x8BDD;&#x53EF;&#x4EE5;&#x5173;&#x95ED;.</p>
+<h1 class="mume-header" id="%E9%AD%94%E6%94%B9%E5%BC%80%E5%A7%8B">&#x9B54;&#x6539;&#x5F00;&#x59CB;</h1>
+
+<p>&#x5F53;&#x7136;&#x8FD9;&#x53EA;&#x662F;&#x9B54;&#x6CD5;, &#x4E0D;&#x662F;&#x70BC;&#x91D1;&#x672F;, &#x6240;&#x4EE5;&#x662F;&#x9700;&#x8981;&#x4ED8;&#x51FA;&#x52AA;&#x529B;&#x7684;, &#x6211;&#x4EEC;&#x8981;&#x624B;&#x52A8;&#x5B9E;&#x73B0;&#x52A8;&#x6001;&#x5E93;&#x7684;&#x6865;&#x63A5;, &#x9996;&#x5148;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x67E5;&#x770B;&#x6211;&#x4EEC;&#x8981;&#x8C03;&#x7528;&#x7684;&#x51FD;&#x6570;&#x9700;&#x8981;&#x4EC0;&#x4E48;&#x53C2;&#x6570;. &#x8FD9;&#x4E24;&#x4E2A;&#x5B9A;&#x4E49;&#x5F88;&#x7B80;&#x5355;, &#x6211;&#x4EEC;&#x9700;&#x8981;&#x4F20;&#x5165;:</p>
+<ul>
+<li>&#x6211;&#x4EEC;&#x8981;&#x7F16;&#x7801;&#x6216;&#x89E3;&#x7801;&#x7684;&#x5B57;&#x7B26;&#x4E32; <code>const char *src</code></li>
+<li>&#x8BE5;&#x5B57;&#x7B26;&#x4E32;&#x7684;&#x957F;&#x5EA6; <code>size_t srclen</code></li>
+<li>&#x6307;&#x5411;&#x8FD4;&#x56DE;&#x7ED3;&#x679C;&#x7684;&#x6307;&#x9488; <code>char *out</code></li>
+<li>&#x8FD4;&#x56DE;&#x7ED3;&#x679C;&#x7684;&#x957F;&#x5EA6;&#x7684;&#x6307;&#x9488; <code>size_t *outlen</code></li>
+<li>&#x8FD8;&#x6709; flag <code>int flags</code></li>
+</ul>
+<pre data-role="codeBlock" data-info="c" class="language-c"><span class="token keyword">void</span> <span class="token function">base64_encode</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span>src<span class="token punctuation">,</span> size_t srclen<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>out<span class="token punctuation">,</span> size_t <span class="token operator">*</span>outlen<span class="token punctuation">,</span> <span class="token keyword">int</span> flags<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span>  <span class="token function">base64_decode</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span>src<span class="token punctuation">,</span> size_t srclen<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>out<span class="token punctuation">,</span> size_t <span class="token operator">*</span>outlen<span class="token punctuation">,</span> <span class="token keyword">int</span> flags<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</pre><p>&#x7136;&#x540E;&#x6211;&#x4EEC;&#x5C31;&#x53EF;&#x4EE5;&#x5F00;&#x59CB;&#x7F16;&#x5199; ffi &#x6865;&#x63A5;&#x7A0B;&#x5E8F;&#x4E86;. &#x9996;&#x5148;&#x628A;&#x9700;&#x8981;&#x7684;&#x5E93;&#x5168;&#x90FD;&#x5305;&#x542B;&#x8FDB;&#x6765;, &#x6CE8;&#x610F;, &#x591A;&#x7528; local &#x6CA1;&#x574F;&#x5904;, &#x4F7F;&#x7528; local &#x53EF;&#x4EE5;&#x6709;&#x6548;&#x4ECE;&#x5C40;&#x90E8;&#x67E5;&#x8BE2;, &#x907F;&#x514D;&#x4F4E;&#x6548;&#x7684;&#x5168;&#x5C40;&#x67E5;&#x8BE2;. &#x751A;&#x81F3;&#x5176;&#x4ED6;&#x5305;&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x90FD;&#x53EF;&#x4EE5; local &#x4E00;&#x4E0B;&#x6765;&#x63D0;&#x5347;&#x6027;&#x80FD;.</p>
+<p>&#x52A8;&#x6001;&#x5E93;&#x7684;&#x8BDD;&#x7528;&#x4E13;&#x7528;&#x7684; <code>ffi.load</code> &#x6765;&#x5F15;&#x7528;.</p>
+<p>&#x7136;&#x540E;&#x5B9A;&#x4E49;&#x4E00;&#x4E2A; _M &#x7528;&#x6765;&#x5305;&#x88F9;&#x6211;&#x4EEC;&#x7684;&#x5E93;. &#x8FD9;&#x91CC;&#x8DDF; JavaScript &#x5F88;&#x50CF;, JavaScript &#x5728;&#x6D4F;&#x89C8;&#x5668;&#x91CC;&#x6709; window, Lua &#x6709; _G. &#x6211;&#x4EEC;&#x8981;&#x5C3D;&#x53EF;&#x80FD;&#x907F;&#x514D;&#x5C01;&#x88C5;&#x597D;&#x7684;&#x5E93;&#x76F4;&#x63A5;&#x6254;&#x7ED9;&#x5168;&#x5C40;, &#x56E0;&#x6B64;&#x5C01;&#x88C5;&#x8D77;&#x6765;&#x662F;&#x4E2A;&#x597D;&#x529E;&#x6CD5;.</p>
+<pre data-role="codeBlock" data-info="lua" class="language-lua"><span class="token comment">-- init</span>
+<span class="token keyword">local</span> ffi        <span class="token operator">=</span> require <span class="token string">&quot;ffi&quot;</span>
+<span class="token keyword">local</span> floor      <span class="token operator">=</span> math<span class="token punctuation">.</span>floor
+<span class="token keyword">local</span> ffi_new    <span class="token operator">=</span> ffi<span class="token punctuation">.</span>new
+<span class="token keyword">local</span> ffi_str    <span class="token operator">=</span> ffi<span class="token punctuation">.</span>string
+<span class="token keyword">local</span> ffi_typeof <span class="token operator">=</span> ffi<span class="token punctuation">.</span>typeof
+<span class="token keyword">local</span> C          <span class="token operator">=</span> ffi<span class="token punctuation">.</span>C
+<span class="token keyword">local</span> libbase64  <span class="token operator">=</span> ffi<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token string">&quot;./libbase64.so&quot;</span><span class="token punctuation">)</span> <span class="token comment">-- change this path when needed.</span>
+
+<span class="token keyword">local</span> _M <span class="token operator">=</span> <span class="token punctuation">{</span> _VERSION <span class="token operator">=</span> <span class="token string">&apos;0.0.1&apos;</span> <span class="token punctuation">}</span>
+</pre><p>&#x7136;&#x540E;&#x662F;&#x7528; ffi.cdef &#x58F0;&#x660E; ABI &#x63A5;&#x53E3;, &#x8FD9;&#x91CC;&#x66F4;&#x7B80;&#x5355;, &#x76F4;&#x63A5;&#x628A;&#x6E90;&#x4EE3;&#x7801;&#x7684;&#x5934;&#x6587;&#x4EF6;&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x58F0;&#x660E;&#x62F7;&#x8FC7;&#x6765;&#x5C31;&#x5B8C;&#x4E8B;&#x4E86;:</p>
+<pre data-role="codeBlock" data-info="lua" class="language-lua"><span class="token comment">-- cdef</span>
+ffi<span class="token punctuation">.</span>cdef<span class="token string">[[
+void base64_encode(const uint8_t *src, size_t srclen, uint8_t *out, size_t *outlen, size_t flags);
+int  base64_decode(const uint8_t *src, size_t srclen, uint8_t *out, size_t *outlen, size_t flags);
+]]</span>
+</pre><p>&#x63A5;&#x4E0B;&#x6765;&#x662F;&#x6700;&#x91CD;&#x8981;&#x7684;&#x7C7B;&#x578B;&#x8F6C;&#x6362;:</p>
+<pre data-role="codeBlock" data-info="lua" class="language-lua"><span class="token comment">-- define types</span>
+<span class="token keyword">local</span> uint8t    <span class="token operator">=</span> <span class="token function">ffi_typeof</span><span class="token punctuation">(</span><span class="token string">&quot;uint8_t[?]&quot;</span><span class="token punctuation">)</span> <span class="token comment">-- uint8_t *</span>
+<span class="token keyword">local</span> psizet    <span class="token operator">=</span> <span class="token function">ffi_typeof</span><span class="token punctuation">(</span><span class="token string">&quot;size_t[1]&quot;</span><span class="token punctuation">)</span>  <span class="token comment">-- size_t *</span>
+
+<span class="token comment">-- package function</span>
+<span class="token keyword">function</span> _M<span class="token punctuation">.</span><span class="token function">base64_encode</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> flags<span class="token punctuation">)</span>
+    <span class="token keyword">local</span> dlen   <span class="token operator">=</span> <span class="token function">floor</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token operator">#</span>src <span class="token operator">*</span> <span class="token number">8</span> <span class="token operator">+</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">6</span><span class="token punctuation">)</span>
+	<span class="token keyword">local</span> out    <span class="token operator">=</span> <span class="token function">ffi_new</span><span class="token punctuation">(</span>uint8t<span class="token punctuation">,</span> dlen<span class="token punctuation">)</span>
+	<span class="token keyword">local</span> outlen <span class="token operator">=</span> <span class="token function">ffi_new</span><span class="token punctuation">(</span>psizet<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+	libbase64<span class="token punctuation">.</span><span class="token function">base64_encode</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> <span class="token operator">#</span>src<span class="token punctuation">,</span> out<span class="token punctuation">,</span> outlen<span class="token punctuation">,</span> flags<span class="token punctuation">)</span>
+	<span class="token keyword">return</span> <span class="token function">ffi_str</span><span class="token punctuation">(</span>out<span class="token punctuation">,</span> outlen<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token keyword">end</span> 
+
+<span class="token keyword">function</span> _M<span class="token punctuation">.</span><span class="token function">base64_decode</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> flags<span class="token punctuation">)</span>
+    <span class="token keyword">local</span> dlen   <span class="token operator">=</span> <span class="token function">floor</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token operator">#</span>src <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">6</span> <span class="token operator">/</span> <span class="token number">8</span><span class="token punctuation">)</span>
+    <span class="token keyword">local</span> out    <span class="token operator">=</span> <span class="token function">ffi_new</span><span class="token punctuation">(</span>uint8t<span class="token punctuation">,</span> dlen<span class="token punctuation">)</span>
+	<span class="token keyword">local</span> outlen <span class="token operator">=</span> <span class="token function">ffi_new</span><span class="token punctuation">(</span>psizet<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+    libbase64<span class="token punctuation">.</span><span class="token function">base64_decode</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> <span class="token operator">#</span>src<span class="token punctuation">,</span> out<span class="token punctuation">,</span> outlen<span class="token punctuation">,</span> flags<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token function">ffi_str</span><span class="token punctuation">(</span>out<span class="token punctuation">,</span> outlen<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">end</span> 
+</pre><p>&#x6211;&#x4EEC;&#x7528; ffi_typeof &#x6765;&#x5B9A;&#x4E49;&#x9700;&#x8981;&#x6620;&#x5C04;&#x7684;&#x6570;&#x636E;&#x7C7B;&#x578B;, &#x7136;&#x540E;&#x7528; ffi_new &#x6765;&#x5C06;&#x5176;&#x5B9E;&#x4F8B;&#x5316;, &#x5206;&#x914D;&#x5185;&#x5B58;&#x7A7A;&#x95F4;. &#x5177;&#x4F53;&#x6765;&#x8BB2;:</p>
+<p>&#x6211;&#x4EEC;&#x5B9A;&#x4E49;&#x4E86;2&#x79CD;&#x6570;&#x636E;&#x7C7B;&#x578B;, &#x5176;&#x4E2D;, <code>local uint8t = ffi_typeof(&quot;uint8_t[?]&quot;)</code> &#x7C7B;&#x578B;&#x7528;&#x6765;&#x4F20;&#x8F93;&#x5B57;&#x7B26;&#x4E32;, &#x540E;&#x9762;&#x7684;&#x95EE;&#x53F7;&#x662F;&#x7ED9; <code>local out = ffi_new(uint8t, dlen)</code> &#x4E2D;&#x7684; <code>ffi_new</code> &#x51FD;&#x6570;&#x51C6;&#x5907;&#x7684;, &#x5B83;&#x7684;&#x7B2C;&#x4E8C;&#x4E2A;&#x53C2;&#x6570;&#x53EF;&#x4EE5;&#x6307;&#x5B9A;&#x5B9E;&#x4F8B;&#x5316;&#x8BE5;&#x6570;&#x636E;&#x7C7B;&#x578B;&#x65F6;&#x7684;&#x957F;&#x5EA6;. &#x8FD9;&#x6837;&#x6211;&#x4EEC;&#x5C31;&#x5F97;&#x5230;&#x4E86;&#x4E00;&#x4E2A;&#x7A7A;&#x7684;&#x5B57;&#x7B26;&#x4E32;&#x6570;&#x7EC4;, &#x7528;&#x6765;&#x88C5; C &#x51FD;&#x6570;&#x8FD4;&#x56DE;&#x7684;&#x7ED3;&#x679C;. &#x8FD9;&#x91CC;&#x7684; dlen &#x8BA1;&#x7B97;&#x51FA;&#x4E86;&#x6E90;&#x5B57;&#x7B26;&#x4E32; base64 encode &#x4E4B;&#x540E;&#x7684;&#x957F;&#x5EA6;, &#x5206;&#x914D;&#x8BE5;&#x957F;&#x5EA6;&#x5373;&#x53EF;.</p>
+<p>&#x540C;&#x6837;, <code>local psizet = ffi_typeof(&quot;size_t[1]&quot;)</code> &#x6307;&#x5B9A;&#x4E86;&#x4E00;&#x4E2A; <code>size_t *</code> &#x7C7B;&#x578B;. C &#x8BED;&#x8A00;&#x91CC;&#x9762;&#x6570;&#x7EC4;&#x5C31;&#x662F;&#x6307;&#x9488;, &#x5373; <code>size_t[0]</code> &#x4E0E; <code>site_t*</code> &#x662F;&#x7B49;&#x4EF7;&#x7684;. &#x56E0;&#x6B64;&#x6211;&#x4EEC;&#x5206;&#x53EA;&#x6709;&#x4E00;&#x4E2A;&#x5143;&#x7D20;&#x7684; <code>size_t</code> &#x6570;&#x7EC4;&#x5C31;&#x5F97;&#x5230;&#x4E86;&#x6307;&#x5411; <code>size_t</code> &#x7C7B;&#x578B;&#x7684;&#x6307;&#x9488;. &#x7136;&#x540E;&#x5728; <code>local outlen = ffi_new(psizet, 1)</code> &#x7684;&#x65F6;&#x5019;&#x540E;&#x9762;&#x7684;&#x53C2;&#x6570;&#x5199;&#x7684;&#x4E5F;&#x662F;1, &#x4E0D;&#x8FC7;&#x8FD9;&#x91CC;&#x5199;&#x4EC0;&#x4E48;&#x5DF2;&#x7ECF;&#x65E0;&#x6240;&#x8C13;&#x4E86;, &#x5B83;&#x53EA;&#x662F;&#x4E0D;&#x652F;&#x6301;&#x4F20;&#x8FDB;&#x53BB;&#x7A7A;, &#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x76F8;&#x5F53;&#x4E8E;&#x4F20;&#x4E86;&#x4E2A; placeholder.</p>
+<p>&#x5728;&#x4F7F;&#x7528;&#x8FD9;&#x4E2A;&#x503C;&#x7684;&#x65F6;&#x5019;, &#x6211;&#x4EEC;&#x4E5F;&#x662F;&#x6309;&#x7167;&#x6570;&#x7EC4;&#x7684;&#x6A21;&#x5F0F;&#x53BB;&#x4F7F;&#x7528;&#x7684;: <code>return ffi_str(out, outlen[0])</code>.</p>
+<p>&#x9700;&#x8981;&#x6CE8;&#x610F;&#x7684;&#x662F;, &#x4E00;&#x5B9A;&#x8981;&#x5C06; <code>require &quot;ffi&quot;</code> &#x4EE5;&#x53CA; <code>ffi.load</code> &#x653E;&#x5728;&#x4EE3;&#x7801;&#x6700;&#x5E95;&#x5C42;, &#x5426;&#x5219;&#x4F1A;&#x51FA;&#x73B0; <code>table overflow</code> &#x7684;&#x60C5;&#x51B5;.</p>
+<p>&#x6700;&#x540E;, &#x8FD9;&#x4E2A;&#x6587;&#x4EF6;&#x662F;&#x8FD9;&#x6837;&#x5B50;&#x7684;:</p>
+<pre data-role="codeBlock" data-info="lua" class="language-lua"><span class="token comment">--[[
+ 
+    ffi-base64.lua
+    
+    @version    20201228:1
+    @author     karminski &lt;code.karminski@outlook.com&gt;
+
+]]</span><span class="token comment">--</span>
+
+<span class="token comment">-- init</span>
+<span class="token keyword">local</span> ffi        <span class="token operator">=</span> require <span class="token string">&quot;ffi&quot;</span>
+<span class="token keyword">local</span> floor      <span class="token operator">=</span> math<span class="token punctuation">.</span>floor
+<span class="token keyword">local</span> ffi_new    <span class="token operator">=</span> ffi<span class="token punctuation">.</span>new
+<span class="token keyword">local</span> ffi_str    <span class="token operator">=</span> ffi<span class="token punctuation">.</span>string
+<span class="token keyword">local</span> ffi_typeof <span class="token operator">=</span> ffi<span class="token punctuation">.</span>typeof
+<span class="token keyword">local</span> C          <span class="token operator">=</span> ffi<span class="token punctuation">.</span>C
+<span class="token keyword">local</span> libbase64  <span class="token operator">=</span> ffi<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token string">&quot;./libbase64.so&quot;</span><span class="token punctuation">)</span> <span class="token comment">-- change this path when needed.</span>
+
+<span class="token keyword">local</span> _M <span class="token operator">=</span> <span class="token punctuation">{</span> _VERSION <span class="token operator">=</span> <span class="token string">&apos;0.0.1&apos;</span> <span class="token punctuation">}</span>
+
+
+<span class="token comment">-- cdef</span>
+ffi<span class="token punctuation">.</span>cdef<span class="token string">[[
+void base64_encode(const uint8_t *src, size_t srclen, uint8_t *out, size_t *outlen, size_t flags);
+int  base64_decode(const uint8_t *src, size_t srclen, uint8_t *out, size_t *outlen, size_t flags);
+]]</span>
+
+<span class="token comment">-- define types</span>
+<span class="token keyword">local</span> uint8t    <span class="token operator">=</span> <span class="token function">ffi_typeof</span><span class="token punctuation">(</span><span class="token string">&quot;uint8_t[?]&quot;</span><span class="token punctuation">)</span> <span class="token comment">-- uint8_t *</span>
+<span class="token keyword">local</span> psizet    <span class="token operator">=</span> <span class="token function">ffi_typeof</span><span class="token punctuation">(</span><span class="token string">&quot;size_t[1]&quot;</span><span class="token punctuation">)</span>  <span class="token comment">-- size_t *</span>
+
+<span class="token comment">-- package function</span>
+<span class="token keyword">function</span> _M<span class="token punctuation">.</span><span class="token function">base64_encode</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> flags<span class="token punctuation">)</span>
+    <span class="token keyword">local</span> dlen   <span class="token operator">=</span> <span class="token function">floor</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token operator">#</span>src <span class="token operator">*</span> <span class="token number">8</span> <span class="token operator">+</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">6</span><span class="token punctuation">)</span>
+	<span class="token keyword">local</span> out    <span class="token operator">=</span> <span class="token function">ffi_new</span><span class="token punctuation">(</span>uint8t<span class="token punctuation">,</span> dlen<span class="token punctuation">)</span>
+	<span class="token keyword">local</span> outlen <span class="token operator">=</span> <span class="token function">ffi_new</span><span class="token punctuation">(</span>psizet<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+	libbase64<span class="token punctuation">.</span><span class="token function">base64_encode</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> <span class="token operator">#</span>src<span class="token punctuation">,</span> out<span class="token punctuation">,</span> outlen<span class="token punctuation">,</span> flags<span class="token punctuation">)</span>
+	<span class="token keyword">return</span> <span class="token function">ffi_str</span><span class="token punctuation">(</span>out<span class="token punctuation">,</span> outlen<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token keyword">end</span> 
+
+<span class="token keyword">function</span> _M<span class="token punctuation">.</span><span class="token function">base64_decode</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> flags<span class="token punctuation">)</span>
+    <span class="token keyword">local</span> dlen   <span class="token operator">=</span> <span class="token function">floor</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token operator">#</span>src <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token number">6</span> <span class="token operator">/</span> <span class="token number">8</span><span class="token punctuation">)</span>
+    <span class="token keyword">local</span> out    <span class="token operator">=</span> <span class="token function">ffi_new</span><span class="token punctuation">(</span>uint8t<span class="token punctuation">,</span> dlen<span class="token punctuation">)</span>
+	<span class="token keyword">local</span> outlen <span class="token operator">=</span> <span class="token function">ffi_new</span><span class="token punctuation">(</span>psizet<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span>
+    libbase64<span class="token punctuation">.</span><span class="token function">base64_decode</span><span class="token punctuation">(</span>src<span class="token punctuation">,</span> <span class="token operator">#</span>src<span class="token punctuation">,</span> out<span class="token punctuation">,</span> outlen<span class="token punctuation">,</span> flags<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> <span class="token function">ffi_str</span><span class="token punctuation">(</span>out<span class="token punctuation">,</span> outlen<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<span class="token keyword">end</span> 
+
+<span class="token keyword">return</span> _M
+</pre><p>&#x597D;&#x4E86;, &#x5927;&#x529F;&#x544A;&#x6210;, &#x6211;&#x4EEC;&#x5199;&#x4E2A; demo &#x8C03;&#x7528;&#x4E00;&#x4E0B;&#x8BD5;&#x8BD5;:</p>
+<pre data-role="codeBlock" data-info="lua" class="language-lua"><span class="token comment">-- main.lua</span>
+<span class="token keyword">local</span> ffi_base64 <span class="token operator">=</span> require <span class="token string">&quot;ffi-base64&quot;</span> 
+
+<span class="token keyword">local</span> target <span class="token operator">=</span> <span class="token string">&quot;https://example.com&quot;</span>
+
+<span class="token keyword">local</span> r <span class="token operator">=</span> ffi_base64<span class="token punctuation">.</span><span class="token function">base64_encode</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>
+<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">&quot;base64 encode result: \n&quot;</span><span class="token operator">..</span>r<span class="token punctuation">)</span>
+
+<span class="token keyword">local</span> r <span class="token operator">=</span> ffi_base64<span class="token punctuation">.</span><span class="token function">base64_decode</span><span class="token punctuation">(</span>r<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>
+<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">&quot;base64 decode result: \n&quot;</span><span class="token operator">..</span>r<span class="token punctuation">)</span>
+
+</pre><pre data-role="codeBlock" data-info class="language-"><code>root@router02:/data/works/libbase64-ffi# luajit -v
+LuaJIT 2.1.0-beta3 -- Copyright (C) 2005-2020 Mike Pall. https://luajit.org/
+root@router02:/data/works/libbase64-ffi# luajit ./main.lua 
+base64 encode result: 
+aHR0cHM6Ly9leGFtcGxlLmNvbQ==
+base64 decode result: 
+https://example.com
+
+</code></pre><p>&#x641E;&#x5B9A;! &#x662F;&#x4E0D;&#x662F;&#x5F88;&#x7B80;&#x5355;? &#x7C7B;&#x4F3C;&#x7684; FFI &#x5E93;&#x8FD8;&#x6709;&#x5F88;&#x591A;, &#x5404;&#x4E2A;&#x8BED;&#x8A00;&#x4E5F;&#x6709;&#x4E0D;&#x540C;&#x7A0B;&#x5EA6;&#x7684;&#x652F;&#x6301;. &#x5927;&#x5BB6;&#x90FD;&#x53EF;&#x4EE5;&#x5C1D;&#x8BD5;&#x4E00;&#x4E0B;.<br>
+&#x6700;&#x540E;, &#x5F53;&#x4F60;&#x9047;&#x5230;&#x7C7B;&#x4F3C;&#x7684;&#x95EE;&#x9898;&#x7684;&#x65F6;&#x5019;, &#x5C31;&#x53EF;&#x4EE5;&#x56DE;&#x5FC6;&#x8D77;&#x6765;, &#x8FD8;&#x6709; FFI &#x8FD9;&#x6837;&#x4E00;&#x4EF6;&#x8D81;&#x624B;&#x7684;&#x5175;(&#x9B54;)&#x5668;(&#x6CD5;)&#x5728;&#x4F60;&#x7684;&#x6B66;&#x5668;&#x5E93;&#x91CC;&#x9762;.<br>
+&#x4EE5;&#x4E0A;.</p>
+
+      </div>
+      <div class="md-sidebar-toc"><ul>
+<li><a href="#%E4%BB%80%E4%B9%88-%E8%BF%99%E9%87%8C%E7%AB%9F%E7%84%B6%E8%BA%BA%E7%9D%80%E4%B8%80%E4%B8%AA%E9%AB%98%E6%80%A7%E8%83%BD-base64-%E5%BA%93">&#x4EC0;&#x4E48;? &#x8FD9;&#x91CC;&#x7ADF;&#x7136;&#x8EBA;&#x7740;&#x4E00;&#x4E2A;&#x9AD8;&#x6027;&#x80FD; base64 &#x5E93;?</a></li>
+<li><a href="#%E9%AD%94%E6%94%B9%E5%BC%80%E5%A7%8B">&#x9B54;&#x6539;&#x5F00;&#x59CB;</a></li>
+</ul>
+</div>
+      <a id="sidebar-toc-btn">&#x2261;</a>
+    
+    
+    
+    
+    
+    
+    
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  
+    </body></html>

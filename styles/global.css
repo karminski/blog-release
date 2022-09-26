@@ -1,0 +1,30 @@
+html, body                  { font-family: Consolas,Arial; font-size: 12px; height: 100%; margin: 0;}
+a                           { color: #2F2F2F; text-decoration: none;}
+a:visited                   { color: #2F2F2F;}
+a:hover                     { color: #1e50a2;}
+#main                       { float: left; margin: 10px auto 10px 10px; color: #2F2F2F; border: 1px dashed #F0F0F0; padding: 10px;}
+.clear                      { clear: both;}
+.title                      { font-size: 12px; color: #4169E1;}
+.underline                  { color: #A1A1A1;}
+#banner                     { color: #4169E1; float: left; margin: 0px auto 20px 0px;}
+#memo                       { color: #2F2F2F; float: left; margin: 0px auto 20px 0px;}
+.content                    { width: 1000px; float: left; }
+.index                      { width: 1100px; float: left; }
+#foot                       { color: #919191; float: left; margin: 20px auto 0px 5px; }
+#logo                       { float: left; }
+#title                      { float: left; margin: 46px 0 0 20px; }
+
+
+
+/* entry category styles */
+
+.diary                      { color:#00a497; background: #FFFFFF; }
+.networking                 { color:#b44c97; background: #FFFFFF; }
+.translation                { color:#f09199; background: #FFFFFF; }
+.reading_notes              { color:#59b9c6; background: #FFFFFF; }
+.architecture               { color:#badcad; background: #FFFFFF; }
+.container                  { color:#ffea00; background: #FFFFFF; }
+.openresty                  { color:#bb5548; background: #FFFFFF; }
+.erlang                     { color:#a58f86; background: #FFFFFF; }
+.c_and_cpp                  { color:#d4dcd6; background: #FFFFFF; }
+.hole                       { color:#43676b; background: #FFFFFF; }

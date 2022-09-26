@@ -1,0 +1,859 @@
+<!DOCTYPE html><html><head>
+      <title>programmers-guide-to-recovery-the-road-bike-approach</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+
+      <style>
+      /**
+ * VS theme by Andrew Lock (https://andrewlock.net)
+ * Inspired by Visual Studio syntax coloring
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: #000000;
+    font-family: "Consolas", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+    background: #C1DEF1;
+}
+
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+    background: #C1DEF1;
+}
+
+
+/* Code blocks */
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+    background-color: #f9f9f9;
+}
+
+
+/* Inline code */
+
+:not(pre)>code[class*="language-"] {
+    padding: .2em;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background: #EEE;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: #0066FF;
+    font-style: italic;
+}
+
+.token.namespace {
+    opacity: .7;
+}
+
+.token.string {
+    color: #036A07;
+}
+
+.token.punctuation {
+    color: #000000;
+}
+
+.token.operator {
+    color: #0066FF;
+    font-weight: 900;
+    /* no highlight */
+}
+
+.token.url,
+.token.symbol,
+.token.number,
+.token.boolean,
+.token.variable,
+.token.constant,
+.token.inserted {
+    color: #0000CD;
+}
+
+.token.atrule,
+.token.keyword,
+.token.attr-value,
+.language-autohotkey .token.selector,
+.language-json .token.boolean,
+.language-json .token.number,
+code[class*="language-css"] {
+    color: #0000ff;
+    font-weight: 900;
+}
+
+.token.function {
+    color: #000000;
+}
+
+.token.deleted,
+.language-autohotkey .token.tag {
+    color: #9a050f;
+}
+
+.token.selector,
+.language-autohotkey .token.keyword {
+    color: #00009f;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+
+.token.italic {
+    font-style: italic;
+}
+
+.token.class-name,
+.language-json .token.property {
+    color: #2B91AF;
+}
+
+.token.tag,
+.token.selector {
+    color: #800000;
+}
+
+.token.attr-name,
+.token.property,
+.token.regex,
+.token.entity {
+    color: #19921c;
+}
+
+.token.directive.tag .tag {
+    background: #ffff00;
+    color: #000000;
+}
+
+
+/* overrides color-values for the Line Numbers plugin
+ * http://prismjs.com/plugins/line-numbers/
+ */
+
+.line-numbers .line-numbers-rows {
+    border-right-color: #a5a5a5;
+}
+
+.line-numbers-rows>span:before {
+    color: #2B91AF;
+}
+
+
+/* overrides color-values for the Line Highlight plugin
+* http://prismjs.com/plugins/line-highlight/
+*/
+
+.line-highlight {
+    background: rgba(193, 222, 241, 0.2);
+    background: -webkit-linear-gradient(left, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+    background: linear-gradient(to right, rgba(193, 222, 241, 0.2) 70%, rgba(221, 222, 241, 0));
+}
+
+
+/* highlight */
+
+pre[data-line] {
+    position: relative;
+    padding: 1em 0 1em 3em;
+}
+
+pre[data-line] .line-highlight-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: transparent;
+    display: block;
+    width: 100%;
+}
+
+pre[data-line] .line-highlight {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    margin-top: 1em;
+    background: hsla(24, 20%, 50%, .08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    pointer-events: none;
+    line-height: inherit;
+    white-space: pre;
+}
+
+pre[data-line] .line-highlight:before,
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-start);
+    position: absolute;
+    top: .4em;
+    left: .6em;
+    min-width: 1em;
+    padding: 0 .5em;
+    background-color: hsla(24, 20%, 50%, .4);
+    color: hsl(24, 20%, 95%);
+    font: bold 65%/1.5 sans-serif;
+    text-align: center;
+    vertical-align: .3em;
+    text-shadow: none;
+    box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+    content: attr(data-end);
+    top: auto;
+    bottom: .4em;
+}html body {
+    font-family: "Consolas", Arial, freesans, sans-serif;
+    font-size: 12px;
+    height: 100%;
+    color: #2F2F2F;
+    background-color: #fff;
+    overflow: initial;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+html body h1 {
+    color: #4169E1;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 3em;
+}
+
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6 {
+    color: #2b2b2b;
+    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+html body strong {
+    color: #000
+}
+
+html body del {
+    color: #5c5c5c
+}
+
+html body a:not([href]) {
+    color: inherit;
+    text-decoration: none
+}
+
+html body a {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body a:hover {
+    color: #4169E1;
+    text-decoration: none
+}
+
+html body img {
+    max-width: 100%
+}
+
+html body>p {
+    display: block;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    word-wrap: break-word;
+}
+
+html body>ul,
+html body>ol {
+    margin-bottom: 0px
+}
+
+html body ul,
+html body ol {
+    padding-left: 2em
+}
+
+html body ul.no-list,
+html body ol.no-list {
+    padding: 0;
+    list-style-type: none
+}
+
+html body ul ul,
+html body ul ol,
+html body ol ol,
+html body ol ul {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body li {
+    margin-bottom: 0
+}
+
+html body li.task-list-item {
+    list-style: none
+}
+
+html body li>p {
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+html body .task-list-item-checkbox {
+    margin: 0 .2em .25em -1.8em;
+    vertical-align: middle
+}
+
+html body .task-list-item-checkbox:hover {
+    cursor: pointer
+}
+
+html body blockquote {
+    margin: 16px 0;
+    font-size: inherit;
+    padding: 0 15px;
+    color: #5c5c5c;
+    border-left: 4px solid #d6d6d6
+}
+
+html body blockquote>:first-child {
+    margin-top: 0
+}
+
+html body blockquote>:last-child {
+    margin-bottom: 0
+}
+
+html body hr {
+    height: 4px;
+    margin: 32px 0;
+    background-color: #d6d6d6;
+    border: 0 none
+}
+
+html body table {
+    margin: 10px 0 15px 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all
+}
+
+html body table th {
+    font-weight: bold;
+    color: #000
+}
+
+html body table td,
+html body table th {
+    border: 1px solid #d6d6d6;
+    padding: 6px 13px
+}
+
+html body dl {
+    padding: 0
+}
+
+html body dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold
+}
+
+html body dl dd {
+    padding: 0 16px;
+    margin-bottom: 0px
+}
+
+html body code {
+    font-family: Consolas, monospace;
+    font-size: 12px !important;
+    color: #000;
+    background-color: #f0f0f0;
+}
+
+html body code::before,
+html body code::after {
+    letter-spacing: -0.2em;
+    content: "\00a0"
+}
+
+html body pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: .85em !important;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0
+}
+
+html body .highlight {
+    margin-bottom: 0px
+}
+
+html body .highlight pre,
+html body pre {
+    padding: 1em;
+    overflow: auto;
+    font-size: .85em !important;
+    line-height: 1.45;
+    border: #d6d6d6;
+    border-radius: 3px
+}
+
+html body .highlight pre {
+    margin-bottom: 0;
+    word-break: normal
+}
+
+html body pre code,
+html body pre tt {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0
+}
+
+html body pre code:before,
+html body pre tt:before,
+html body pre code:after,
+html body pre tt:after {
+    content: normal
+}
+
+html body p,
+html body blockquote,
+html body ul,
+html body ol,
+html body dl,
+html body pre {
+    /* nothing */
+}
+
+html body kbd {
+    color: #000;
+    border: 1px solid #d6d6d6;
+    border-bottom: 2px solid #c7c7c7;
+    padding: 2px 4px;
+    background-color: #f0f0f0;
+    border-radius: 3px
+}
+
+@media print {
+    html body {
+        background-color: #fff
+    }
+    html body h1,
+    html body h2,
+    html body h3,
+    html body h4,
+    html body h5,
+    html body h6 {
+        color: #000;
+        page-break-after: avoid
+    }
+    html body blockquote {
+        color: #5c5c5c
+    }
+    html body pre {
+        page-break-inside: avoid
+    }
+    html body table {
+        display: table
+    }
+    html body img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%
+    }
+    html body pre,
+    html body code {
+        word-wrap: break-word;
+        white-space: pre
+    }
+}
+
+.markdown-preview {
+    float: left;
+    margin: 10px auto 10px 10px;
+    color: #2F2F2F;
+    border: 1px dashed #DDDDDD;
+    padding: 10px;
+    width: 80em;
+}
+
+p {
+    margin: 1em 0 1em 0;
+}
+
+
+/* code block theme */.markdown-preview {
+    height: 100%;
+    box-sizing: border-box
+}
+
+.markdown-preview .pagebreak,
+.markdown-preview .newpage {
+    page-break-before: always
+}
+
+.markdown-preview pre.line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber
+}
+
+.markdown-preview pre.line-numbers>code {
+    position: relative
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 1em;
+    font-size: 100%;
+    left: 0;
+    width: 3em;
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span {
+    pointer-events: none;
+    display: block;
+    counter-increment: linenumber
+}
+
+.markdown-preview pre.line-numbers .line-numbers-rows>span:before {
+    content: counter(linenumber);
+    color: #999;
+    display: block;
+    padding-right: .8em;
+    text-align: right
+}
+
+.markdown-preview .mathjax-exps .MathJax_Display {
+    text-align: center !important
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .btn-group {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .status {
+    display: none
+}
+
+.markdown-preview:not([for="preview"]) .code-chunk .output-div {
+    margin-bottom: 16px
+}
+
+.scrollbar-style::-webkit-scrollbar {
+    width: 8px
+}
+
+.scrollbar-style::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+.scrollbar-style::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+    position: relative;
+    top: 0
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+        display: none
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn {
+    position: fixed;
+    bottom: 8px;
+    right: 8px;
+    font-size: 28px;
+    cursor: pointer;
+    color: inherit;
+    z-index: 99;
+    width: 32px;
+    text-align: center;
+    opacity: .4
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn {
+    opacity: 1
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    padding: 32px 0 48px 0;
+    font-size: 12px;
+    border-left: 1px dashed #DDDDDD;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: inherit
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar {
+    width: 8px
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: transparent
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(150, 150, 150, 0.66);
+    border: 4px solid rgba(150, 150, 150, 0.66);
+    background-clip: content-box
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a {
+    text-decoration: none
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    padding: 0 1.6em;
+    margin-top: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li {
+    margin-bottom: .8em
+}
+
+html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul {
+    list-style-type: none
+}
+
+@media screen and (max-width:1274px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        padding: 0em
+    }
+}
+
+@media screen and (max-width:450px) {
+    html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview {
+        width: 100%
+    }
+}
+
+html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc {
+    display: none
+}
+
+@media screen and (max-width:914px) {
+    html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview {
+        width: 100%
+    }
+}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h2>Programmers Guide to Recovery - The Road Bike Approach</h2>
+<ul>
+<li>@name       &#x7A0B;&#x5E8F;&#x5458;&#x5EB7;&#x590D;&#x6307;&#x5357;-&#x516C;&#x8DEF;&#x81EA;&#x884C;&#x8F66;&#x65B9;&#x6CD5; - Episode 1. &#x6211;&#x662F;&#x5982;&#x4F55;&#x901A;&#x8FC7;&#x9A91;&#x8F66;&#x6539;&#x5584;&#x5FC3;&#x810F;&#x95EE;&#x9898;&#x7684;</li>
+<li>@author     karminski &lt;<a href="mailto:code.karminski@outlook.com">code.karminski@outlook.com</a>&gt;</li>
+<li>@version    20211007:1</li>
+</ul>
+<h2>Episode 1. &#x6211;&#x662F;&#x5982;&#x4F55;&#x901A;&#x8FC7;&#x9A91;&#x8F66;&#x6539;&#x5584;&#x5FC3;&#x810F;&#x95EE;&#x9898;&#x7684;</h2>
+<p><img src="./assets/images/Programmers-Guide-to-Recovery-The-Road-Bike-Approach-Cover-Ep1.png" alt="Cover"></p>
+<p>&#x672C;&#x6587;&#x8BB0;&#x5F55;&#x4E86;&#x6211;&#x771F;&#x5B9E;&#x7684;&#x953B;&#x70BC;&#x5386;&#x7A0B;, &#x4E0D;&#x4F46;&#x529F;&#x51CF;&#x4E0B;&#x6765;&#x4E86;10kg, &#x8FD8;&#x6CBB;&#x6108;&#x4E86;&#x5FC3;&#x810F;&#x7684;&#x95EE;&#x9898;. &#x4E8E;&#x662F;&#x60F3;&#x501F;&#x6B64;&#x673A;&#x4F1A;&#x5206;&#x4EAB;&#x4E0B;&#x7ECF;&#x9A8C;, &#x5E0C;&#x671B;&#x5BF9;&#x5927;&#x5BB6;&#x6709;&#x6240;&#x5E2E;&#x52A9;.</p>
+<p>&#x3010;<strong>&#x6CE8;&#x610F;, &#x672C;&#x6587;&#x4E0D;&#x542B;&#x4EFB;&#x4F55;&#x533B;&#x7597;&#x6307;&#x5BFC;&#x548C;&#x5EFA;&#x8BAE;, &#x6709;&#x5173;&#x4E2A;&#x4EBA;&#x5065;&#x5EB7;&#x7684;&#x54A8;&#x8BE2;&#x6216;&#x5EFA;&#x8BAE;&#x8BF7;&#x53BB;&#x4E13;&#x4E1A;&#x533B;&#x7597;&#x673A;&#x6784;&#x5C31;&#x8BCA;&#xFF0C;&#x672C;&#x6587;&#x6D89;&#x53CA;&#x5230;&#x7684;&#x8FD0;&#x52A8;&#x5B58;&#x5728;&#x98CE;&#x9669;, &#x8BF7;&#x5728;&#x5B89;&#x5168;&#x7684;&#x73AF;&#x5883;&#x4E0B;&#x8FDB;&#x884C;&#x4F53;&#x80B2;&#x6D3B;&#x52A8;&#x5E76;&#x8D2D;&#x4E70;&#x4FDD;&#x9669;</strong>&#x3011;</p>
+<h1 class="mume-header" id="%E8%B5%B7%E5%9B%A0">&#x8D77;&#x56E0;</h1>
+
+<p>&#x71AC;&#x591C;&#x5BF9;&#x4E8E;&#x5E74;&#x8F7B;&#x4EBA;&#x6765;&#x8BF4;, &#x7B80;&#x76F4;&#x5982;&#x540C;&#x547C;&#x5438;&#x4E00;&#x6837;&#x666E;&#x901A;&#x3010;&#x6B64;&#x5904;&#x6709;&#x72D7;&#x5934;&#x3011;. &#x6211;&#x4E5F;&#x4E0D;&#x4F8B;&#x5916;, &#x6211;&#x7ECF;&#x5E38;&#x53EF;&#x4EE5;36&#x5C0F;&#x65F6;&#x4E0D;&#x7761;&#x89C9;, &#x7136;&#x540E;&#x7761;14&#x4E2A;&#x5C0F;&#x65F6;&#x8D77;&#x6765;&#x7EE7;&#x7EED;&#x5DE5;&#x4F5C;.</p>
+<p>2020&#x5E74;&#x7684;&#x4E00;&#x5929;, &#x5728;&#x6211;&#x71AC;&#x591C;&#x7761;&#x9192;&#x4E4B;&#x540E;, &#x7A81;&#x7136;&#x53D1;&#x73B0;&#x5FC3;&#x8DF3;&#x4E00;&#x76F4;&#x5F88;&#x5267;&#x70C8;(&#x5FC3;&#x60B8;), &#x4E4B;&#x524D;&#x662F;&#x53EA;&#x8981;&#x71AC;&#x591C;&#x540E;&#x6CA1;&#x7761;&#x591F;, &#x5C31;&#x4F1A;&#x51FA;&#x73B0;&#x8FD9;&#x79CD;&#x60C5;&#x51B5;. &#x76F8;&#x4FE1;&#x5927;&#x5BB6;&#x4E5F;&#x6709;&#x7C7B;&#x4F3C;&#x7684;&#x7ECF;&#x5386;, &#x665A;&#x4E0A;4&#x70B9;&#x7761;, &#x7136;&#x540E;8&#x70B9;&#x8D77;&#x5E8A;, &#x90A3;&#x767D;&#x5929;&#x53EF;&#x6709;&#x7684;&#x53D7;&#x7684;&#x4E86;. &#x6211;&#x5E76;&#x6CA1;&#x6709;&#x5728;&#x610F;, &#x4EE5;&#x4E3A;&#x662F;&#x7761;&#x5F97;&#x4E0D;&#x597D;, &#x518D;&#x597D;&#x597D;&#x7761;&#x4E00;&#x89C9;&#x5C31;&#x597D;&#x4E86;.</p>
+<p>&#x4F46;&#x662F;, &#x4F46;&#x662F;&#x6765;&#x4E86;, &#x7B2C;&#x4E8C;&#x5929;&#x4E5F;&#x6CA1;&#x597D;, &#x7B2C;&#x4E09;&#x5929;&#x4E5F;&#x6CA1;&#x597D;, &#x8FC7;&#x4E86;&#x4E00;&#x5468;&#x90FD;&#x6CA1;&#x597D;! &#x5373;&#x4F7F;&#x4F5C;&#x606F;&#x6B63;&#x5E38;&#x4E86;&#x4E5F;&#x80FD;&#x611F;&#x89C9;&#x5230;&#x5FC3;&#x810F;&#x5728;&#x7A81;&#x7A81;&#x7A81;&#x7684;&#x8DF3;, &#x7279;&#x522B;&#x660E;&#x663E;, &#x751A;&#x81F3;&#x8BA9;&#x6211;&#x5165;&#x7761;&#x90FD;&#x5F88;&#x56F0;&#x96BE;.</p>
+<p>&#x4E8E;&#x662F;&#x6211;&#x53BB;&#x6302;&#x4E86;&#x4E2A;&#x53F7;, &#x7136;&#x540E;&#x80CC;&#x7740;&#x4E00;&#x4E2A;24&#x5C0F;&#x65F6;&#x7684;&#x68C0;&#x6D4B;&#x4EEA;&#x8BB0;&#x5F55;&#x4E86;&#x4E00;&#x5929;&#x7684;&#x6570;&#x636E;, &#x6700;&#x540E;&#x68C0;&#x67E5;&#x7ED3;&#x679C;&#x662F; &#x2014;&#x2014; <strong>&#x5076;&#x53D1;&#x5BA4;&#x6027;&#x65E9;&#x640F;</strong>.</p>
+<p><img src="./assets/images/outpatient-sheet.png" alt="&#x68C0;&#x67E5;&#x62A5;&#x544A;"></p>
+<p>&#x6211;&#x95EE;&#x533B;&#x751F;&#x8981;&#x5403;&#x836F;&#x6216;&#x8005;&#x624B;&#x672F;&#x5417;? &#x533B;&#x751F;&#x8BF4;&#x4F60;&#x7684;&#x75C7;&#x72B6;&#x8F83;&#x8F7B;, &#x76EE;&#x524D;&#x5148;&#x89C2;&#x5BDF;&#x5427;. &#x6211;&#x56DE;&#x53BB;&#x641C;&#x4E86;&#x641C;, &#x8C8C;&#x4F3C;&#x4E5F;&#x6CA1;&#x4EC0;&#x4E48;&#x597D;&#x7684;&#x6CBB;&#x7597;&#x65B9;&#x6848;. &#x8BB8;&#x591A;&#x91CD;&#x75C7;&#x60A3;&#x8005;&#x9700;&#x8981;&#x6D88;&#x878D;, &#x4F46;&#x662F;&#x8C8C;&#x4F3C;&#x4E5F;&#x4E0D;&#x662F;&#x7279;&#x522B;&#x6709;&#x6548;. &#x5BF9;&#x6211;&#x6765;&#x8BF4;, &#x75C7;&#x72B6;&#x4E0D;&#x6D88;&#x5931;, &#x5B9E;&#x5728;&#x662F;&#x5F88;&#x96BE;&#x53D7;. &#x751A;&#x81F3;&#x5728;&#x5E73;&#x65F6;&#x90FD;&#x5F88;&#x53D7;&#x5E72;&#x6270;, &#x4E0D;&#x80FD;&#x96C6;&#x4E2D;&#x7CBE;&#x529B;.</p>
+<p>&#x5916;&#x52A0;&#x8FD9;&#x65F6;&#x6211;&#x53D1;&#x73B0;&#x4F53;&#x91CD;&#x4E5F;&#x53D8;&#x5F97;&#x5F88;&#x4E0D;&#x5999;, &#x5C31;&#x5728;&#x75C5;&#x53D1;&#x7684;&#x524D;&#x51E0;&#x5929;&#x8FD8;&#x4E70;&#x4E86;&#x4E00;&#x7BB1;&#x8D85;&#x7EA7;&#x80A5;&#x5B85;&#x5FEB;&#x4E50;&#x6C34;, &#x4E00;&#x5468;&#x5C31;&#x5E72;&#x8FDB;&#x53BB;&#x4E86;. &#x4F53;&#x91CD;&#x76F4;&#x63A5;&#x6DA8;&#x4E86;1kg. &#x6211;&#x8EAB;&#x9AD8;171cm, &#x5F53;&#x65F6;&#x4F53;&#x91CD;&#x8FBE;&#x5230;&#x4E86;78kg. BMI&#x8D85;&#x6807;. &#x6807;&#x51C6;&#x80A5;&#x5B85;&#x4E00;&#x4E2A;.</p>
+<p><img src="./assets/images/juice-order-info.png" alt="&#x7F6A;&#x9B41;&#x7978;&#x9996;"><br>
+(16&#x53F7;&#x51CC;&#x6668;3&#x70B9;&#x534A;&#x4E70;&#x7684;, 21&#x53F7;&#x559D;&#x5B8C;&#x7684;...)</p>
+<p>&#x4E8E;&#x662F;&#x6211;&#x4E0B;&#x5B9A;&#x51B3;&#x5FC3;&#x8981;&#x53BB;&#x953B;&#x70BC;, &#x4E3A;&#x4E86;&#x8BA9;&#x953B;&#x70BC;&#x4E0D;&#x81F3;&#x4E8E;&#x90A3;&#x4E48;&#x65E0;&#x804A;, &#x4E14;&#x540C;&#x65F6;&#x6709;&#x6C27;&#x548C;&#x65E0;&#x6C27;&#x90FD;&#x80FD;&#x6DB5;&#x76D6;&#x5230;, &#x6211;&#x9009;&#x62E9;&#x4E86;&#x516C;&#x8DEF;&#x81EA;&#x884C;&#x8F66;. &#x4E4B;&#x524D;&#x6211;&#x53EA;&#x662F;&#x9A91;&#x8F66;&#x901A;&#x52E4;, &#x9A91;&#x7684;&#x6700;&#x591A;&#x7684;&#x65F6;&#x5019;&#x662F;2018&#x5E74;, &#x6BCF;&#x5929;&#x4ECE;&#x5929;&#x901A;&#x82D1;&#x9A91;&#x5230;&#x671B;&#x4EAC;(&#x5355;&#x7A0B;15km&#x5DE6;&#x53F3;)&#x901A;&#x52E4;, &#x66F4;&#x8FDC;&#x7684;&#x5C31;&#x6CA1;&#x6709;&#x7ECF;&#x5386;&#x8FC7;&#x4E86;.</p>
+<h1 class="mume-header" id="%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%88%AC%E5%B1%B1">&#x7B2C;&#x4E00;&#x6B21;&#x722C;&#x5C71;</h1>
+
+<p>&#x6211;&#x9009;&#x4E86;&#x4E2A;&#x98CE;&#x548C;&#x65E5;&#x4E3D;&#x7684;&#x5468;&#x672B;&#x4E0B;&#x5348;&#x6CBF;&#x7740;&#x7ACB;&#x6C64;&#x8DEF;&#x4E00;&#x8DEF;&#x5411;&#x5317;, &#x9A91;&#x5230;&#x4E86;&#x5174;&#x5BFF;&#x9547;, &#x4E00;&#x53E3;&#x6C14;&#x9A91;&#x4E86;17km, &#x4F11;&#x606F;&#x4E86;&#x4E00;&#x4F1A;&#x540E;&#x53D1;&#x73B0;, &#x518D;&#x5411;&#x5317;&#x5F88;&#x8FD1;&#x5C31;&#x662F;&#x5C71;&#x533A;, &#x800C;&#x6211;&#x4ECE;&#x6765;&#x6CA1;&#x9A91;&#x8F66;&#x722C;&#x8FC7;&#x5C71;, &#x5F88;&#x60F3;&#x8BD5;&#x4E00;&#x8BD5;. &#x6B64;&#x65F6;&#x7684;&#x6211;&#x6EE1;&#x8111;&#x5B50;&#x662F;&#x73AF;&#x6CD5;&#x9009;&#x624B;&#x7684;&#x6447;&#x8F66;&#x8FDB;&#x653B;&#x59FF;&#x52BF;, &#x6839;&#x672C;&#x4E0D;&#x77E5;&#x9053;&#x722C;&#x5C71;&#x6709;&#x591A;&#x96BE;.</p>
+<p><img src="./assets/images/into-the-mountains-section.png" alt="into-the-mountains-section"></p>
+<p>(&#x5B89;&#x56DB;&#x8DEF;, &#x6B63;&#x722C;&#x6148;&#x60B2;&#x5CEA;&#x7B2C;&#x4E00;&#x4E2A;&#x5761;, &#x5761;&#x5EA6;3.9%, &#x957F;&#x5EA6;900m, &#x722C;&#x5347;36&#x7C73;)</p>
+<p>&#x7ED3;&#x679C;, &#x5BF9;, &#x5C31;&#x662F;&#x8FD9;&#x4E48;&#x4E2A;900&#x7C73;&#x7684;&#x5761;, &#x6211;&#x722C;&#x5230;&#x4E00;&#x534A;, &#x76F4;&#x63A5;&#x9A91;&#x4E0D;&#x52A8;&#x4E86;, &#x7528;&#x884C;&#x8BDD;&#x8BF4;&#x5C31;&#x662F; &#x2014;&#x2014; &#x628A;&#x81EA;&#x5DF1;&#x62C9;&#x7206;&#x4E86;. &#x751A;&#x81F3;&#x6211;&#x4E0B;&#x8F66;&#x540E;&#x76F4;&#x63A5; &#x2014;&#x2014; &#x5410;&#x4E86;. &#x80C3;&#x90E8;&#x5728;&#x4E0D;&#x65AD;&#x5730;&#x7FFB;&#x817E;, &#x4E24;&#x773C;&#x751A;&#x81F3;&#x6709;&#x70B9;&#x9ED1;&#x89C6;. &#x5FC3;&#x7387;&#x76F4;&#x63A5;&#x5E72;&#x5230;&#x4E86;190+, &#x6211;&#x8DE8;&#x8FC7;&#x62A4;&#x680F;&#x5012;&#x5728;&#x8349;&#x5730;&#x4E0A;&#x4F11;&#x606F;&#x4E86;15&#x5206;&#x949F;&#x624D;&#x7F13;&#x8FC7;&#x6765;. &#x4E00;&#x5EA6;&#x89C9;&#x5F97;&#x81EA;&#x5DF1;&#x8981;&#x6302;&#x4E86;.</p>
+<p>&#x56DE;&#x770B;&#x6570;&#x636E;, &#x6211;&#x51FA;&#x95E8;&#x540E;&#x9A91;&#x4E86;3km&#x4E4B;&#x540E;, &#x5FC3;&#x7387;&#x5C31;&#x4E00;&#x76F4;&#x5728;170&#x4EE5;&#x4E0A;. &#x53EF;&#x4EE5;&#x60F3;&#x8C61;&#x8EAB;&#x4F53;&#x5DF2;&#x7ECF;&#x8870;&#x5F31;&#x5230;&#x4E86;&#x4EC0;&#x4E48;&#x7A0B;&#x5EA6;.</p>
+<p><img src="./assets/images/first-ride-recording.png" alt="first-ride-recording"></p>
+<p>(&#x7B2C;&#x4E00;&#x6B21;&#x7684;&#x9A91;&#x884C;&#x6570;&#x636E;)</p>
+<p>&#x540E;&#x7EED;&#x6211;&#x53C8;&#x5F80;&#x540E;&#x6323;&#x624E;&#x4E86;5km, &#x9A91;&#x5230;&#x4E86;&#x725B;&#x8E44;&#x5CAD;&#x6751;, &#x5B9E;&#x5728;&#x662F;&#x9A91;&#x4E0D;&#x52A8;&#x4E86;, &#x4E8E;&#x662F;&#x7070;&#x6E9C;&#x6E9C;&#x56DE;&#x5BB6;. &#x8FD9;&#x662F;&#x7B2C;&#x4E00;&#x6B21;&#x9A91;&#x884C;, &#x9A91;&#x4E86;&#x603B;&#x8BA1;50km, &#x722C;&#x5347;186m, &#x9A91;&#x884C;&#x4E86;3&#x5C0F;&#x65F6;, Strava &#x6839;&#x636E;&#x5FC3;&#x7387;&#x8BC4;&#x4F30;&#x7684;&#x76F8;&#x5BF9;&#x8D1F;&#x8377;&#x5EA6;&#x662F; 482, &#x5E73;&#x5747;&#x5FC3;&#x7387;&#x662F; 173bpm, &#x5927;&#x5BB6;&#x53EF;&#x4EE5;&#x5148;&#x8BB0;&#x4F4F;&#x8FD9;&#x4E2A;&#x6570;&#x636E;.</p>
+<h1 class="mume-header" id="%E5%86%8D%E6%AC%A1%E6%8C%91%E6%88%98">&#x518D;&#x6B21;&#x6311;&#x6218;</h1>
+
+<p>&#x5E78;&#x597D;&#x6211;&#x8FD9;&#x4E2A;&#x4EBA;&#x6700;&#x64C5;&#x957F;&#x7684;&#x5C31;&#x662F;&#x6B7B;&#x78D5;, &#x5B8C;&#x5168;&#x5C06;&#x81EA;&#x5DF1;&#x4E4B;&#x524D;&#x5FC3;&#x810F;&#x6709;&#x95EE;&#x9898;&#x8FD9;&#x4EF6;&#x4E8B;&#x629B;&#x5728;&#x4E86;&#x8111;&#x540E;, &#x4E4B;&#x540E;&#x6211;&#x53C8;&#x5E73;&#x8DEF;&#x9A91;&#x4E86;&#x4E24;&#x6B21;, &#x5728;5&#x6708;9&#x65E5;, &#x6211;&#x51B3;&#x5B9A;&#x518D;&#x6B21;&#x722C;&#x5C71;.</p>
+<p><img src="./assets/images/second-ride.png" alt="second-ride"></p>
+<p>(&#x7B2C;&#x4E8C;&#x6B21;&#x722C;&#x5C71;&#x7684;&#x6570;&#x636E;)</p>
+<p>&#x8FD9;&#x6B21;&#x4E0D;&#x4F46;&#x6210;&#x529F;&#x4E00;&#x53E3;&#x6C14;&#x4E0A;&#x4E86;&#x7B2C;&#x4E00;&#x4E2A;&#x5761;, &#x751A;&#x81F3;&#x4E00;&#x76F4;&#x5411;&#x4E0A;&#x722C;, &#x6700;&#x540E;&#x7EC8;&#x4E8E;&#x5230;&#x4E86;&#x6E56;&#x95E8;&#x6865;(&#x94F6;&#x5C71;&#x5854;&#x6797;&#x9644;&#x8FD1;), &#x9014;&#x4E2D;&#x4E0D;&#x65AD;&#x7684;&#x611F;&#x89C9;&#x81EA;&#x5DF1;&#x4E0D;&#x884C;&#x4E86;, &#x4F46;&#x597D;&#x5728;&#x575A;&#x6301;&#x4E86;&#x4E0B;&#x6765;. &#x4F11;&#x606F;&#x4E86;20&#x5206;&#x949F;&#x540E;&#x4E0B;&#x5C71;&#x56DE;&#x5BB6;.</p>
+<p>&#x9A91;&#x4E86;&#x603B;&#x8BA1;67km, &#x722C;&#x5347;306m, &#x9A91;&#x884C;&#x4E86;3&#x5C0F;&#x65F6;43&#x5206;, Strava &#x6839;&#x636E;&#x5FC3;&#x7387;&#x8BC4;&#x4F30;&#x7684;&#x76F8;&#x5BF9;&#x8D1F;&#x8377;&#x5EA6;&#x662F; 487, &#x5E73;&#x5747;&#x5FC3;&#x7387;&#x662F; 167bpm.</p>
+<p>&#x4EC5;&#x4EC5;&#x662F;&#x9A91;&#x4E86;4&#x6B21;, &#x8FD0;&#x52A8;&#x7684;&#x5E73;&#x5747;&#x5FC3;&#x7387;&#x5C31;&#x6709;&#x4E86;&#x660E;&#x663E;&#x7684;&#x6539;&#x5584;, &#x800C;&#x4E14;&#x5FC3;&#x60B8;&#x7684;&#x72B6;&#x51B5;&#x4E5F;&#x6CA1;&#x6709;&#x4E86;! &#x867D;&#x7136;&#x6BCF;&#x6B21;&#x9A91;&#x90FD;&#x5341;&#x5206;&#x75DB;&#x82E6;, &#x4F46;&#x6211;&#x9690;&#x7EA6;&#x611F;&#x89C9;&#x627E;&#x5230;&#x4E86;&#x80FD;&#x6539;&#x5584;&#x8EAB;&#x4F53;&#x72B6;&#x51B5;&#x7684;&#x65B9;&#x6CD5;.</p>
+<h1 class="mume-header" id="%E6%AD%A3%E5%BC%8F%E5%BC%80%E5%A7%8B">&#x6B63;&#x5F0F;&#x5F00;&#x59CB;</h1>
+
+<p>&#x4E4B;&#x540E;&#x53C8;&#x9A91;&#x4E86;4&#x6B21;&#x5DE6;&#x53F3;, &#x7A81;&#x7136;&#x53D1;&#x73B0;&#x6709;&#x4E2A;&#x8BA4;&#x8BC6;&#x7684;&#x670B;&#x53CB;&#x4E5F;&#x9A91;&#x8F66;, &#x4E8E;&#x662F;&#x7EA6;&#x597D;&#x4E86;&#x5468;&#x672B;&#x4E00;&#x8D77;&#x53BB;&#x9A91;&#x89E3;(xie, &#x540C;&#x874E;)&#x5B57;&#x77F3;.</p>
+<p>&#x719F;&#x6089;&#x7684;&#x670B;&#x53CB;&#x5E94;&#x8BE5;&#x77E5;&#x9053;, &#x89E3;&#x5B57;&#x77F3;&#x662F;&#x5317;&#x4EAC;&#x5317;&#x90E8;&#x975E;&#x5E38;&#x8457;&#x540D;&#x7684;&#x9A91;&#x884C;&#x8DEF;&#x7EBF;, &#x4ECE;&#x5341;&#x4E09;&#x9675;&#x6C34;&#x5E93;&#x540E;&#x9762;&#x7684;&#x8302;&#x9675;&#x6751;&#x5F00;&#x59CB;, &#x4E00;&#x76F4;&#x5230;&#x89E3;&#x5B57;&#x77F3;&#x6751;&#x4E4B;&#x524D;&#x7684;&#x5C71;&#x9876;&#x4F11;&#x606F;&#x533A;.</p>
+<p><img src="./assets/images/xiezishi-section-info.png" alt="xiezishi-section-info"></p>
+<p>&#x4E8B;&#x5B9E;&#x8BC1;&#x660E;&#x6211;&#x98D8;&#x4E86;, &#x9A91;&#x4E86;&#x51E0;&#x6B21;&#x6148;&#x60B2;&#x5CEA;&#x5C31;&#x89C9;&#x5F97;&#x722C;&#x5C71;&#x4E5F;&#x4E0D;&#x8FC7;&#x5982;&#x6B64;&#x4E86; (&#x5B9E;&#x9645;&#x4E0A;&#x6148;&#x60B2;&#x5CEA;&#x7B97;&#x662F;&#x5165;&#x95E8;&#x8DEF;&#x7EBF;&#x4E2D;&#x7684;&#x5165;&#x95E8;&#x8DEF;&#x7EBF;, &#x5E73;&#x5747;&#x5761;&#x5EA6;1.8% &#x52C9;&#x5F3A;&#x7B97;4&#x7EA7;&#x5761;).</p>
+<p>&#x800C;&#x8FD9;&#x6B21;&#x8981;&#x53BB;&#x722C;&#x7684;&#x89E3;&#x5B57;&#x77F3;&#x662F;&#x4E2A;2&#x7EA7;&#x5761;. &#x5E73;&#x5747;&#x5761;&#x5EA6;3.8%, &#x4E0D;&#x662F;&#x5F88;&#x7B80;&#x5355;&#x7684;.</p>
+<p>&#x7ED3;&#x679C;, &#x6211;&#x628A;&#x81EA;&#x5DF1;&#x62C9;&#x7206;&#x4E86;5&#x6B21;, &#x6700;&#x540E;&#x8FDE;&#x63A8;&#x5E26;&#x722C;&#x7EC8;&#x4E8E;&#x4E0A;&#x53BB;&#x4E86;...</p>
+<p><img src="./assets/images/xiezishi-photo.png" alt="xiezishi-photo.png"></p>
+<p>(&#x53F3;&#x8FB9;&#x7684;&#x80A5;&#x5B85;&#x5C31;&#x662F;&#x63A5;&#x8FD1;80kg&#x7684;&#x6211;)</p>
+<p>&#x8FD9;&#x662F;&#x6211;&#x9A91;&#x7684;&#x6700;&#x7206;&#x70B8;&#x7684;&#x4E00;&#x6B21;, &#x603B;&#x8BA1;&#x9A91;&#x4E86;5.5&#x5C0F;&#x65F6;, 117km, &#x722C;&#x5347;&#x4E86;874m. &#x722C;&#x5B8C;&#x4E86;&#x76F4;&#x63A5;&#x56DE;&#x5BB6;&#x8FDE;&#x7AD9;&#x90FD;&#x7AD9;&#x4E0D;&#x8D77;&#x6765;&#x4E86;. &#x817F;&#x75BC;&#x4E86;&#x597D;&#x51E0;&#x5929;.</p>
+<h1 class="mume-header" id="%E6%88%90%E6%9E%9C">&#x6210;&#x679C;</h1>
+
+<p>&#x5C31;&#x8FD9;&#x6837;, &#x6211;&#x6BCF;&#x5468;&#x57FA;&#x672C;&#x90FD;&#x4F1A;&#x51FA;&#x53BB;&#x9A91;, &#x5230;&#x4E86;6&#x6708;&#x5E95;, &#x5DF2;&#x7ECF;&#x9A91;&#x4E86;16&#x6B21;, 47&#x5C0F;&#x65F6;, &#x5E73;&#x5747;&#x6BCF;&#x5468;6&#x5C0F;&#x65F6;.</p>
+<p><img src="./assets/images/ride-data-2020-04-2020-06.png" alt="ride-data-2020-04-2020-06"></p>
+<p>&#x5927;&#x5BB6;&#x6CE8;&#x610F;&#x770B; Hr &#x8FD9;&#x4E00;&#x5217;&#x7684;&#x6570;&#x636E;, &#x8FD9;&#x4EE3;&#x8868;&#x4E86;&#x9A91;&#x884C;&#x7684;&#x5E73;&#x5747;&#x5FC3;&#x7387;(&#x4E0E;Strava&#x7EDF;&#x8BA1;&#x65B9;&#x5F0F;&#x7565;&#x6709;&#x4E0D;&#x540C;). &#x4ECE;&#x7B2C;&#x4E00;&#x6B21;&#x9A91;&#x7684;&#x5E73;&#x5747;&#x5FC3;&#x7387;177, 2&#x4E2A;&#x6708;&#x540E;, &#x5E73;&#x5747;&#x5FC3;&#x7387;&#x5DF2;&#x7ECF;&#x4E0B;&#x964D;&#x5230;&#x4E86;150&#x5DE6;&#x53F3;. &#x53EF;&#x4EE5;&#x8BF4;&#x662F;&#x6548;&#x679C;&#x663E;&#x8457;.</p>
+<p>&#x8FD9;&#x91CC;&#x8BF4;&#x4E00;&#x4E2A;&#x4F1A;&#x4EE4;&#x4F60;&#x9707;&#x60CA;&#x7684;&#x6570;&#x636E;, &#x8DDF;&#x6211;&#x4E00;&#x8D77;&#x9A91;&#x884C;&#x7684;&#x53E6;&#x4E00;&#x4E2A;&#x5927;&#x4F6C;(&#x4ED6;&#x7ECF;&#x5E38;&#x8FD0;&#x52A8;), &#x4ED6;&#x8DDF;&#x6211;&#x4E00;&#x8D77;&#x7684;&#x6700;&#x9AD8;&#x5FC3;&#x7387;&#x662F; 140... &#x4EBA;&#x5BB6;&#x7684;&#x6700;&#x9AD8;&#x5FC3;&#x7387;&#x662F;&#x6BD4;&#x6211;&#x7684;&#x5E73;&#x5747;&#x5FC3;&#x7387;&#x90FD;&#x8981;&#x4F4E;. &#x53EF;&#x89C1;&#x6211;&#x8FD8;&#x6709;&#x76F8;&#x5F53;&#x5927;&#x7684;&#x63D0;&#x5347;&#x7A7A;&#x95F4;&#x3010;&#x624B;&#x52A8;&#x72D7;&#x5934;&#x3011;.</p>
+<h1 class="mume-header" id="%E5%90%91%E5%9B%9B%E6%B5%B7%E8%BF%9B%E5%8F%91">&#x5411;&#x56DB;&#x6D77;&#x8FDB;&#x53D1;</h1>
+
+<p>&#x968F;&#x7740;&#x9A91;&#x884C;&#x6B21;&#x6570;&#x589E;&#x591A;, &#x6211;&#x5F00;&#x59CB;&#x4E0D;&#x6EE1;&#x8DB3;&#x4E8E;&#x9644;&#x8FD1;&#x7684;&#x5C0F;&#x5C71;&#x4E86;, &#x4E8E;&#x662F;&#x7784;&#x51C6;&#x4E86;&#x9644;&#x8FD1;&#x552F;&#x4E00;&#x7684; 1 &#x7EA7;&#x5761;, &#x56DB;&#x6D77;.</p>
+<p><img src="./assets/images/4sea-section-info.png" alt="4sea-section-info"></p>
+<p>&#x7B2C;&#x4E00;&#x6B21;&#x9A91;&#x662F;6&#x6708;26&#x65E5;, &#x9A91;&#x4E86;&#x63A5;&#x8FD1;7&#x5C0F;&#x65F6;, 145km, &#x722C;&#x5347;1507m, &#x8D1F;&#x8377;&#x5EA6;537. &#x56DB;&#x6D77;&#x8DEF;&#x6BB5;&#x6210;&#x7EE9;&#x662F; 1:13:32.</p>
+<p><img src="./assets/images/4sea-ride-06-26.png" alt="4sea-ride-06-26"></p>
+<p>&#x8FD9;&#x4E2A;&#x8DEF;&#x6BB5;&#x96BE;&#x5EA6;&#x7206;&#x70B8;, &#x6709;&#x4E00;&#x6BB5;&#x6700;&#x9661;&#x5CED;&#x7684;&#x8DEF;&#x63A5;&#x8FD1;9%+. &#x9A91;&#x4E00;&#x6B21;&#x76F4;&#x63A5;&#x5C31;&#x5E72;&#x8FDB;&#x53BB;2500&#x5343;&#x5361;, &#x9A91;&#x5B8C;&#x4E86;&#x4E4B;&#x540E;&#x76F4;&#x63A5;&#x4F53;&#x91CD;&#x6389;2kg (&#x867D;&#x7136;&#x5927;&#x90E8;&#x5206;&#x662F;&#x6C34;&#x5206;). &#x7B80;&#x76F4;&#x662F;&#x953B;&#x70BC;&#x7684;&#x7EDD;&#x4F73;&#x8DEF;&#x6BB5;, &#x4E8E;&#x662F;&#x6211;&#x6574;&#x4E2A;2020&#x5E74;8&#x6708;&#x4EFD;&#x90FD;&#x5728;&#x8DDF;&#x8FD9;&#x4E2A;&#x8DEF;&#x6BB5;&#x6B7B;&#x78D5;, &#x6BCF;&#x5468;&#x96F7;&#x6253;&#x4E0D;&#x52A8;&#x9A91;&#x4E24;&#x6B21;. &#x57FA;&#x672C;&#x662F;&#x817F;&#x4E0D;&#x9178;&#x4E86;&#x5C31;&#x53BB;.</p>
+<p>&#x7B49;&#x5230;&#x4E86;9&#x6708;26&#x65E5;, &#x7ECF;&#x8FC7;&#x4E86;3&#x4E2A;&#x6708;, &#x6211;&#x7EC8;&#x4E8E;&#x5237;&#x51FA;&#x6765;&#x4E86;&#x4E2A;&#x4E2A;&#x4EBA;&#x6700;&#x597D;&#x6210;&#x7EE9;, 52:50, &#x6BD4;&#x7B2C;&#x4E00;&#x6B21;&#x9A91;&#x5FEB;&#x4E86;20:42.</p>
+<p><img src="./assets/images/4sea-records.png" alt="4sea-records"></p>
+<p><img src="./assets/images/4sea-ride-09-26.png" alt="4sea-ride-09-26"></p>
+<p>&#x800C;&#x8FD9;&#x6B21;&#x521B;&#x9020;&#x4E86;&#x5E74;&#x5EA6;&#x6700;&#x4F73;&#x7EAA;&#x5F55;&#x7684;&#x9A91;&#x884C;, &#x8D1F;&#x8377;&#x5EA6;&#x53EA;&#x6709; &#x2014;&#x2014; 342.</p>
+<p>&#x8FD8;&#x8BB0;&#x5F97;&#x6211;&#x7B2C;&#x4E00;&#x6B21;&#x9A91;&#x8F66;&#x8FDB;&#x5C71;&#x5417;? &#x5BF9;&#x7684;, &#x9A91;&#x5410;&#x4E86;&#x90A3;&#x4E00;&#x6B21;, &#x7CFB;&#x7EDF;&#x8BC4;&#x4F30;&#x6211;&#x7684;&#x8D1F;&#x8377;&#x5EA6;&#x662F; 482. &#x800C;&#x8FD9;&#x6B21;&#x8D85;&#x8D8A;&#x7B2C;&#x4E00;&#x6B21;&#x63A5;&#x8FD1; 2.5 &#x500D;&#x8DDD;&#x79BB;(50km vs 128km), 7 &#x500D;&#x722C;&#x5347;&#x9AD8;&#x5EA6; (186m vs 1312m), &#x521B;&#x9020;&#x4E86;&#x4E2A;&#x4EBA;&#x7EAA;&#x5F55;&#x7684;&#x9A91;&#x884C;, &#x7CFB;&#x7EDF;&#x8BC4;&#x4F30;&#x6211;&#x7684;&#x8D1F;&#x8377;&#x5EA6;&#x662F; 342. &#x6BD4;&#x7B2C;&#x4E00;&#x6B21;&#x9A91;&#x8FD8;&#x8F7B;&#x677E;.</p>
+<p>(&#x751A;&#x81F3;&#x5230;&#x4E86;&#x4ECA;&#x5E74;, &#x6211;&#x6709;&#x6B21;&#x9A91;&#x4E86;&#x534A;&#x5C0F;&#x65F6;&#x5171;&#x4EAB;&#x5355;&#x8F66;, Strava&#x544A;&#x8BC9;&#x6211;, &#x8D1F;&#x8377;&#x5EA6;&#x662F;0...... &#x6BEB;&#x65E0;&#x953B;&#x70BC;&#x6548;&#x679C;. &#x5982;&#x56FE;:)</p>
+<p><img src="./assets/images/share-bike-record.png" alt="share-bike-record"></p>
+<p>&#x800C;&#x5230;&#x4E86;&#x8FD9;&#x4E2A;&#x65F6;&#x5019; (2020&#x5E74;9&#x6708;26&#x65E5;, &#x8DDD;&#x79BB;&#x5F00;&#x59CB;&#x953B;&#x70BC;&#x7ECF;&#x8FC7;&#x4E86;5&#x4E2A;&#x6708;), &#x6211;&#x7684;&#x4F53;&#x91CD;&#x5DF2;&#x7ECF;&#x6389;&#x5230;&#x4E86;68kg, &#x800C;&#x5FC3;&#x60B8;&#x7684;&#x95EE;&#x9898;&#x518D;&#x4E5F;&#x6CA1;&#x6709;&#x53D1;&#x751F;&#x8FC7;&#x4E86;.</p>
+<p>&#x8FD9;&#x4E00;&#x5E74;&#x6211;Strava&#x4E0A;&#x6709;&#x8BB0;&#x5F55;&#x7684;&#x9A91;&#x884C;&#x662F;85&#x6B21;, 5721km(&#x52A0;&#x8D77;&#x6765;&#x80FD;&#x4ECE;&#x5317;&#x4EAC;&#x9A91;&#x5230;&#x5317;&#x6781;&#x4E86;), &#x603B;&#x8BA1;&#x9A91;&#x884C;&#x4E86; 282&#x5C0F;&#x65F6;, &#x6BCF;&#x5468;&#x7EA6;8&#x5C0F;&#x65F6;. &#x722C;&#x5347;&#x4E86;56699m, &#x76F8;&#x5F53;&#x4E8E;6.5&#x4E2A;&#x73E0;&#x5CF0;&#x9AD8;&#x5EA6;.</p>
+<p><img src="./assets/images/4sea-photo.png" alt="4sea-photo"></p>
+<p>(&#x53F3;&#x8D77;&#x7B2C;&#x4E09;&#x4E2A;&#x7A7F;&#x7EFF;&#x8272; Tinkoff/SAXO BANK &#x961F;&#x670D;&#x7684;&#x5C31;&#x662F;&#x8FD8;&#x5269; 68kg &#x7684;&#x80A5;&#x5B85;&#x7684;&#x6211;, &#x4E2D;&#x95F4;&#x767D;&#x8863;&#x670D;&#x7684;&#x5144;&#x5F1F;&#x773C;&#x719F;&#x4E0D;? &#x8FD9;&#x8DDF;&#x6211;&#x7B2C;&#x4E00;&#x6B21;&#x9A91;&#x89E3;&#x5B57;&#x77F3;&#x662F;&#x4E00;&#x4E2A;&#x4EBA;, &#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4ED6;&#x4F53;&#x578B;&#x4F5C;&#x4E3A;&#x53C2;&#x7167;&#x6765;&#x5BF9;&#x6BD4;&#x6211;&#x7684;&#x4F53;&#x578B;&#x53D8;&#x5316;).</p>
+<p>&#x597D;&#x4E86;, &#x672C;&#x6B21;&#x5185;&#x5BB9;&#x57FA;&#x672C;&#x5C31;&#x662F;&#x8FD9;&#x4E9B;, &#x7B97;&#x662F;&#x4E2A;&#x5F00;&#x7BC7;. &#x5982;&#x679C;&#x5927;&#x5BB6;&#x611F;&#x5174;&#x8DA3;, &#x63A5;&#x4E0B;&#x6765;&#x51E0;&#x7BC7;&#x6211;&#x4F1A;&#x5206;&#x4EAB;&#x5177;&#x4F53;&#x8BE5;&#x600E;&#x6837;&#x53BB;&#x79D1;&#x5B66;&#x8BAD;&#x7EC3; (&#x7EDD;&#x5BF9;&#x4E0D;&#x80FD;&#x778E;&#x9A91;), &#x4EE5;&#x53CA;&#x5927;&#x591A;&#x6570;&#x670B;&#x53CB;&#x62C5;&#x5FC3;&#x7684;&#x4F24;&#x819D;&#x76D6;/&#x4F24;&#x86CB; (&#x4F60;&#x4E00;&#x5B9A;&#x6CA1;&#x542C;&#x8BF4;&#x8FC7;fitting/&#x4ED4;&#x7EC6;&#x770B;&#x56FE;&#x4E2D;&#x7684;&#x4EBA;&#x90FD;&#x7A7F;&#x7740;&#x9A91;&#x884C;&#x88E4;), &#x4EE5;&#x53CA;&#x5982;&#x679C;&#x4E0D;&#x8FD0;&#x52A8;&#x4F53;&#x80FD;&#x6ED1;&#x5761;&#x6709;&#x591A;&#x5FEB;(2&#x5468;&#x5F00;&#x59CB;&#x4E0B;&#x964D;2&#x4E2A;&#x6708;&#x6389;&#x56DE;&#x539F;&#x5F62;...), &#x7B49;&#x7B49;&#x7B49;&#x7B49;&#x95EE;&#x9898;.</p>
+<p>&#x554A;, &#x987A;&#x4FBF;, &#x6211;&#x4ECE;&#x4E0D;&#x5FCC;&#x53E3;. &#x8FD9; 10kg &#x5B8C;&#x5168;&#x662F;&#x9760;&#x5927;&#x8FD0;&#x52A8;&#x91CF;&#x51CF;&#x4E0B;&#x6765;&#x7684;. &#x552F;&#x4E00;&#x7684;&#x996E;&#x98DF;&#x53D8;&#x5316;&#x662F;, &#x6211;&#x7528;&#x65E0;&#x7CD6;&#x996E;&#x6599;&#x66FF;&#x4EE3;&#x4E86;&#x542B;&#x7CD6;&#x996E;&#x6599;...</p>
+<p>&#x5C31;&#x8FD9;&#x6837;, &#x6211;&#x4EEC;&#x4E0B;&#x671F;&#x518D;&#x89C1;.</p>
+
+      </div>
+      <div class="md-sidebar-toc"><ul>
+<li><a href="#%E8%B5%B7%E5%9B%A0">&#x8D77;&#x56E0;</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%88%AC%E5%B1%B1">&#x7B2C;&#x4E00;&#x6B21;&#x722C;&#x5C71;</a></li>
+<li><a href="#%E5%86%8D%E6%AC%A1%E6%8C%91%E6%88%98">&#x518D;&#x6B21;&#x6311;&#x6218;</a></li>
+<li><a href="#%E6%AD%A3%E5%BC%8F%E5%BC%80%E5%A7%8B">&#x6B63;&#x5F0F;&#x5F00;&#x59CB;</a></li>
+<li><a href="#%E6%88%90%E6%9E%9C">&#x6210;&#x679C;</a></li>
+<li><a href="#%E5%90%91%E5%9B%9B%E6%B5%B7%E8%BF%9B%E5%8F%91">&#x5411;&#x56DB;&#x6D77;&#x8FDB;&#x53D1;</a></li>
+</ul>
+</div>
+      <a id="sidebar-toc-btn">&#x2261;</a>
+    
+    
+    
+    
+    
+    
+    
+    
+<script>
+
+var sidebarTOCBtn = document.getElementById('sidebar-toc-btn')
+sidebarTOCBtn.addEventListener('click', function(event) {
+  event.stopPropagation()
+  if (document.body.hasAttribute('html-show-sidebar-toc')) {
+    document.body.removeAttribute('html-show-sidebar-toc')
+  } else {
+    document.body.setAttribute('html-show-sidebar-toc', true)
+  }
+})
+</script>
+      
+  
+    </body></html>
